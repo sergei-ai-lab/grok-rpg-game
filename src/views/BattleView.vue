@@ -252,7 +252,7 @@ const pf = store.profile
 const paused = ref(false)
 const speed = ref(1)
 
-const SPEEDS = [1, 3, 5, 8, 10, 15]
+const SPEEDS = [1, 3, 5, 8]
 const speedOptions = SPEEDS.map(value => ({ label: `${value}x`, value }))
 
 onMounted(() => {
@@ -260,14 +260,9 @@ onMounted(() => {
     router.replace('/')
     return
   }
-  if (!run.started || run.status === 'idle') {
-    // 刷新页面：若存档中保存了层数（>1），则恢复；否则从第 1 层开始
-    const savedFloor = pf.value!.runFloor ?? 1
-    if (savedFloor > 1)
-      store.continueRun()
-    else
-      store.startRun()
-  }
+  // A reload must resume the exact persisted encounter/choice even on floor 1.
+  if (!run.started || run.status === 'idle')
+    store.continueRun()
 })
 
 // 自动战斗心跳（倍速控制间隔）
