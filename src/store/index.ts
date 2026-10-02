@@ -935,11 +935,14 @@ export const useGlobalState = createGlobalState(() => {
   }
 
   function setLead(heroId: string) {
-    const bond = p().bonds[heroId]
+    const pf = p()
+    const bond = pf.bonds[heroId]
     if (!bond || bond.rank < 1)
       return false
+    if (pf.heroId === heroId)
+      return true
     clearRunSnapshot()
-    p().heroId = heroId
+    pf.heroId = heroId
     return true
   }
 
