@@ -79,13 +79,12 @@ test('realm gates level/stamina, final victory pays all stones, sweep requires p
   assert.deepEqual([p.gold - before.gold, p.exp - before.exp, p.stone - before.stone], [120, 90, 3])
   assert.equal(p.dungeonCount.forest, 1)
   assert.equal(p.bonds.vorathion.copies, 0)
-  state.sweepDungeon('forest')
-  assert.equal(p.stamina, 970)
-  assert.equal(p.dungeonCount.forest, 2)
-  assert.equal(p.gold, before.gold + 240)
+  const afterClear = [p.stamina, p.dungeonCount.forest, p.gold, p.stone]
+  assert.equal(state.sweepDungeon('forest'), false)
+  assert.deepEqual([p.stamina, p.dungeonCount.forest, p.gold, p.stone], afterClear)
 })
 
-test('quest rewards are single-claim until paid daily refresh; achievements remain claimed', async () => {
+test('quest rewards are single-claim and paid daily refresh cannot reset them', async () => {
   const { state } = await fresh()
   const p = state.profile.value
   state.track('battle', 5)
@@ -97,15 +96,13 @@ test('quest rewards are single-claim until paid daily refresh; achievements rema
   state.track('floor', 10, 'max')
   state.claimQuest('ach_floor10')
   assert.equal(p.soul, 5)
-  assert.equal(state.refreshDaily(), true)
-  assert.equal(p.gold, 720)
-  assert.equal(state.questProgress('daily_battle').current, 0)
+  const beforeRefresh = [p.gold, p.daily.progress.battle, p.daily.claimed.daily_battle]
+  assert.equal(state.refreshDaily(), false)
+  assert.deepEqual([p.gold, p.daily.progress.battle, p.daily.claimed.daily_battle], beforeRefresh)
   assert.equal(state.questProgress('ach_floor10').claimed, true)
-  state.track('battle', 5)
-  assert.equal(state.questProgress('daily_battle').claimable, true)
 })
 
-test('stamina regenerates one point per 30 seconds, caps at 1000; purchase costs 50 for 100', async () => {
+test('stamina regenerates one point per 30 seconds and paid refill is disabled', async () => {
   const { state } = await fresh()
   const p = state.profile.value
   const now = Date.now
@@ -120,8 +117,9 @@ test('stamina regenerates one point per 30 seconds, caps at 1000; purchase costs
     assert.equal(p.stamina, 1000)
     assert.equal(state.buyStamina(), false)
     p.stamina = 850
-    assert.equal(state.buyStamina(), true)
-    assert.deepEqual([p.stamina, p.gold], [950, 150])
+    const gold = p.gold
+    assert.equal(state.buyStamina(), false)
+    assert.deepEqual([p.stamina, p.gold], [850, gold])
   }
   finally { Date.now = now }
 })
