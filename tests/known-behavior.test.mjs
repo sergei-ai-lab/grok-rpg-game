@@ -2,42 +2,49 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { fresh, withRandom, forceVictory } from './helpers.mjs'
 
-// Characterization of confirmed baseline inconsistencies, NOT desired design.
-// Update these assertions only after the corresponding Stage 1 change is approved.
-test('AUDIT BLOCKER: tower floors 41..44 have no foes and floor 45 crashes on empty sprite pool', async () => {
-  const { game } = await fresh()
-  assert.equal(Math.max(...game.SPRITES.map(s => s.tier)), 5)
-  for (const floor of [41, 42, 43, 44]) assert.equal(game.genTowerWave(floor).length, 0)
-  assert.throws(() => game.genTowerWave(45), TypeError)
+test('Stage 1: legacy Tower ends safely on floor 40', async () => {
+  const { game, state } = await fresh()
+  withRandom(0.5, () => {
+    const floor40 = game.genTowerWave(40)
+    assert.equal(floor40.length, 1)
+    assert.equal(floor40[0].boss, true)
+    assert.deepEqual(game.genTowerWave(41), [])
+    assert.deepEqual(game.genTowerWave(45), [])
+  })
+  state.run.floor = 40
+  state.run.status = 'waveClear'
+  assert.equal(state.nextTowerFloor(), false)
+  assert.equal(state.run.floor, 40)
+  assert.equal(state.run.status, 'runOver')
 })
 
-test('AUDIT BUG: pet rarity upgrade changes its label and price but not combat stats', async () => {
+test('Stage 1: ineffective pet rarity upgrade cannot spend resources', async () => {
   const { game, state } = await fresh()
   const p = state.profile.value
   const pet = p.pets[0]
   p.gold = 10000
   p.soul = 1000
-  const before = game.petCombatStats(pet, game.boonsToBonus([]))
-  assert.equal(state.upgradePetRarity(pet.uid), true)
-  assert.equal(pet.rarity, 'epic')
-  assert.deepEqual(game.petCombatStats(pet, game.boonsToBonus([])), before)
+  const beforeStats = game.petCombatStats(pet, game.boonsToBonus([]))
+  const before = [p.gold, p.soul, pet.rarity]
+  assert.equal(state.upgradePetRarity(pet.uid), false)
+  assert.deepEqual([p.gold, p.soul, pet.rarity], before)
+  assert.deepEqual(game.petCombatStats(pet, game.boonsToBonus([])), beforeStats)
 })
 
-test('AUDIT BUG: shop rarity/level summon collapses to rare level-1 pet or one bond copy', async () => {
+test('Stage 1: misleading market dragon offer cannot spend or mark sold', async () => {
   const { state } = await fresh()
   const p = state.profile.value
   p.gold = 100000
   p.shop.stock = [{ kind: 'pet', level: 20, rarity: 'red' }]
   p.shop.sold = [false]
-  withRandom(0.2, () => state.buyShop(0))
-  const pet = p.pets.find(pet => pet.species === 'kaelith')
-  assert.equal(pet.rarity, 'rare')
-  assert.equal(pet.level, 1)
-  assert.deepEqual({ ...p.bonds.kaelith }, { rank: 1, copies: 0 })
+  state.buyShop(0)
+  assert.equal(p.gold, 100000)
+  assert.equal(p.shop.sold[0], false)
+  assert.equal(p.pets.length, 1)
   assert.equal(p.achievements.progress.shopBuy ?? 0, 0)
 })
 
-test('AUDIT BUG: damaging active skills bypass enemy shield; lifesteal heals 125%, not 50%', async () => {
+test('Stage 1: damaging active skills respect shield and Thunder Feast heals 50% of actual damage', async () => {
   const { game, state } = await fresh({ heroId: 'verdraxis' })
   const hero = state.run.units.find(u => u.side === 'hero')
   const enemy = state.run.units.find(u => u.side === 'enemy')
@@ -48,10 +55,10 @@ test('AUDIT BUG: damaging active skills bypass enemy shield; lifesteal heals 125
   enemy.shield = 1000
   enemy.def = 0
   game.castHeroSkill([hero, enemy], 'verdraxis', { logs: [], floats: [] })
-  assert.deepEqual([enemy.hp, enemy.shield, hero.hp], [950, 1000, 64])
+  assert.deepEqual([enemy.hp, enemy.shield, hero.hp], [1000, 950, 26])
 })
 
-test('AUDIT LIMIT: copies continue to accumulate at rank 10 with no conversion', async () => {
+test('AUDIT LIMIT: copies still accumulate at rank 10 until Stage 3 conversion', async () => {
   const { state } = await fresh()
   const bond = state.profile.value.bonds.vorathion
   bond.rank = 10
@@ -70,23 +77,34 @@ test('AUDIT LIMIT: XP level achievements target profile level rather than bond r
   assert.equal(state.questProgress('ach_level30').claimable, true)
 })
 
-test('AUDIT BUG: multiple stone entries are paid in full but reward popup reports the first only', async () => {
-  const { state } = await fresh()
+test('Stage 1: realm reward receipt reports the full stone payout', async () => {
+  const { game, state } = await fresh()
   const p = state.profile.value
-  p.dungeonCount.forest = 1
-  state.sweepDungeon('forest')
-  assert.equal(p.stone, 8)
-  assert.equal(state.run.lastReward.stone, 2)
+  p.level = 2
+  p.stamina = 1000
+  const beforeStone = p.stone
+  state.enterDungeon('forest')
+  for (let i = 0; i < game.DUNGEONS[0].waves; i++) {
+    withRandom(0.5, () => forceVictory(state))
+    if (i < game.DUNGEONS[0].waves - 1)
+      state.nextDungeonWave()
+  }
+  assert.equal(p.stone - beforeStone, 3)
+  assert.equal(state.run.lastReward.stone, 3)
 })
 
-test('AUDIT BUG: dungeon egg bypasses bonds until the profile is loaded again', async () => {
-  const { state, storage, flush } = await fresh()
+test('Stage 1: dungeon egg unlocks its species bond immediately', async () => {
+  const { game, state } = await fresh()
   const p = state.profile.value
-  p.dungeonCount.hell = 1
-  withRandom(0.2, () => state.sweepDungeon('hell'))
-  assert.ok(p.pets.some(pet => pet.species === 'kaelith'))
-  assert.equal(p.bonds.kaelith.rank, 0)
-  await flush()
-  const loaded = await fresh({ save: storage.getItem('dragonverse-profile'), create: false })
-  assert.equal(loaded.state.profile.value.bonds.kaelith.rank, 1)
+  p.level = 14
+  p.stamina = 1000
+  state.enterDungeon('hell')
+  for (let i = 0; i < game.DUNGEONS[2].waves; i++) {
+    withRandom(0.2, () => forceVictory(state))
+    if (i < game.DUNGEONS[2].waves - 1)
+      state.nextDungeonWave()
+  }
+  const added = p.pets.find(pet => pet.uid !== p.pets[0].uid)
+  assert.ok(added?.species)
+  assert.equal(p.bonds[added.species].rank, 1)
 })
