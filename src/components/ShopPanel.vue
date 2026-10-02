@@ -12,16 +12,6 @@
         >
           <span class="i-mdi-refresh mr-1" />{{ t('shop.refreshCost', { cost: store.SHOP_REFRESH_COST }) }}
         </button>
-        <button
-          class="game-btn-ghost"
-          :class="{ invisible: tab !== 'buy', 'pointer-events-none': tab !== 'buy' }"
-          :disabled="tab !== 'buy'"
-          title="Refresh until a legendary or mythic dragon appears"
-          aria-label="Refresh until legendary"
-          @click="store.refreshShopToGoldOrRed()"
-        >
-          <span class="i-mdi-auto-fix mr-1" />{{ tr('Hunt rare', 'Искать редких') }}
-        </button>
         <div class="flex rounded-lg bg-black/40 p-0.5 text-12px">
           <button class="rounded-md px-3 py-1" :class="tab === 'buy' ? 'bg-primary text-black font-semibold' : 'text-white/60'" @click="tab = 'buy'">{{ t('shop.buyTab') }}</button>
           <button class="rounded-md px-3 py-1" :class="tab === 'sell' ? 'bg-primary text-black font-semibold' : 'text-white/60'" @click="tab = 'sell'">{{ t('shop.sellTab') }}</button>
@@ -41,12 +31,12 @@
     <!-- 购买 -->
     <div v-if="tab === 'buy'" class="grid grid-cols-2 gap-2">
       <div
-        v-for="(slot, i) in pf.shop.stock"
-        :key="i"
+        v-for="{ slot, index } in visibleStock"
+        :key="index"
         class="relative flex flex-col rounded-lg border border-white/10 bg-white/5 p-2"
         :style="slotBorder(slot)"
       >
-        <div v-if="pf.shop.sold[i]" class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black/70 text-12px font-bold text-white/50">
+        <div v-if="pf.shop.sold[index]" class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black/70 text-12px font-bold text-white/50">
           {{ t('shop.soldOut') }}
         </div>
         <div class="mb-1.5 flex flex-col items-center text-center">
@@ -57,7 +47,7 @@
         <div class="mb-1 min-h-20px flex-1 text-center text-10px leading-3 text-green-300/80">
           {{ slotDesc(slot) }}
         </div>
-        <button class="game-btn w-full py-1 text-11px" :disabled="pf.shop.sold[i]" @click="store.buyShop(i)">
+        <button class="game-btn w-full py-1 text-11px" :disabled="pf.shop.sold[index]" @click="store.buyShop(index)">
           <span class="i-mdi-cash-multiple mr-0.5" />{{ shopSlotPrice(slot) }}
         </button>
       </div>
@@ -85,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { ShopSlot } from '@/game/types'
 import { RARITY_META } from '@/game/engine/stats'
 import { shopSlotPrice } from '@/game/engine/loot'
@@ -101,6 +91,11 @@ const { t } = useI18n()
 const store = useGlobalState()
 const pf = store.profile
 const tab = ref<'buy' | 'sell'>('buy')
+const visibleStock = computed(() =>
+  pf.value!.shop.stock
+    .map((slot, index) => ({ slot, index }))
+    .filter(entry => entry.slot.kind !== 'pet'),
+)
 
 function slotColor(slot: ShopSlot): string {
   return slot.rarity ? RARITY_META[slot.rarity].color : '#e5e7eb'
