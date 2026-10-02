@@ -12,7 +12,7 @@ test('equip/swap/unequip uses the correct slots and preserves slot enhancement',
   assert.equal(p.equipped.weapon.enhance, 4)
   state.equipItem('two')
   assert.equal(p.equipped.weapon.uid, 'two')
-  assert.ok(p.bag.some(i => i.uid === 'one'))
+  assert.equal(p.bag.find(i => i.uid === 'one').enhance, 0)
   state.equipItem('armor')
   assert.equal(p.equipped.armor.uid, 'armor')
   state.unequipItem('weapon')
@@ -29,9 +29,9 @@ test('selling and salvaging remove items once and give exact resource rewards', 
   state.sellItem('sold')
   assert.equal(p.gold, 224)
   state.recycleItem('salvaged')
-  assert.deepEqual([p.stone, p.soul, p.bag.length], [9, 13, 0])
+  assert.deepEqual([p.stone, p.soul, p.bag.length], [8, 8, 0])
   state.recycleItem('salvaged')
-  assert.equal(p.soul, 13)
+  assert.equal(p.soul, 8)
 })
 
 test('enhancement charges success and failure, caps at 99 and rejects missing resources', async () => {
