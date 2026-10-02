@@ -222,34 +222,6 @@ export interface DragonBond {
   copies: number
 }
 
-export type PersistedRunStatus =
-  | 'idle' | 'fighting' | 'waveClear' | 'boon'
-  | 'runOver' | 'dungeonClear' | 'dungeonLost' | 'towerClear'
-
-export interface PersistedRewardInfo {
-  gold: number
-  exp: number
-  drops: BagItem[]
-  stone: number
-  egg?: boolean
-  copyOf?: string
-  extraCopy?: string
-}
-
-export interface RunSnapshot {
-  mode: 'tower' | 'dungeon'
-  status: PersistedRunStatus
-  floor: number
-  units: BattleUnit[]
-  round: number
-  logs: LogLine[]
-  boonOffer: string[]
-  dungeonDefId: string
-  dungeonWave: number
-  lastReward: PersistedRewardInfo | null
-  goldGained: number
-}
-
 export interface Profile {
   heroId: string
   level: number
@@ -276,8 +248,6 @@ export interface Profile {
   runDungeonDefId: string
   /** 持久化的副本波次 */
   runDungeonWave: number
-  /** Exact encounter/reward state for reload-safe continuation. */
-  runSnapshot?: RunSnapshot
   /** 背包容量上限（可花费金币提升） */
   bagCap: number
   shop: { stock: ShopSlot[], sold: boolean[], refreshCount: number }
