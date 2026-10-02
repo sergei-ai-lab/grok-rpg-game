@@ -198,24 +198,33 @@
 
     <!-- ===== 失败结算 ===== -->
     <Teleport to="body">
-      <div v-if="run.status === 'runOver' || run.status === 'dungeonLost'" class="fixed inset-0 z-[55] flex items-center justify-center bg-black/80">
-        <div class="panel-in w-80 rounded-2xl border border-red-400/30 bg-[#1b1416] p-6 text-center">
-          <span class="i-mdi-emoticon-dead-outline mb-2 text-48px text-red-400" />
-          <div class="mb-1 text-20px font-black text-red-300">
-            {{ run.status === 'runOver' ? t('battle.runOver') : t('battle.defeat') }}
+      <div v-if="run.status === 'runOver' || run.status === 'towerClear' || run.status === 'dungeonLost'" class="fixed inset-0 z-[55] flex items-center justify-center bg-black/80">
+        <div
+          class="panel-in w-80 rounded-2xl bg-[#1b1416] p-6 text-center"
+          :class="run.status === 'towerClear' ? 'border border-yellow-400/30' : 'border border-red-400/30'"
+        >
+          <span
+            :class="run.status === 'towerClear' ? 'i-mdi-trophy-award text-yellow-400' : 'i-mdi-emoticon-dead-outline text-red-400'"
+            class="mb-2 text-48px"
+          />
+          <div
+            class="mb-1 text-20px font-black"
+            :class="run.status === 'towerClear' ? 'text-yellow-300' : 'text-red-300'"
+          >
+            {{ run.status === 'towerClear' ? tr('Tower cleared', 'Башня пройдена') : run.status === 'runOver' ? t('battle.runOver') : t('battle.defeat') }}
           </div>
           <div class="mb-4 text-13px text-white/55">
-            <template v-if="run.status === 'runOver'">
+            <template v-if="run.status === 'runOver' || run.status === 'towerClear'">
               {{ t('battle.reachedFloor') }}：{{ run.floor }} <span class="text-white/35">/</span> {{ t('common.gold') }} +{{ run.goldGained }}
             </template>
             <template v-else>{{ dungeonLabel(run.dungeonDefId) }}</template>
           </div>
           <div class="space-y-2">
-            <button v-if="run.status === 'runOver'" class="game-btn w-full py-2" @click="store.startRun()">
+            <button v-if="run.status === 'runOver' || run.status === 'towerClear'" class="game-btn w-full py-2" @click="store.startRun()">
               <span class="i-mdi-restart mr-1" />{{ t('battle.restartRun') }}
             </button>
             <button class="game-btn-ghost w-full py-2" @click="run.status === 'dungeonLost' ? store.exitToTower() : goHome()">
-              {{ run.status === 'dungeonLost' ? t('common.back') : t('common.back') }}
+              {{ t('common.back') }}
             </button>
           </div>
         </div>
