@@ -42,15 +42,6 @@
               <span class="i-mdi-sword-cross mr-1" />
               {{ pf.level < d.needLevel ? `${t('common.locked')} / ${t('dungeon.recommended', { lv: d.needLevel })}` : `${t('dungeon.enter')} (${t('dungeon.cost', { n: d.cost })})` }}
             </button>
-            <button
-              v-if="pf.dungeonCount[d.id]"
-              class="game-btn-purple w-full text-12px"
-              :disabled="pf.stamina < d.cost * 2 || inDungeon"
-              :title="`Spend ${d.cost * 2} stamina to claim the rewards now`"
-              @click="store.sweepDungeon(d.id)"
-            >
-              <span class="i-mdi-fast-forward mr-1" />{{ tr(`Sweep (${d.cost * 2} stamina)`, `Зачистка (${d.cost * 2} вын.)`) }}
-            </button>
           </div>
         </div>
       </div>
