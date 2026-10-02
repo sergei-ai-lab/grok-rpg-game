@@ -126,10 +126,6 @@
       <div v-if="run.status === 'boon'" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black/80 p-6">
         <h2 class="mb-1 text-24px font-black text-white">{{ t('battle.boonTitle') }}</h2>
         <p class="mb-4 text-13px text-white/50">{{ t('battle.boonSubtitle') }}</p>
-        <div class="mb-6 flex items-center gap-2 text-13px text-amber-300">
-          <span class="i-mdi-timer-sand" />
-          <span>{{ tr(`Auto-pick in ${boonCountdown}s`, `Автовыбор через ${boonCountdown} с`) }}</span>
-        </div>
         <div class="grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
           <button
             v-for="id in run.boonOffer"
@@ -172,7 +168,8 @@
               {{ tr(`Raise to Lv${leadBond.rank + 1} · ${leadBond.copies}/${leadNeed}`, `Поднять до ур.${leadBond.rank + 1} · ${leadBond.copies}/${leadNeed}`) }}
             </button>
             <button class="game-btn w-full py-2" @click="goNextFloor">
-              {{ tr('Next battle', 'Следующий бой') }} <span class="i-mdi-arrow-right" />
+              {{ run.floor >= store.TOWER_MAX_FLOOR ? tr('Finish Tower', 'Завершить башню') : tr('Next battle', 'Следующий бой') }}
+              <span class="i-mdi-arrow-right" />
             </button>
           </template>
         </div>
@@ -225,7 +222,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useIntervalFn } from '@vueuse/core'
 import { useGlobalState } from '@/store'
@@ -273,7 +270,7 @@ onMounted(() => {
 // 自动战斗心跳（倍速控制间隔）
 const baseInterval = 520
 useIntervalFn(() => {
-  if (run.status !== 'fighting' || paused.value || store.activePanel.value)
+  if (run.status !== 'fighting' || paused.value || store.interactionPaused.value || store.activePanel.value)
     return
   // 技能就绪时自动释放
   const hero = run.units.find(u => u.side === 'hero')
@@ -282,60 +279,21 @@ useIntervalFn(() => {
   store.battleTick()
 }, () => Math.max(60, Math.round(baseInterval / speed.value)))
 
-// Short pause on the reward so a copy can be spent before the next fight.
-let nextTimer: ReturnType<typeof setTimeout> | null = null
-function clearNextTimer() {
-  if (nextTimer) {
-    clearTimeout(nextTimer)
-    nextTimer = null
-  }
-}
 function goNextFloor() {
-  clearNextTimer()
   store.nextTowerFloor()
 }
 function raiseLead() {
   if (!pf.value)
     return
   store.raiseBond(pf.value.heroId)
-  clearNextTimer()
 }
-watch(() => run.status, (s) => {
-  clearNextTimer()
-  if (s === 'waveClear' && run.mode === 'tower')
-    nextTimer = setTimeout(goNextFloor, 12000)
-})
 
-// 祝福选择 5 秒倒计时，到 0 自动随机选一个
-const boonCountdown = ref(5)
-let boonTimer: ReturnType<typeof setInterval> | null = null
-function clearBoonTimer() {
-  if (boonTimer) {
-    clearInterval(boonTimer)
-    boonTimer = null
-  }
+function onVisibilityChange() {
+  if (document.hidden)
+    paused.value = true
 }
-watch(() => run.status, (s) => {
-  clearBoonTimer()
-  if (s === 'boon') {
-    boonCountdown.value = 5
-    boonTimer = setInterval(() => {
-      boonCountdown.value -= 1
-      if (boonCountdown.value <= 0) {
-        clearBoonTimer()
-        const offer = run.boonOffer
-        if (offer.length) {
-          const pick = offer[Math.floor(Math.random() * offer.length)]
-          store.chooseBoon(pick)
-        }
-      }
-    }, 1000)
-  }
-})
-onUnmounted(() => {
-  clearBoonTimer()
-  clearNextTimer()
-})
+onMounted(() => document.addEventListener('visibilitychange', onVisibilityChange))
+onUnmounted(() => document.removeEventListener('visibilitychange', onVisibilityChange))
 
 const enemies = computed(() => run.units.filter(u => u.side === 'enemy'))
 const allies = computed(() => run.units.filter(u => u.side !== 'enemy'))
@@ -348,7 +306,13 @@ const skillCd = computed(() => {
   const hero = run.units.find(u => u.side === 'hero')
   return hero?.skillCd ?? 0
 })
-const skillReady = computed(() => run.status === 'fighting' && skillCd.value <= 0)
+const skillReady = computed(() =>
+  run.status === 'fighting'
+  && !paused.value
+  && !store.interactionPaused.value
+  && !store.activePanel.value
+  && skillCd.value <= 0,
+)
 
 const leadBond = computed(() => pf.value ? pf.value.bonds?.[pf.value.heroId] : undefined)
 const leadNeed = computed(() => copiesToNext(leadBond.value?.rank ?? 1))
@@ -386,9 +350,17 @@ function goHome() {
   router.push('/')
 }
 
-function openPanel(key: string) {
+async function openPanel(key: string) {
   if (key === 'summon') {
-    store.summonDragon()
+    const ok = await store.confirm(
+      tr(
+        `Spend ${store.SUMMON_COST} gold: unlock one of the six dragons or gain +1 copy. While species remain locked, there is a 70% chance to draw from the locked pool.`,
+        `Потратить ${store.SUMMON_COST} золота: открыть одного из шести драконов или получить +1 копию. Пока есть закрытые виды, шанс выбора из них — 70%.`,
+      ),
+      tr('Summon dragon', 'Призвать дракона'),
+    )
+    if (ok)
+      store.summonDragon()
     return
   }
   if (key === 'more') {
