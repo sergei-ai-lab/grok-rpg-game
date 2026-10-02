@@ -2,37 +2,52 @@
 
 Source snapshot of the current playable DragonVerse build.
 This repository is the editable game. It is not the compiled preview bundle.
+It is an isolated Grok RPG game, not the main DragonVerse project.
 
 Baseline tag: `baseline-2026-10-02`
+Frozen baseline SHA: `2931ea69bfbf653c105f145520d41747c85f4f07`.
 The tag matches the source that produced the playable build. Nothing in this snapshot was refactored for the export.
 
 ## Install
 
 ```bash
-npm install
+npm ci
 ```
 
-`package-lock.json` is the lockfile used by the current build. `pnpm-lock.yaml` is also in the tree from the upstream project.
+Use Node.js 22 and `package-lock.json`, the lockfile used by the exported playable build and the Stage 0 checks. `pnpm-lock.yaml` and `bun.lockb` remain historical upstream snapshots; CI uses `npm ci` to avoid different dependency resolutions. No dependency versions were changed for Stage 0.
 
 ## Run locally
 
 ```bash
-npx vite
+npm run dev
 ```
 
-Open the URL Vite prints. The dev script in `package.json` (`npm run dev`) also runs `bin/art-code-font.js` before Vite. That script is from the upstream project and is not required to start the game. Use `npx vite` to match the running build.
+Open the URL Vite prints. `npm run dev` prints the upstream console banner before starting Vite; `npx vite` also starts the same game.
 
 ## Build
 
-The playable build was produced with:
+The historical playable export was produced with `npx vite build`. The standard verified production command is now:
 
 ```bash
-npx vite build
+npm run build
 ```
 
 Output is `dist/`. Serve that folder with any static file server. Asset paths are relative (`base: './'` in `vite.config.ts`).
 
-`npm run build` runs `vue-tsc && vite build`. The typecheck step is stricter than the command that produced the current playable build. Use `npx vite build` to reproduce that build.
+`npm run build` runs `vue-tsc && vite build`; Stage 0 corrects the baseline type errors without removing that check. Serve the static bundle with `npm run preview`.
+
+## Regression checks and audit
+
+```bash
+npm run typecheck
+npm test
+npm run build
+npm run verify:bundle
+```
+
+Tests use the real game source, existing Vite pipeline and Node's built-in test runner. No new dependency or test framework is installed. Explicitly named `AUDIT BUG`, `AUDIT BLOCKER` and `AUDIT ECONOMY` cases document existing defects; a green CI does not imply those defects were repaired.
+
+The [Stage 0 audit](docs/stage0/README.md) covers active/legacy code, systems, progression, economy, battle, licenses and proposed future stages. `npm run audit:simulate` reproduces the seeded economy/battle experiment; `node scripts/audit-runtime.mjs` rebuilds the runtime map. Product balance and visuals are unchanged.
 
 ## Stack
 
@@ -82,3 +97,4 @@ This game has no API keys, tokens, or passwords. `.env.example` is empty on purp
 
 Game code is adapted from [Auto Monster](https://github.com/SmallTeddy/auto-monster) by SmallTeddy, MIT. See `LICENSE` and `public/ATTRIBUTION.txt`.
 Tiles are Dungeon Crawl 32x32, CC0.
+Full notices for bundled runtime libraries, Material Design Icons and the inherited CC BY 3.0 Shark bite logo by Delapouite are in `public/THIRD_PARTY_NOTICES.txt`. The unused font's unresolved rights and tile provenance limits are documented in [the license audit](docs/stage0/LICENSES.md).

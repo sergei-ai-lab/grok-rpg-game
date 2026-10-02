@@ -104,6 +104,8 @@ const zhCN = {
     bag: '背包',
     shop: '商店',
     pet: '宠物',
+    summon: '召唤',
+    more: '更多',
     dungeon: '副本',
     quest: '任务',
   },

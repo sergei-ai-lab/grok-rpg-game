@@ -4,7 +4,7 @@ import type {
   AutoHandleCfg, BagItem, BattleUnit, DungeonDef, FloatText, LogLine, Pet, Profile,
 } from '@/game/types'
 import { CANON_DRAGONS, copiesToNext, speciesFromName, BOND_MAX } from '@/game/data/dragons'
-import { i18n } from '@/locales'
+import { i18n, type AppLocale } from '@/locales'
 import { tr, tx } from '@/locales/text'
 import { spriteByName } from '@/game/assets'
 import { DUNGEONS } from '@/game/data/dungeons'
@@ -144,7 +144,7 @@ export const useGlobalState = createGlobalState(() => {
       },
     },
   )
-  const lang = useStorage<string>('dragonverse-lang', 'en-US')
+  const lang = useStorage<AppLocale>('dragonverse-lang', 'en-US')
   if (lang.value !== 'ru' && lang.value !== 'en-US')
     lang.value = 'en-US'
   i18n.global.locale.value = lang.value

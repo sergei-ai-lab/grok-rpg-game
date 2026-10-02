@@ -7,3 +7,4 @@ dist
 !.env.example
 .idea
 .vscode
+.stage0-test-*

@@ -7,6 +7,10 @@
     "dev": "node bin/art-code-font.js && vite",
     "commit": "git add . && cz",
     "build": "vue-tsc && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "node scripts/run-tests.mjs",
+    "audit:simulate": "node scripts/run-tests.mjs --simulate",
+    "verify:bundle": "node scripts/verify-bundle.mjs",
     "preview": "vite preview",
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist"

@@ -1,0 +1,1160 @@
+{
+  "baseline": "2931ea69bfbf653c105f145520d41747c85f4f07",
+  "method": "Actual Vite production graph including dynamic Home/Battle routes and auto imports; type-only shared files identified separately.",
+  "counts": {
+    "ACTIVE": 39,
+    "SHARED": 3,
+    "LEGACY / UNUSED": 22
+  },
+  "assetCounts": {
+    "monsterReachable": 500,
+    "propertyReachable": 0,
+    "otherReachable": 0
+  },
+  "entries": [
+    {
+      "path": "src/App.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/App.vue",
+        "src/main.ts"
+      ]
+    },
+    {
+      "path": "src/components/BagPanel.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/BagPanel.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/ConfirmDialog.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/App.vue",
+        "src/components/ConfirmDialog.vue"
+      ]
+    },
+    {
+      "path": "src/components/DungeonPanel.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/DungeonPanel.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/GameSelect.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/GameSelect.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/HeroInfoPanel.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/HeroInfoPanel.vue",
+        "src/components/TopBar.vue"
+      ]
+    },
+    {
+      "path": "src/components/HpBar.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/HpBar.vue",
+        "src/components/UnitCard.vue"
+      ]
+    },
+    {
+      "path": "src/components/ItemTile.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/BagPanel.vue",
+        "src/components/ItemTile.vue"
+      ]
+    },
+    {
+      "path": "src/components/LangSwitch.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/LangSwitch.vue",
+        "src/components/TopBar.vue",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/components/ModalPanel.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/BagPanel.vue",
+        "src/components/DungeonPanel.vue",
+        "src/components/HeroInfoPanel.vue",
+        "src/components/ModalPanel.vue",
+        "src/components/PetPanel.vue",
+        "src/components/QuestPanel.vue",
+        "src/components/ShopPanel.vue"
+      ]
+    },
+    {
+      "path": "src/components/PetPanel.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/PetPanel.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/QuestPanel.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/QuestPanel.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/ShopPanel.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/ShopPanel.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/Sprite.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/DungeonPanel.vue",
+        "src/components/HeroInfoPanel.vue",
+        "src/components/PetPanel.vue",
+        "src/components/Sprite.vue",
+        "src/components/UnitCard.vue",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/components/ToastHost.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/App.vue",
+        "src/components/ToastHost.vue"
+      ]
+    },
+    {
+      "path": "src/components/TopBar.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/TopBar.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/UnitCard.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/UnitCard.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/components/ZoneTag.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/ZoneTag.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/env.d.ts",
+      "classification": "SHARED",
+      "evidence": "Type declarations used by active source/tooling",
+      "importers": []
+    },
+    {
+      "path": "src/game/assets.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/DungeonPanel.vue",
+        "src/components/HeroInfoPanel.vue",
+        "src/game/engine/battle.ts",
+        "src/game/engine/loot.ts",
+        "src/game/engine/run.ts",
+        "src/store/index.ts",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/game/data/boons.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/HeroInfoPanel.vue",
+        "src/game/engine/run.ts",
+        "src/game/engine/stats.ts",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/game/data/catalog.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/DungeonPanel.vue",
+        "src/components/ShopPanel.vue",
+        "src/game/engine/items.ts",
+        "src/game/engine/loot.ts",
+        "src/game/engine/stats.ts",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/data/dragons.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/PetPanel.vue",
+        "src/game/engine/loot.ts",
+        "src/store/index.ts",
+        "src/views/BattleView.vue",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/game/data/dungeons.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/DungeonPanel.vue",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/data/heroes.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/HeroInfoPanel.vue",
+        "src/game/engine/battle.ts",
+        "src/game/engine/stats.ts",
+        "src/store/index.ts",
+        "src/views/BattleView.vue",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/game/data/quests.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/QuestPanel.vue",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/engine/battle.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/game/engine/run.ts",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/engine/items.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/BagPanel.vue",
+        "src/components/ItemTile.vue",
+        "src/components/ShopPanel.vue"
+      ]
+    },
+    {
+      "path": "src/game/engine/loot.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/ShopPanel.vue",
+        "src/game/engine/battle.ts",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/engine/rng.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/game/engine/battle.ts",
+        "src/game/engine/loot.ts",
+        "src/game/engine/run.ts",
+        "src/game/engine/stats.ts",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/engine/run.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/engine/stats.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/BagPanel.vue",
+        "src/components/HeroInfoPanel.vue",
+        "src/components/ItemTile.vue",
+        "src/components/PetPanel.vue",
+        "src/components/ShopPanel.vue",
+        "src/components/TopBar.vue",
+        "src/game/engine/battle.ts",
+        "src/game/engine/items.ts",
+        "src/game/engine/loot.ts",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/game/types.ts",
+      "classification": "SHARED",
+      "evidence": "Type declarations used by active source/tooling",
+      "importers": []
+    },
+    {
+      "path": "src/i18n/cn.ts",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/i18n/en.ts",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/i18n/index.ts",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/locales/index.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/locales/text.ts",
+        "src/main.ts",
+        "src/store/index.ts"
+      ]
+    },
+    {
+      "path": "src/locales/text.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/BagPanel.vue",
+        "src/components/DungeonPanel.vue",
+        "src/components/HeroInfoPanel.vue",
+        "src/components/LangSwitch.vue",
+        "src/components/PetPanel.vue",
+        "src/components/QuestPanel.vue",
+        "src/components/ShopPanel.vue",
+        "src/components/TopBar.vue",
+        "src/components/UnitCard.vue",
+        "src/game/engine/items.ts",
+        "src/store/index.ts",
+        "src/views/BattleView.vue",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/main.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": []
+    },
+    {
+      "path": "src/router/index.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/main.ts"
+      ]
+    },
+    {
+      "path": "src/store/index.ts",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/components/BagPanel.vue",
+        "src/components/ConfirmDialog.vue",
+        "src/components/DungeonPanel.vue",
+        "src/components/HeroInfoPanel.vue",
+        "src/components/LangSwitch.vue",
+        "src/components/PetPanel.vue",
+        "src/components/QuestPanel.vue",
+        "src/components/ShopPanel.vue",
+        "src/components/ToastHost.vue",
+        "src/components/TopBar.vue",
+        "src/views/BattleView.vue",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/styles/base.css",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/styles/main.css",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/main.ts"
+      ]
+    },
+    {
+      "path": "src/utils/index.ts",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/BattleView.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/router/index.ts",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "path": "src/views/Enum/index.ts",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/GameMain.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/Home.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/Item/EquipmentItem.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/Item/LogInfoItem.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/Panel/BagPanel.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/Panel/EquipmentPanel.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/Panel/FightLogPanel.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Game/Panel/StatsPanel.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/HomeView.vue",
+      "classification": "ACTIVE",
+      "evidence": "Vite production module graph",
+      "importers": [
+        "src/router/index.ts",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "path": "src/views/Layout/GameContent.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Layout/GameNav.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/NavButton/ChangeGameStatus.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/NavButton/ChangeLanguage.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/NavButton/FullScreenToggle.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/NavButton/GitHubButton.vue",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Type/index.ts",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/views/Utils/indexDB.ts",
+      "classification": "LEGACY / UNUSED",
+      "evidence": "Not reachable from index.html -> src/main.ts; no matching router entry",
+      "importers": []
+    },
+    {
+      "path": "src/vite-env.d.ts",
+      "classification": "SHARED",
+      "evidence": "Type declarations used by active source/tooling",
+      "importers": []
+    }
+  ],
+  "chunks": [
+    {
+      "file": "assets/index-BxTq3qlc.js",
+      "sourceModules": [
+        "src/App.vue",
+        "src/assets/monster/1-100/大象.png",
+        "src/assets/monster/1-100/矮人.png",
+        "src/assets/monster/1-100/豺.png",
+        "src/assets/monster/101-200/刺莲花.png",
+        "src/assets/monster/201-300/丑八怪.png",
+        "src/assets/monster/201-300/丑陋的僵尸.png",
+        "src/assets/monster/201-300/丑陋的触手怪.png",
+        "src/assets/monster/301-400/光谱半人马.png",
+        "src/assets/monster/301-400/光谱四足动物.png",
+        "src/assets/monster/301-400/光谱小型四足动物.png",
+        "src/assets/monster/301-400/光谱巨妖.png",
+        "src/assets/monster/301-400/光谱德雷克.png",
+        "src/assets/monster/301-400/光谱的战士.png",
+        "src/assets/monster/301-400/光谱的执事.png",
+        "src/assets/monster/301-400/光谱的蚂蚁.png",
+        "src/assets/monster/301-400/光谱的蜘蛛.png",
+        "src/assets/monster/301-400/光谱的蜜蜂.png",
+        "src/assets/monster/301-400/光谱的蜥蜴.png",
+        "src/assets/monster/301-400/光谱的蝙蝠.png",
+        "src/assets/monster/301-400/光谱的鱼.png",
+        "src/assets/monster/301-400/光谱纳加人.png",
+        "src/assets/monster/301-400/光谱蛇.png",
+        "src/assets/monster/301-400/光谱蠕虫.png",
+        "src/assets/monster/301-400/光谱龙.png",
+        "src/assets/monster/301-400/冰兽.png",
+        "src/assets/monster/301-400/冰冷的幽灵.png",
+        "src/assets/monster/301-400/冰半人马.png",
+        "src/assets/monster/301-400/冰四足拟象兽.png",
+        "src/assets/monster/301-400/冰大.png",
+        "src/assets/monster/301-400/冰小.png",
+        "src/assets/monster/301-400/冰德雷克.png",
+        "src/assets/monster/301-400/冰恶魔.png",
+        "src/assets/monster/301-400/冰晶怪.png",
+        "src/assets/monster/301-400/冰海妖.png",
+        "src/assets/monster/301-400/冰狼.png",
+        "src/assets/monster/301-400/冰纳加.png",
+        "src/assets/monster/301-400/冰蚂蚁.png",
+        "src/assets/monster/301-400/冰蛇.png",
+        "src/assets/monster/301-400/冰蜘蛛.png",
+        "src/assets/monster/301-400/冰蜜蜂.png",
+        "src/assets/monster/301-400/冰蜥蜴.png",
+        "src/assets/monster/301-400/冰蝙蝠.png",
+        "src/assets/monster/301-400/冰螅拟像.png",
+        "src/assets/monster/301-400/冰雕塑.png",
+        "src/assets/monster/301-400/冰霜巨龙.png",
+        "src/assets/monster/301-400/冰魔鬼.png",
+        "src/assets/monster/301-400/冰龙.png",
+        "src/assets/monster/301-400/大型光谱.png",
+        "src/assets/monster/401-500/刽子手.png",
+        "src/assets/monster/401-500/她杜.png",
+        "src/assets/monster/401-500/恶魔地狱龙.png",
+        "src/assets/monster/401-500/收割者.png",
+        "src/assets/monster/401-500/斑驳的龙.png",
+        "src/assets/monster/401-500/暗影恶魔.png",
+        "src/assets/monster/401-500/死亡渗出.png",
+        "src/assets/monster/401-500/灰色恶魔龙.png",
+        "src/assets/monster/401-500/熔化恶魔龙.png",
+        "src/assets/monster/401-500/白角恶魔.png",
+        "src/assets/monster/世俗的仆人.png",
+        "src/assets/monster/东方的龙.png",
+        "src/assets/monster/乌卡德木雕像.png",
+        "src/assets/monster/乌鸦.png",
+        "src/assets/monster/九头蛇.png",
+        "src/assets/monster/人僧鬼.png",
+        "src/assets/monster/人形精灵.png",
+        "src/assets/monster/人类的奴隶.png",
+        "src/assets/monster/人鱼.png",
+        "src/assets/monster/人鱼国王.png",
+        "src/assets/monster/人鱼射手.png",
+        "src/assets/monster/人鱼战士.png",
+        "src/assets/monster/人鱼护卫.png",
+        "src/assets/monster/人鱼蓝魔.png",
+        "src/assets/monster/令人不寒而栗的雕像.png",
+        "src/assets/monster/令人毛骨悚然的雕像.png",
+        "src/assets/monster/使苦痛的人.png",
+        "src/assets/monster/僵尸.png",
+        "src/assets/monster/僵尸大鼠.png",
+        "src/assets/monster/僵尸德雷克.png",
+        "src/assets/monster/僵尸怪物.png",
+        "src/assets/monster/僵尸海怪头.png",
+        "src/assets/monster/僵尸猎犬.png",
+        "src/assets/monster/僵尸蜥蜴.png",
+        "src/assets/monster/僵尸蟹.png",
+        "src/assets/monster/僵尸蟾蜍.png",
+        "src/assets/monster/僵尸龟.png",
+        "src/assets/monster/兀鹫.png",
+        "src/assets/monster/克苏鲁乌贼.png",
+        "src/assets/monster/兵蚁.png",
+        "src/assets/monster/兽人.png",
+        "src/assets/monster/兽人军阀.png",
+        "src/assets/monster/兽人向导.png",
+        "src/assets/monster/兽人巫师.png",
+        "src/assets/monster/兽人战士.png",
+        "src/assets/monster/兽人祭司.png",
+        "src/assets/monster/兽人骑士.png",
+        "src/assets/monster/冲击蛇.png",
+        "src/assets/monster/刺猎人.png",
+        "src/assets/monster/北极熊.png",
+        "src/assets/monster/半人马圣骑士.png",
+        "src/assets/monster/半兽人大祭司.png",
+        "src/assets/monster/半身人.png",
+        "src/assets/monster/卡托帕斯.png",
+        "src/assets/monster/双头人.png",
+        "src/assets/monster/双头食人魔.png",
+        "src/assets/monster/双足飞龙.png",
+        "src/assets/monster/发光的变形的过程.png",
+        "src/assets/monster/变异野兽.png",
+        "src/assets/monster/变形精灵.png",
+        "src/assets/monster/可怕的象.png",
+        "src/assets/monster/可怕的质量.png",
+        "src/assets/monster/可怜的明星.png",
+        "src/assets/monster/向导.png",
+        "src/assets/monster/吸血鬼.png",
+        "src/assets/monster/吸血鬼法师.png",
+        "src/assets/monster/吸血鬼骑士.png",
+        "src/assets/monster/啮龟.png",
+        "src/assets/monster/喷火雕像.png",
+        "src/assets/monster/噬魂者.png",
+        "src/assets/monster/圣骑士.png",
+        "src/assets/monster/圣龙.png",
+        "src/assets/monster/地狱人.png",
+        "src/assets/monster/地狱巫师.png",
+        "src/assets/monster/地狱猎犬.png",
+        "src/assets/monster/地狱的哨兵.png",
+        "src/assets/monster/地狱的猪.png",
+        "src/assets/monster/地狱的翅膀.png",
+        "src/assets/monster/地狱离子.png",
+        "src/assets/monster/地狱粘结师.png",
+        "src/assets/monster/地狱骑士.png",
+        "src/assets/monster/地球元素.png",
+        "src/assets/monster/地精学者.png",
+        "src/assets/monster/多头天使.png",
+        "src/assets/monster/多头怪兽.png",
+        "src/assets/monster/多毛的魔鬼.png",
+        "src/assets/monster/大地元素雕像.png",
+        "src/assets/monster/大型骷髅人.png",
+        "src/assets/monster/大型骷髅四足兽.png",
+        "src/assets/monster/大眼睛.png",
+        "src/assets/monster/大科布尔德.png",
+        "src/assets/monster/大纳加族.png",
+        "src/assets/monster/大蟒.png",
+        "src/assets/monster/大阿凡达.png",
+        "src/assets/monster/天使.png",
+        "src/assets/monster/天启蟹.png",
+        "src/assets/monster/太阳的恶魔.png",
+        "src/assets/monster/失去的灵魂.png",
+        "src/assets/monster/女巫的人类.png",
+        "src/assets/monster/好色之徒.png",
+        "src/assets/monster/妖魔僧鬼.png",
+        "src/assets/monster/守护那加人.png",
+        "src/assets/monster/害群之马.png",
+        "src/assets/monster/小型僵尸.png",
+        "src/assets/monster/小型光谱.png",
+        "src/assets/monster/小型路楼人.png",
+        "src/assets/monster/小型骷髅人.png",
+        "src/assets/monster/小型骷髅四足兽.png",
+        "src/assets/monster/小妖精.png",
+        "src/assets/monster/小枝甘.png",
+        "src/assets/monster/小枝魔法师.png",
+        "src/assets/monster/小矮人德鲁伊.png",
+        "src/assets/monster/小蛇.png",
+        "src/assets/monster/小鬼.png",
+        "src/assets/monster/山巨人.png",
+        "src/assets/monster/岩石巨魔.png",
+        "src/assets/monster/岩石巨魔和尚鬼.png",
+        "src/assets/monster/岩虫.png",
+        "src/assets/monster/工蚁.png",
+        "src/assets/monster/工读生.png",
+        "src/assets/monster/巨型壁虎.png",
+        "src/assets/monster/巨型蛞蝓.png",
+        "src/assets/monster/巨型蟾蜍.png",
+        "src/assets/monster/巨大的变形虫.png",
+        "src/assets/monster/巨大的孢子.png",
+        "src/assets/monster/巨大的橙子脑.png",
+        "src/assets/monster/巨大的水蛭1.png",
+        "src/assets/monster/巨大的甲虫.png",
+        "src/assets/monster/巨大的眼球.png",
+        "src/assets/monster/巨大的绿头苍蝇.png",
+        "src/assets/monster/巨大的萤火虫.png",
+        "src/assets/monster/巨大的蚂蚁.png",
+        "src/assets/monster/巨大的蚊子.png",
+        "src/assets/monster/巨大的蜈蚣.png",
+        "src/assets/monster/巨大的蜗牛.png",
+        "src/assets/monster/巨大的蜥蜴.png",
+        "src/assets/monster/巨大的蝎子.png",
+        "src/assets/monster/巨大的蝙蝠.png",
+        "src/assets/monster/巨大的螨.png",
+        "src/assets/monster/巨大的蟑螂.png",
+        "src/assets/monster/巨大的金鱼.png",
+        "src/assets/monster/巨大的青蛙.png",
+        "src/assets/monster/巨水蛭.png",
+        "src/assets/monster/巨石甲虫.png",
+        "src/assets/monster/巨魔.png",
+        "src/assets/monster/巫妖.png",
+        "src/assets/monster/带刺的蠕虫.png",
+        "src/assets/monster/带刺的青蛙.png",
+        "src/assets/monster/干瘪腐蚀性.png",
+        "src/assets/monster/幻影人.png",
+        "src/assets/monster/幻影的战士.png",
+        "src/assets/monster/幻影蝙蝠.png",
+        "src/assets/monster/幽灵.png",
+        "src/assets/monster/弥诺陶洛斯.png",
+        "src/assets/monster/弹簧防御器.png",
+        "src/assets/monster/弹簧骑手.png",
+        "src/assets/monster/强大的破坏者.png",
+        "src/assets/monster/归来的复仇者.png",
+        "src/assets/monster/影人.png",
+        "src/assets/monster/影子大鬼.png",
+        "src/assets/monster/影子小鬼.png",
+        "src/assets/monster/影子幽灵.png",
+        "src/assets/monster/影魔.png",
+        "src/assets/monster/德律阿得斯.png",
+        "src/assets/monster/快速旋转舞蜘蛛.png",
+        "src/assets/monster/怀特岛人.png",
+        "src/assets/monster/怀特岛国王.png",
+        "src/assets/monster/恒星诅咒质量.png",
+        "src/assets/monster/恶僧鬼.png",
+        "src/assets/monster/恶魔之眼.png",
+        "src/assets/monster/恶魔的履带.png",
+        "src/assets/monster/恶魔蚊.png",
+        "src/assets/monster/愤怒之眼.png",
+        "src/assets/monster/愤怒之蛾.png",
+        "src/assets/monster/战争的狗.png",
+        "src/assets/monster/战争贩子.png",
+        "src/assets/monster/抑制蛾.png",
+        "src/assets/monster/折磨的人.png",
+        "src/assets/monster/抽象国王.png",
+        "src/assets/monster/斯芬克斯.png",
+        "src/assets/monster/方尖塔.png",
+        "src/assets/monster/无盾的小枝防御器.png",
+        "src/assets/monster/无聊甲虫.png",
+        "src/assets/monster/暴风雪恶魔.png",
+        "src/assets/monster/更大的木乃伊.png",
+        "src/assets/monster/月亮巨魔.png",
+        "src/assets/monster/有触手的怪物.png",
+        "src/assets/monster/有触手的红触手.png",
+        "src/assets/monster/木乃伊.png",
+        "src/assets/monster/木乃伊的牧师.png",
+        "src/assets/monster/木头傀儡.png",
+        "src/assets/monster/未出生的人.png",
+        "src/assets/monster/杀手知道紫色.png",
+        "src/assets/monster/杀手知道红色.png",
+        "src/assets/monster/杀手知道绿色.png",
+        "src/assets/monster/杀手知道蓝色.png",
+        "src/assets/monster/杀手知道青色.png",
+        "src/assets/monster/杀手知道黄色.png",
+        "src/assets/monster/极寒人.png",
+        "src/assets/monster/果冻.png",
+        "src/assets/monster/树精.png",
+        "src/assets/monster/核电站地下室突变怪.png",
+        "src/assets/monster/棕色软泥怪.png",
+        "src/assets/monster/森林德雷克.png",
+        "src/assets/monster/植物.png",
+        "src/assets/monster/植物的恶魔.png",
+        "src/assets/monster/橙色水晶雕像.png",
+        "src/assets/monster/橙色的恶魔.png",
+        "src/assets/monster/橙色的老鼠.png",
+        "src/assets/monster/死亡上限.png",
+        "src/assets/monster/死亡公鸭.png",
+        "src/assets/monster/死亡骑士.png",
+        "src/assets/monster/死灵法师.png",
+        "src/assets/monster/死牦牛.png",
+        "src/assets/monster/毁灭之眼.png",
+        "src/assets/monster/毒蛇.png",
+        "src/assets/monster/毒蜥.png",
+        "src/assets/monster/水元素人.png",
+        "src/assets/monster/水元素雕像.png",
+        "src/assets/monster/水晶傀儡.png",
+        "src/assets/monster/水晶卫士.png",
+        "src/assets/monster/水母.png",
+        "src/assets/monster/水银龙.png",
+        "src/assets/monster/沉默的幽灵.png",
+        "src/assets/monster/沼泽体.png",
+        "src/assets/monster/沼泽德雷克.png",
+        "src/assets/monster/沼泽蠕虫.png",
+        "src/assets/monster/沼泽龙.png",
+        "src/assets/monster/法力毒蛇.png",
+        "src/assets/monster/波加特.png",
+        "src/assets/monster/泰坦.png",
+        "src/assets/monster/活板门蜘蛛.png",
+        "src/assets/monster/流浪的蘑菇.png",
+        "src/assets/monster/海怪的头.png",
+        "src/assets/monster/海蛇.png",
+        "src/assets/monster/深层巨魔.png",
+        "src/assets/monster/深层巨魔萨满.png",
+        "src/assets/monster/深层精灵召唤者.png",
+        "src/assets/monster/深层精灵巫师.png",
+        "src/assets/monster/深层精灵恶魔学家.png",
+        "src/assets/monster/深层精灵法师.png",
+        "src/assets/monster/深层精灵魔法师.png",
+        "src/assets/monster/深巨魔地球法师.png",
+        "src/assets/monster/深巨魔狂.png",
+        "src/assets/monster/深度精灵歼灭者.png",
+        "src/assets/monster/深海精灵剑术大师.png",
+        "src/assets/monster/深海精灵战士.png",
+        "src/assets/monster/深渊恶魔.png",
+        "src/assets/monster/深矮人死亡骑士.png",
+        "src/assets/monster/深矮星.png",
+        "src/assets/monster/深矮星工匠.png",
+        "src/assets/monster/深矮狂暴兽.png",
+        "src/assets/monster/深精灵大祭司.png",
+        "src/assets/monster/深精灵弓箭手大师.png",
+        "src/assets/monster/深精灵战士.png",
+        "src/assets/monster/深精灵死亡法师.png",
+        "src/assets/monster/深精灵牧师.png",
+        "src/assets/monster/深精灵骑士.png",
+        "src/assets/monster/深色藤蔓雕像基座.png",
+        "src/assets/monster/混沌生成体1.png",
+        "src/assets/monster/混沌生成体2.png",
+        "src/assets/monster/淹死的灵魂.png",
+        "src/assets/monster/源泉.png",
+        "src/assets/monster/溶解怪.png",
+        "src/assets/monster/潜伏的恐怖.png",
+        "src/assets/monster/火元素.png",
+        "src/assets/monster/火元素雕像.png",
+        "src/assets/monster/火凤凰.png",
+        "src/assets/monster/火巨人.png",
+        "src/assets/monster/火德雷克.png",
+        "src/assets/monster/火怪.png",
+        "src/assets/monster/火漩涡.png",
+        "src/assets/monster/火蜥蜴.png",
+        "src/assets/monster/火蜥蜴风暴呼叫者.png",
+        "src/assets/monster/火蝙蝠.png",
+        "src/assets/monster/火螃蟹.png",
+        "src/assets/monster/火龙神兽.png",
+        "src/assets/monster/灰熊.png",
+        "src/assets/monster/灰色的老鼠.png",
+        "src/assets/monster/灰色的蛇.png",
+        "src/assets/monster/烟恶魔.png",
+        "src/assets/monster/熊蜂.png",
+        "src/assets/monster/熔岩虫.png",
+        "src/assets/monster/熔岩蛇.png",
+        "src/assets/monster/熔岩鱼.png",
+        "src/assets/monster/熵韦弗.png",
+        "src/assets/monster/爬行的尸体.png",
+        "src/assets/monster/牦牛.png",
+        "src/assets/monster/狂战士.png",
+        "src/assets/monster/狗头人.png",
+        "src/assets/monster/独一无二的纳加武士.png",
+        "src/assets/monster/独眼巨人.png",
+        "src/assets/monster/狮头怪兽.png",
+        "src/assets/monster/狼.png",
+        "src/assets/monster/狼蛛.png",
+        "src/assets/monster/猎犬.png",
+        "src/assets/monster/球照明.png",
+        "src/assets/monster/球蟒.png",
+        "src/assets/monster/生锈的魔鬼.png",
+        "src/assets/monster/电动机器人.png",
+        "src/assets/monster/电鳗.png",
+        "src/assets/monster/畸形人.png",
+        "src/assets/monster/畸形的兽人.png",
+        "src/assets/monster/白色的小鬼.png",
+        "src/assets/monster/皇帝蝎子.png",
+        "src/assets/monster/看不见的小白鼠.png",
+        "src/assets/monster/看不见的恐怖.png",
+        "src/assets/monster/眨眼蛙.png",
+        "src/assets/monster/睡莲.png",
+        "src/assets/monster/短尾矮袋鼠.png",
+        "src/assets/monster/石傀儡.png",
+        "src/assets/monster/石巨人.png",
+        "src/assets/monster/神圣的猪.png",
+        "src/assets/monster/科摩多龙.png",
+        "src/assets/monster/穹窿哨兵.png",
+        "src/assets/monster/空气法师.png",
+        "src/assets/monster/粉色蝴蝶.png",
+        "src/assets/monster/精通仪礼的纳加人.png",
+        "src/assets/monster/紫色蝙蝠雕像.png",
+        "src/assets/monster/红绿史莱姆.png",
+        "src/assets/monster/红色史莱姆.png",
+        "src/assets/monster/红色的黄蜂.png",
+        "src/assets/monster/红色蝴蝶.png",
+        "src/assets/monster/红魔怪.png",
+        "src/assets/monster/红魔野兽.png",
+        "src/assets/monster/红魔鬼.png",
+        "src/assets/monster/纳加人.png",
+        "src/assets/monster/纳加战士.png",
+        "src/assets/monster/纳加法师.png",
+        "src/assets/monster/纳加神枪手.png",
+        "src/assets/monster/绿乌龟.png",
+        "src/assets/monster/绿色的死亡.png",
+        "src/assets/monster/绿色的老鼠.png",
+        "src/assets/monster/绿色胖鱼怪.png",
+        "src/assets/monster/绿色蝴蝶.png",
+        "src/assets/monster/绿飞龙.png",
+        "src/assets/monster/羊.png",
+        "src/assets/monster/羊人.png",
+        "src/assets/monster/羊兽.png",
+        "src/assets/monster/美人鱼.png",
+        "src/assets/monster/美国水蛇.png",
+        "src/assets/monster/翠色长蛇.png",
+        "src/assets/monster/老人头蛛.png",
+        "src/assets/monster/老鼠.png",
+        "src/assets/monster/肉傀儡.png",
+        "src/assets/monster/胖猪.png",
+        "src/assets/monster/脆弱的缕.png",
+        "src/assets/monster/脉动肿块.png",
+        "src/assets/monster/脑虫.png",
+        "src/assets/monster/脚趾甲傀儡.png",
+        "src/assets/monster/腐烂的人.png",
+        "src/assets/monster/腐烂的绿巨人.png",
+        "src/assets/monster/腐烂的魔鬼.png",
+        "src/assets/monster/荆棘区.png",
+        "src/assets/monster/葡萄树跟踪狂.png",
+        "src/assets/monster/蒸汽龙.png",
+        "src/assets/monster/蓝色史莱姆.png",
+        "src/assets/monster/蓝色恶魔.png",
+        "src/assets/monster/蓝色恶魔怪.png",
+        "src/assets/monster/蓝色蝴蝶.png",
+        "src/assets/monster/蚁后.png",
+        "src/assets/monster/蛇怪.png",
+        "src/assets/monster/蛇毒法师.png",
+        "src/assets/monster/蜂王.png",
+        "src/assets/monster/蜗牛的雕像.png",
+        "src/assets/monster/蜘蛛.png",
+        "src/assets/monster/蜡像鬼.png",
+        "src/assets/monster/蜥蜴人.png",
+        "src/assets/monster/蜥蜴战士.png",
+        "src/assets/monster/蜥蜴掠夺者.png",
+        "src/assets/monster/蜥蜴魔术师.png",
+        "src/assets/monster/蝎子.png",
+        "src/assets/monster/蝙蝠.png",
+        "src/assets/monster/蝾螈煽动.png",
+        "src/assets/monster/蝾螈神秘.png",
+        "src/assets/monster/蠕虫.png",
+        "src/assets/monster/血圣.png",
+        "src/assets/monster/被释放的奴隶.png",
+        "src/assets/monster/解体怪.png",
+        "src/assets/monster/诅咒头骨.png",
+        "src/assets/monster/诅咒脚趾.png",
+        "src/assets/monster/象恶魔.png",
+        "src/assets/monster/豺狼人.png",
+        "src/assets/monster/豺狼人中士.png",
+        "src/assets/monster/豺狼人萨满.png",
+        "src/assets/monster/跳蛛.png",
+        "src/assets/monster/软泥.png",
+        "src/assets/monster/轻藤雕像底座.png",
+        "src/assets/monster/达耶娃.png",
+        "src/assets/monster/过度活跃的球形等菌.png",
+        "src/assets/monster/金库守卫.png",
+        "src/assets/monster/金库看守.png",
+        "src/assets/monster/金旅龙.png",
+        "src/assets/monster/金色恶魔.png",
+        "src/assets/monster/金色的眼睛.png",
+        "src/assets/monster/铁傀儡.png",
+        "src/assets/monster/铁元素.png",
+        "src/assets/monster/铁小鬼.png",
+        "src/assets/monster/铁巨魔.png",
+        "src/assets/monster/铁巨魔僧鬼.png",
+        "src/assets/monster/铁牌召集人.png",
+        "src/assets/monster/铁质护心器.png",
+        "src/assets/monster/铁魔鬼.png",
+        "src/assets/monster/铁龙.png",
+        "src/assets/monster/银星.png",
+        "src/assets/monster/闪亮的眼睛.png",
+        "src/assets/monster/阴间的诸.png",
+        "src/assets/monster/雕像基地.png",
+        "src/assets/monster/霜巨人.png",
+        "src/assets/monster/非常丑陋的东西.png",
+        "src/assets/monster/非洲杀人蜂.png",
+        "src/assets/monster/风暴龙.png",
+        "src/assets/monster/飞行的头骨.png",
+        "src/assets/monster/食人魔.png",
+        "src/assets/monster/食人魔法师.png",
+        "src/assets/monster/食尸动物.png",
+        "src/assets/monster/食尸鬼.png",
+        "src/assets/monster/饥饿的鬼.png",
+        "src/assets/monster/骑士兵傀儡.png",
+        "src/assets/monster/骑士兵木乃伊.png",
+        "src/assets/monster/骑士兵蛇.png",
+        "src/assets/monster/骨龙.png",
+        "src/assets/monster/骷髅半人马.png",
+        "src/assets/monster/骷髅头蛇.png",
+        "src/assets/monster/骷髅娜迦人.png",
+        "src/assets/monster/骷髅幽灵.png",
+        "src/assets/monster/骷髅战士.png",
+        "src/assets/monster/骷髅法师.png",
+        "src/assets/monster/骷髅精灵.png",
+        "src/assets/monster/骷髅蛇.png",
+        "src/assets/monster/骷髅蝙蝠.png",
+        "src/assets/monster/骷髅鱼.png",
+        "src/assets/monster/骷髅龙.png",
+        "src/assets/monster/鬣蜥.png",
+        "src/assets/monster/鬼剥皮.png",
+        "src/assets/monster/鬼蛾.png",
+        "src/assets/monster/鱼鱼.png",
+        "src/assets/monster/鲨鱼.png",
+        "src/assets/monster/鳄鱼.png",
+        "src/assets/monster/鸟身女妖.png",
+        "src/assets/monster/鹰头.png",
+        "src/assets/monster/黄色的蛇.png",
+        "src/assets/monster/黄色的黄蜂.png",
+        "src/assets/monster/黄色蝴蝶.png",
+        "src/assets/monster/黄金龟.png",
+        "src/assets/monster/黏土石魔.png",
+        "src/assets/monster/黑底龙.png",
+        "src/assets/monster/黑曼巴.png",
+        "src/assets/monster/黑熊.png",
+        "src/assets/monster/鼻涕虫象.png",
+        "src/assets/monster/龙卷风.png",
+        "src/assets/monster/龙的影子.png",
+        "src/components/ConfirmDialog.vue",
+        "src/components/ConfirmDialog.vue",
+        "src/components/ConfirmDialog.vue",
+        "src/components/ToastHost.vue",
+        "src/game/assets.ts",
+        "src/game/data/boons.ts",
+        "src/game/data/catalog.ts",
+        "src/game/data/dragons.ts",
+        "src/game/data/dungeons.ts",
+        "src/game/data/heroes.ts",
+        "src/game/data/quests.ts",
+        "src/game/engine/battle.ts",
+        "src/game/engine/loot.ts",
+        "src/game/engine/rng.ts",
+        "src/game/engine/run.ts",
+        "src/game/engine/stats.ts",
+        "src/locales/index.ts",
+        "src/locales/text.ts",
+        "src/main.ts",
+        "src/router/index.ts",
+        "src/store/index.ts",
+        "src/styles/main.css"
+      ]
+    },
+    {
+      "file": "assets/HomeView-sSBa8Mov.js",
+      "sourceModules": [
+        "src/views/HomeView.vue",
+        "src/views/HomeView.vue"
+      ]
+    },
+    {
+      "file": "assets/BattleView-Ba8zF4rF.js",
+      "sourceModules": [
+        "src/components/BagPanel.vue",
+        "src/components/DungeonPanel.vue",
+        "src/components/GameSelect.vue",
+        "src/components/GameSelect.vue",
+        "src/components/GameSelect.vue",
+        "src/components/HeroInfoPanel.vue",
+        "src/components/HpBar.vue",
+        "src/components/ItemTile.vue",
+        "src/components/ModalPanel.vue",
+        "src/components/PetPanel.vue",
+        "src/components/QuestPanel.vue",
+        "src/components/ShopPanel.vue",
+        "src/components/TopBar.vue",
+        "src/components/TopBar.vue",
+        "src/components/TopBar.vue",
+        "src/components/UnitCard.vue",
+        "src/components/ZoneTag.vue",
+        "src/game/engine/items.ts",
+        "src/views/BattleView.vue",
+        "src/views/BattleView.vue",
+        "src/views/BattleView.vue"
+      ]
+    },
+    {
+      "file": "assets/Sprite.vue_vue_type_script_setup_true_lang-DewM6oi6.js",
+      "sourceModules": [
+        "src/components/LangSwitch.vue",
+        "src/components/LangSwitch.vue",
+        "src/components/LangSwitch.vue",
+        "src/components/Sprite.vue"
+      ]
+    }
+  ],
+  "dependencyPackages": [
+    "@intlify/core-base",
+    "@intlify/message-compiler",
+    "@intlify/shared",
+    "@unocss/reset",
+    "@vue/reactivity",
+    "@vue/runtime-core",
+    "@vue/runtime-dom",
+    "@vue/shared",
+    "@vueuse/core",
+    "@vueuse/shared",
+    "vue-i18n",
+    "vue-router"
+  ]
+}
