@@ -1,0 +1,381 @@
+<template>
+  <ModalPanel :title="t('bag.title')" icon="i-mdi-bag-personal-outline" @close="$emit('close')">
+    <template #extra>
+      <span class="text-12px text-white/50">
+        {{ t('bag.capacity') }} {{ pf.bag.length }}/{{ pf.bagCap }}
+      </span>
+      <!-- 购买背包容量（达到最大容量时隐藏） -->
+      <button
+        v-if="pf.bagCap < store.BAG_MAX_CAP"
+        class="ml-2 rounded-lg bg-emerald-500/20 px-2 py-1 text-12px text-emerald-300 hover:bg-emerald-500/30"
+        :title="`Spend ${store.bagSlotCost()} gold for 5 more slots`"
+        @click="store.buyBagSlot()"
+      >
+        <span class="i-mdi-plus mr-0.5" />{{ tr(`Expand (${store.bagSlotCost()}g)`, `Расширить (${store.bagSlotCost()}з)`) }}
+      </button>
+      <!-- 一键出售 -->
+      <button class="ml-2 rounded-lg bg-yellow-500/20 px-2.5 py-1 text-12px text-yellow-300 hover:bg-yellow-500/30" @click="sellAllEquips">
+        <span class="i-mdi-cash-multiple mr-0.5" />{{ tr('Sell all', 'Продать всё') }}
+      </button>
+      <!-- 一键回收 -->
+      <button class="ml-2 rounded-lg bg-cyan-500/20 px-2.5 py-1 text-12px text-cyan-300 hover:bg-cyan-500/30" @click="recycleAllEquips">
+        <span class="i-mdi-recycle mr-0.5" />{{ tr('Salvage all', 'Разобрать всё') }}
+      </button>
+      <button class="ml-2 rounded-lg bg-primary/20 px-2.5 py-1 text-12px text-primary hover:bg-primary/30" @click="store.sortBag()">
+        <span class="i-mdi-sort-alphabetical-variant mr-0.5" />{{ t('common.sort') }}
+      </button>
+    </template>
+
+    <!-- 自动处理配置栏 -->
+    <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <!-- 自动回收配置 -->
+      <div
+        class="rounded-2xl border p-3 transition-colors"
+        :class="pf.autoRecycleCfg.enabled ? 'border-cyan-300/35 bg-cyan-400/8' : 'border-white/10 bg-white/3'"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <button
+            class="group flex min-w-0 items-center gap-2 text-left"
+            :aria-pressed="pf.autoRecycleCfg.enabled"
+            @click="store.toggleAutoRecycle()"
+          >
+            <span
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-17px transition-colors"
+              :class="pf.autoRecycleCfg.enabled ? 'bg-cyan-300/15 text-cyan-200' : 'bg-white/6 text-white/40'"
+            >
+              <span class="i-mdi-recycle" />
+            </span>
+            <span class="min-w-0">
+              <span class="block text-12px font-bold" :class="pf.autoRecycleCfg.enabled ? 'text-cyan-200' : 'text-white/65'">{{ tr('Auto-salvage', 'Авторазбор') }}</span>
+              <span class="mt-0.5 block truncate text-10px text-white/38">{{ tr('Salvage gear in the selected range', 'Разбирать снаряжение в выбранном диапазоне') }}</span>
+            </span>
+          </button>
+          <span
+            class="rounded-md border px-1.5 py-0.5 text-9px font-bold tracking-widest"
+            :class="pf.autoRecycleCfg.enabled ? 'border-cyan-300/30 bg-cyan-300/10 text-cyan-200' : 'border-white/10 bg-white/4 text-white/35'"
+          >{{ pf.autoRecycleCfg.enabled ? tr('ON', 'ВКЛ') : tr('OFF', 'ВЫКЛ') }}</span>
+        </div>
+        <div v-if="pf.autoRecycleCfg.enabled" class="mt-3 space-y-2.5 border-t border-cyan-200/10 pt-3">
+          <div class="flex items-center justify-between text-10px text-white/40">
+            <span class="font-semibold tracking-wide text-white/55">{{ tr('Range', 'Диапазон') }}</span>
+            <span>{{ tr('When the bag is full', 'Когда сумка полна') }}</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-11px text-white/65">
+            <span>{{ tr('Level', 'Уровень') }}</span>
+            <input v-model.number="recycleMin" type="number" min="1" class="h-7 w-14 rounded-md border border-white/10 bg-black/25 px-1.5 text-center text-11px text-white outline-none transition focus:border-cyan-300/50 focus:ring-1 focus:ring-cyan-300/20" @change="onCfgChange('recycle')">
+            <span class="text-white/30">—</span>
+            <input v-model.number="recycleMax" type="number" min="1" class="h-7 w-14 rounded-md border border-white/10 bg-black/25 px-1.5 text-center text-11px text-white outline-none transition focus:border-cyan-300/50 focus:ring-1 focus:ring-cyan-300/20" @change="onCfgChange('recycle')">
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <label v-for="r in rarities" :key="r" class="flex cursor-pointer items-center gap-1.5 rounded-md border px-2 py-1 text-10px transition-colors" :class="pf.autoRecycleCfg.rarities.includes(r) ? 'border-cyan-300/35 bg-cyan-300/10' : 'border-white/8 bg-black/15 opacity-55 hover:opacity-90'" :style="{ color: rarityColor(r) }">
+              <input type="checkbox" class="accent-cyan-300" :checked="pf.autoRecycleCfg.rarities.includes(r)" @change="toggleRarity('recycle', r)">
+              <span>{{ rarityLabel(r) }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 自动出售配置 -->
+      <div
+        class="rounded-2xl border p-3 transition-colors"
+        :class="pf.autoSellCfg.enabled ? 'border-amber-300/35 bg-amber-400/8' : 'border-white/10 bg-white/3'"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <button
+            class="group flex min-w-0 items-center gap-2 text-left"
+            :aria-pressed="pf.autoSellCfg.enabled"
+            @click="store.toggleAutoSell()"
+          >
+            <span
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-17px transition-colors"
+              :class="pf.autoSellCfg.enabled ? 'bg-amber-300/15 text-amber-200' : 'bg-white/6 text-white/40'"
+            >
+              <span class="i-mdi-cash-multiple" />
+            </span>
+            <span class="min-w-0">
+              <span class="block text-12px font-bold" :class="pf.autoSellCfg.enabled ? 'text-amber-200' : 'text-white/65'">{{ tr('Auto-sell', 'Автопродажа') }}</span>
+              <span class="mt-0.5 block truncate text-10px text-white/38">{{ tr('Sell gear in the selected range', 'Продавать снаряжение в выбранном диапазоне') }}</span>
+            </span>
+          </button>
+          <span
+            class="rounded-md border px-1.5 py-0.5 text-9px font-bold tracking-widest"
+            :class="pf.autoSellCfg.enabled ? 'border-amber-300/30 bg-amber-300/10 text-amber-200' : 'border-white/10 bg-white/4 text-white/35'"
+          >{{ pf.autoSellCfg.enabled ? tr('ON', 'ВКЛ') : tr('OFF', 'ВЫКЛ') }}</span>
+        </div>
+        <div v-if="pf.autoSellCfg.enabled" class="mt-3 space-y-2.5 border-t border-amber-200/10 pt-3">
+          <div class="flex items-center justify-between text-10px text-white/40">
+            <span class="font-semibold tracking-wide text-white/55">{{ tr('Range', 'Диапазон') }}</span>
+            <span>{{ tr('When the bag is full', 'Когда сумка полна') }}</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-11px text-white/65">
+            <span>{{ tr('Level', 'Уровень') }}</span>
+            <input v-model.number="sellMin" type="number" min="1" class="h-7 w-14 rounded-md border border-white/10 bg-black/25 px-1.5 text-center text-11px text-white outline-none transition focus:border-amber-300/50 focus:ring-1 focus:ring-amber-300/20" @change="onCfgChange('sell')">
+            <span class="text-white/30">—</span>
+            <input v-model.number="sellMax" type="number" min="1" class="h-7 w-14 rounded-md border border-white/10 bg-black/25 px-1.5 text-center text-11px text-white outline-none transition focus:border-amber-300/50 focus:ring-1 focus:ring-amber-300/20" @change="onCfgChange('sell')">
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <label v-for="r in rarities" :key="r" class="flex cursor-pointer items-center gap-1.5 rounded-md border px-2 py-1 text-10px transition-colors" :class="pf.autoSellCfg.rarities.includes(r) ? 'border-amber-300/35 bg-amber-300/10' : 'border-white/8 bg-black/15 opacity-55 hover:opacity-90'" :style="{ color: rarityColor(r) }">
+              <input type="checkbox" class="accent-amber-300" :checked="pf.autoSellCfg.rarities.includes(r)" @change="toggleRarity('sell', r)">
+              <span>{{ rarityLabel(r) }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 已装备 -->
+    <div class="mb-4">
+      <div class="mb-2 text-12px font-semibold text-white/50">{{ t('bag.equipped') }}</div>
+      <div class="grid grid-cols-3 gap-3">
+        <div
+          v-for="s in slots"
+          :key="s.key"
+          class="flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-all"
+          :class="selectedSlot === s.key ? 'border-primary bg-primary/10' : 'border-white/10 bg-white/5 hover:border-white/30'"
+          @click="selectedUid = ''; selectedSlot = s.key"
+        >
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-dashed text-24px"
+            :style="equippedStyle(s.key)"
+          >
+            <span v-if="equipped(s.key)" :class="itemIcon(equipped(s.key)!)" />
+            <span v-else :class="s.icon" class="text-white/25" />
+          </div>
+          <div class="min-w-0">
+            <div class="text-11px text-white/40">{{ t(`slot.${s.key}`) }}</div>
+            <div v-if="equipped(s.key)" class="truncate text-13px font-semibold" :style="{ color: rarityOf(equipped(s.key)!) }">
+              {{ itemName(equipped(s.key)!) }}
+            </div>
+            <div v-else class="text-12px text-white/30">—</div>
+            <div v-if="equipped(s.key)" class="text-10px text-cyan-300">+{{ equipped(s.key)!.enhance ?? 0 }} <span class="text-white/30">(slot +{{ pf.slotEnhance[s.key] }})</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <!-- 背包格子 -->
+      <div class="min-w-0 flex-1">
+        <div v-if="!pf.bag.length" class="flex h-40 items-center justify-center rounded-xl border border-dashed border-white/15 text-13px text-white/35">
+          {{ t('bag.empty') }}
+        </div>
+        <div v-else class="grid grid-cols-8 gap-1 sm:gap-2">
+          <ItemTile
+            v-for="item in pf.bag"
+            :key="item.uid"
+            :item="item"
+            :selected="selectedUid === item.uid"
+            @select="onSelect"
+          />
+        </div>
+      </div>
+
+      <!-- 详情 / 操作 -->
+      <div class="w-full shrink-0 rounded-xl border border-white/10 bg-black/30 p-4">
+        <template v-if="detailItem">
+          <div class="mb-1 flex items-center gap-2">
+            <span :class="detailIcon" class="text-22px" :style="{ color: detailColor }" />
+            <span class="text-15px font-bold" :style="{ color: detailColor }">{{ detailName }}</span>
+            <span v-if="detailItem.kind === 'equip'" class="ml-auto text-12px text-cyan-300">+{{ detailItem.enhance ?? 0 }}</span>
+          </div>
+          <div v-if="detailItem.kind === 'equip'" class="mb-1 text-11px text-white/45">
+            {{ t(`slot.${detailSlot}`) }} / Lv{{ detailItem.itemLevel }} / {{ t(`rarity.${detailItem.rarity}`) }}
+          </div>
+          <div class="mb-3 text-12px leading-5 text-green-300/90">{{ itemDesc(detailItem) }}</div>
+
+          <!-- 装备对比（选中背包装备时显示） -->
+          <template v-if="detailItem.kind === 'equip' && !isEquipped && equippedInSameSlot">
+            <div class="mb-3 rounded-lg border border-white/10 bg-black/30 p-2">
+              <div class="mb-1 text-10px text-white/40">{{ tr('Equipped', 'Надето') }}: {{ itemName(equippedInSameSlot) }} +{{ equippedInSameSlot.enhance ?? 0 }}</div>
+              <div class="text-11px text-green-300/80">{{ itemDesc(equippedInSameSlot) }}</div>
+            </div>
+          </template>
+
+          <!-- 装备操作 -->
+          <template v-if="detailItem.kind === 'equip'">
+            <div v-if="!isEquipped" class="space-y-2">
+              <button class="game-btn w-full" @click="doEquip">{{ t('common.equip') }}</button>
+              <div class="grid grid-cols-2 gap-2">
+                <button class="game-btn-ghost" @click="store.sellItem(detailItem.uid); clear()">{{ t('common.sell') }} +{{ sellPrice(detailItem) }}</button>
+                <button class="game-btn-ghost" @click="store.recycleItem(detailItem.uid); clear()">{{ t('common.recycle') }}</button>
+              </div>
+              <div class="pt-1 text-center text-11px text-white/40">
+                {{ t('common.recycle') }}: {{ recycleGain(detailItem).stone }} {{ t('common.stone') }} / {{ recycleGain(detailItem).soul }} {{ t('common.soul') }}
+              </div>
+            </div>
+            <div v-else class="space-y-2">
+              <!-- 强化 -->
+              <button class="game-btn w-full" :disabled="enhanceInfo.maxed" @click="store.enhanceItem(selectedSlot as any)">
+                {{ t('common.enhance') }} {{ enhanceInfo.maxed ? '(MAX)' : `+${currentEnhance} → +${currentEnhance + 1}` }}
+              </button>
+              <div v-if="!enhanceInfo.maxed" class="flex justify-between text-11px text-white/50">
+                <span>{{ enhanceInfo.gold }}g {{ enhanceInfo.stone }} stone</span>
+                <span :class="enhanceInfo.rate >= 0.7 ? 'text-green-400' : 'text-amber-400'">{{ Math.round(enhanceInfo.rate * 100) }}%</span>
+              </div>
+              <!-- 升阶 -->
+              <button
+                class="game-btn-purple w-full"
+                :disabled="!upgradeInfo.can"
+                @click="store.upgradeItem(selectedSlot as any)"
+              >
+                {{ t('common.upgrade') }}
+                <span :style="{ color: nextColor }">{{ t(`rarity.${detailItem.rarity}`) }} → {{ nextRarity ? t(`rarity.${nextRarity}`) : 'MAX' }}</span>
+              </button>
+              <div v-if="upgradeInfo.can" class="text-center text-11px text-white/50">
+                {{ upgradeInfo.gold }}g {{ upgradeInfo.soul }} crystals / needs +5
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button class="game-btn-ghost" @click="store.sellItem(detailItem.uid); clear()">{{ t('common.sell') }} +{{ sellPrice(detailItem) }}</button>
+                <button class="game-btn-ghost" @click="store.unequipItem(selectedSlot as any)">{{ t('common.unequip') }}</button>
+              </div>
+              <div class="text-center text-10px text-white/40">{{ tr('Selling keeps the enhancement on the slot', 'При продаже усиление остаётся на слоте') }}</div>
+            </div>
+          </template>
+
+          <!-- 消耗品（旧存档兼容） -->
+          <template v-else-if="detailItem.kind === 'consumable'">
+            <div class="mb-2 text-12px text-white/50">x{{ detailItem.count }}</div>
+            <button class="game-btn-ghost w-full" @click="store.sellItem(detailItem.uid); clear()">{{ t('common.sell') }}</button>
+          </template>
+
+          <!-- 材料 -->
+          <template v-else>
+            <div class="mb-2 text-12px text-white/50">x{{ detailItem.count }}</div>
+            <button class="game-btn-ghost w-full" @click="store.sellItem(detailItem.uid); clear()">{{ t('common.sell') }} +{{ 25 * detailItem.count }}</button>
+          </template>
+        </template>
+        <div v-else class="flex h-48 flex-col items-center justify-center text-center text-12px text-white/35">
+          <span class="i-mdi-cursor-default-outline mb-2 text-30px" />
+          Select an item
+        </div>
+      </div>
+    </div>
+  </ModalPanel>
+</template>
+
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import type { BagItem, EquipSlot, Rarity } from '@/game/types'
+import { RARITY_META, RARITY_ORDER, UPGRADE_GOLD_COST, UPGRADE_SOUL_COST, enhanceCost, recycleGain, sellPrice } from '@/game/engine/stats'
+import { itemDesc, itemIcon, itemName, itemSlot } from '@/game/engine/items'
+import { tr } from '@/locales/text'
+import ModalPanel from './ModalPanel.vue'
+import ItemTile from './ItemTile.vue'
+
+defineEmits<{ close: [] }>()
+
+const { t } = useI18n()
+const store = useGlobalState()
+const pf = store.profile
+
+const slots = [
+  { key: 'weapon' as const, icon: 'i-mdi-sword' },
+  { key: 'armor' as const, icon: 'i-mdi-shield' },
+  { key: 'accessory' as const, icon: 'i-mdi-diamond-outline' },
+]
+const rarities = RARITY_ORDER
+
+const selectedUid = ref('')
+const selectedSlot = ref<EquipSlot | ''>('')
+
+// 自动处理配置的本地副本（用于双向绑定）
+const recycleMin = ref(pf.value!.autoRecycleCfg.minLevel)
+const recycleMax = ref(pf.value!.autoRecycleCfg.maxLevel)
+const sellMin = ref(pf.value!.autoSellCfg.minLevel)
+const sellMax = ref(pf.value!.autoSellCfg.maxLevel)
+
+function onSelect(uid: string) {
+  selectedUid.value = uid
+  selectedSlot.value = ''
+}
+function clear() {
+  selectedUid.value = ''
+}
+function onCfgChange(kind: 'recycle' | 'sell') {
+  const min = kind === 'recycle' ? recycleMin.value : sellMin.value
+  const max = kind === 'recycle' ? recycleMax.value : sellMax.value
+  store.updateAutoCfg(kind, { minLevel: Math.max(1, min), maxLevel: Math.max(min, max) })
+}
+function toggleRarity(kind: 'recycle' | 'sell', r: Rarity) {
+  const cfg = kind === 'recycle' ? pf.value!.autoRecycleCfg : pf.value!.autoSellCfg
+  const exists = cfg.rarities.includes(r)
+  const next = exists ? cfg.rarities.filter(x => x !== r) : [...cfg.rarities, r]
+  store.updateAutoCfg(kind, { rarities: next })
+}
+function rarityColor(r: Rarity) { return RARITY_META[r].color }
+function rarityLabel(r: Rarity) { return t(`rarity.${r}`) }
+
+function sellAllEquips() {
+  store.sellAllEquips()
+  selectedUid.value = ''
+}
+function recycleAllEquips() {
+  store.recycleAllEquips()
+  selectedUid.value = ''
+}
+
+const equipped = (slot: EquipSlot): BagItem | undefined => pf.value!.equipped[slot]
+function equippedStyle(slot: EquipSlot) {
+  const it = pf.value!.equipped[slot]
+  if (!it)
+    return {}
+  const c = RARITY_META[it.rarity ?? 'common'].color
+  return { borderColor: `${c}66`, background: `${c}14`, color: c }
+}
+function rarityOf(item: BagItem) {
+  return RARITY_META[item.rarity ?? 'common'].color
+}
+
+const detailItem = computed<BagItem | undefined>(() => {
+  if (selectedUid.value)
+    return pf.value!.bag.find(b => b.uid === selectedUid.value)
+  if (selectedSlot.value)
+    return pf.value!.equipped[selectedSlot.value as EquipSlot]
+  return undefined
+})
+const detailIcon = computed(() => detailItem.value ? itemIcon(detailItem.value) : '')
+const detailName = computed(() => detailItem.value ? itemName(detailItem.value) : '')
+const detailColor = computed(() => detailItem.value ? RARITY_META[detailItem.value.rarity ?? 'common'].color : '#fff')
+const detailSlot = computed(() => (detailItem.value ? itemSlot(detailItem.value) : '') as EquipSlot)
+const isEquipped = computed(() => !!selectedSlot.value && !!detailItem.value)
+const equippedInSameSlot = computed(() => {
+  if (!detailItem.value || detailItem.value.kind !== 'equip' || isEquipped.value)
+    return undefined
+  const slot = itemSlot(detailItem.value) as EquipSlot
+  return pf.value!.equipped[slot]
+})
+
+const currentEnhance = computed(() => pf.value!.slotEnhance[selectedSlot.value as EquipSlot] ?? 0)
+const enhanceInfo = computed(() => {
+  const item = detailItem.value
+  if (!item)
+    return { gold: 0, stone: 0, rate: 0, maxed: false }
+  const e = currentEnhance.value
+  if (e >= store.MAX_ENHANCE)
+    return { gold: 0, stone: 0, rate: 0, maxed: true }
+  return { ...enhanceCost(RARITY_ORDER.indexOf(item.rarity ?? 'common'), e), maxed: false }
+})
+
+const nextRarity = computed<Rarity | undefined>(() => detailItem.value ? RARITY_META[detailItem.value.rarity ?? 'common'].next : undefined)
+const nextColor = computed(() => nextRarity.value ? RARITY_META[nextRarity.value].color : '#fff')
+const upgradeInfo = computed(() => {
+  const item = detailItem.value
+  if (!item || !nextRarity.value)
+    return { can: false, gold: 0, soul: 0 }
+  const idx = RARITY_ORDER.indexOf(item.rarity ?? 'common')
+  return {
+    can: currentEnhance.value >= 5,
+    gold: UPGRADE_GOLD_COST[idx],
+    soul: UPGRADE_SOUL_COST[idx],
+  }
+})
+
+function doEquip() {
+  if (!detailItem.value)
+    return
+  const slot = itemSlot(detailItem.value) as EquipSlot
+  store.equipItem(detailItem.value.uid)
+  selectedUid.value = ''
+  selectedSlot.value = slot
+}
+</script>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="./icons/game.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+    <title>DRAGONVERSE</title>
+    <style>
+      html, body, #app {
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        min-height: -webkit-fill-available;
+        margin: 0;
+        background: #0b0c0d;
+      }
+    </style>
+    <script>
+      try {
+        var k = "__dv_probe";
+        localStorage.setItem(k, "1");
+        localStorage.removeItem(k);
+      } catch (e) {
+        var mem = Object.create(null);
+        var store = {
+          getItem: function (key) { return Object.prototype.hasOwnProperty.call(mem, key) ? mem[key] : null; },
+          setItem: function (key, value) { mem[key] = String(value); },
+          removeItem: function (key) { delete mem[key]; },
+          clear: function () { mem = Object.create(null); },
+          key: function (i) { return Object.keys(mem)[i] || null; },
+          get length() { return Object.keys(mem).length; }
+        };
+        try { Object.defineProperty(window, "localStorage", { configurable: true, value: store }); } catch (err) {}
+      }
+    </script>
+</head>
+<body>
+<div id="app"></div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

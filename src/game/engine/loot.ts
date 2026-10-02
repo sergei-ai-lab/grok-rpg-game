@@ -1,0 +1,181 @@
+import type { BagItem, EquipSlot, Pet, Rarity, ShopSlot, Stats } from '../types'
+import { SPRITES, spriteByName } from '../assets'
+import { CANON_DRAGONS, speciesFromName } from '../data/dragons'
+import { EQUIPS, getEquipDef } from '../data/catalog'
+import { RARITY_META, RARITY_ORDER, rollRarity } from './stats'
+import { pick, randInt, uid, weighted } from './rng'
+
+// ---------------- 敌人属性 ----------------
+export function enemyStats(level: number, boss: boolean, rarityMul = 1): Stats {
+  const lv = Math.max(1, level)
+  const s: Stats = {
+    hp: Math.round(110 * lv ** 1.45),
+    atk: Math.round(14 + lv * 4.6),
+    def: Math.round(lv * 1.8),
+    spd: Math.round((7 + lv * 0.28) * 10) / 10,
+  }
+  const v = 0.9 + Math.random() * 0.2
+  s.hp = Math.round(s.hp * v * rarityMul)
+  s.atk = Math.round(s.atk * v * rarityMul)
+  s.def = Math.round(s.def * v * rarityMul)
+  if (boss) {
+    const early = lv <= 8
+    s.hp = Math.round(s.hp * (early ? 2.1 : 4.2))
+    s.atk = Math.round(s.atk * (early ? 1.35 : 2.2))
+    s.def = Math.round(s.def * (early ? 1.3 : 2))
+    s.spd = Math.round(s.spd * 1.15 * 10) / 10
+  }
+  else if (lv <= 8) {
+    s.hp = Math.round(s.hp * 0.5)
+    s.atk = Math.round(s.atk * 0.82)
+  }
+  return s
+}
+
+// ---------------- 装备生成 ----------------
+export function genEquip(floor: number, rarity?: Rarity, slot?: EquipSlot): BagItem {
+  const pool = EQUIPS.filter(e => e.floor <= floor + 2)
+  const slotPool = slot ? pool.filter(e => e.slot === slot) : pool
+  const def = pick(slotPool.length ? slotPool : pool)
+  return {
+    uid: uid('eq'),
+    kind: 'equip',
+    defId: def.id,
+    count: 1,
+    rarity: rarity ?? rollRarity(floor),
+    enhance: 0,
+    itemLevel: Math.max(1, floor),
+  }
+}
+
+// ---------------- 宠物生成 ----------------
+const PET_RARITY_WEIGHT: [Rarity, number][] = [
+  ['common', 58],
+  ['rare', 27],
+  ['epic', 10],
+  ['legendary', 4],
+  ['red', 1],
+]
+
+export function rollPetRarity(luck = 0): Rarity {
+  return weighted<Rarity>([
+    ['common', Math.max(12, 58 - luck * 22)],
+    ['rare', 27 + luck * 10],
+    ['epic', 10 + luck * 7],
+    ['legendary', 4 + luck * 3],
+    ['red', Math.max(0.3, 1 + luck * 2)],
+  ])
+}
+
+export function genPet(level: number, rarity?: Rarity, fixedName?: string): Pet {
+  const lv = Math.max(1, level)
+  const r = rarity ?? rollPetRarity()
+  const canon = fixedName
+    ? CANON_DRAGONS.find(d => d.id === fixedName || d.name === fixedName || d.sprite === fixedName)
+    : CANON_DRAGONS[Math.floor(Math.random() * CANON_DRAGONS.length)]
+  const sp = canon
+    ? spriteByName(canon.sprite)
+    : (fixedName
+        ? spriteByName(fixedName)
+        : pick(SPRITES.filter(s => !s.boss).length ? SPRITES.filter(s => !s.boss) : SPRITES))
+  // Capture power scaled from a same-level foe, folded back to a level-1 base.
+  const target = enemyStats(lv, false)
+  const k = 1 + (lv - 1) * 0.11
+  const mul = RARITY_META[r].mul * 0.78
+  return {
+    uid: uid('pet'),
+    name: canon?.name ?? sp.name,
+    sprite: sp.url,
+    rarity: r,
+    level: 1,
+    xp: 0,
+    train: 0,
+    species: canon?.id ?? speciesFromName(sp.name),
+    copies: 0,
+    base: {
+      hp: Math.max(20, Math.round(target.hp * mul / k)),
+      atk: Math.max(4, Math.round(target.atk * mul / k)),
+      def: Math.max(1, Math.round(target.def * mul / k)),
+      spd: Math.max(4, Math.round(target.spd * mul / k * 10) / 10),
+    },
+    deployed: false,
+  }
+}
+
+// ---------------- 掉落 ----------------
+export function rollDrop(floor: number, dropBonus = 0, boss = false): BagItem | null {
+  if (boss) {
+    const eq = genEquip(floor)
+    return eq
+  }
+  const roll = Math.random()
+  const equipP = 0.24 + dropBonus
+  const stoneP = 0.22
+  if (roll < equipP)
+    return genEquip(floor)
+  if (roll < equipP + stoneP)
+    return { uid: uid('it'), kind: 'material', defId: 'stone', count: randInt(1, 2) }
+  return null
+}
+
+// ---------------- 商店 ----------------
+export function genShopStock(level: number): ShopSlot[] {
+  const slots: ShopSlot[] = []
+  const floor = Math.max(1, level + randInt(-1, 2))
+  // 12 个商品：4 件装备 + 3 组材料 + 5 只宠物
+  for (let i = 0; i < 4; i++) {
+    const r = rollRarity(floor, -0.2 + i * 0.05)
+    slots.push({ kind: 'equip', level: floor, rarity: r, equip: genEquip(floor, r) })
+  }
+  for (let i = 0; i < 3; i++)
+    slots.push({ kind: 'material', defId: 'stone', level })
+  for (let i = 0; i < 5; i++)
+    slots.push({ kind: 'pet', level: Math.max(1, floor), rarity: rollPetRarity(0.1 + i * 0.04) })
+  return slots
+}
+
+export function shopSlotPrice(slot: ShopSlot): number {
+  if (slot.kind === 'equip') {
+    // 预览装备：用同层模板均价
+    const pool = EQUIPS.filter(e => e.floor <= slot.level + 2)
+    const avg = pool.reduce((s, e) => s + e.price, 0) / pool.length
+    return Math.round(avg * RARITY_META[slot.rarity ?? 'common'].mul * 0.9)
+  }
+  if (slot.kind === 'pet')
+    return Math.round(46 * Math.max(1, slot.level) * RARITY_META[slot.rarity ?? 'common'].mul)
+  return 25
+}
+
+export function shopSlotPreviewEquip(slot: ShopSlot): BagItem {
+  // 购买前展示用的临时装备
+  return genEquip(slot.level, slot.rarity)
+}
+
+// ---------------- 工具 ----------------
+export function stackIntoBag(bag: BagItem[], item: BagItem, cap = BAG_CAP): boolean {
+  if (item.kind !== 'equip') {
+    const exist = bag.find(b => b.kind === item.kind && b.defId === item.defId)
+    if (exist) {
+      exist.count += item.count
+      return true
+    }
+  }
+  if (bag.length >= cap)
+    return false
+  bag.push(item)
+  return true
+}
+
+export const BAG_CAP = 30
+
+export function todayStr(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
+export function rarityIndex(r: Rarity): number {
+  return RARITY_ORDER.indexOf(r)
+}
+
+export function equipDefOf(item: BagItem) {
+  return getEquipDef(item.defId)
+}

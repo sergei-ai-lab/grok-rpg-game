@@ -1,0 +1,15 @@
+DRAGONVERSE
+Playable build adapted from Auto Monster by SmallTeddy.
+Code license: MIT (Copyright (c) 2024 SmallTeddy).
+https://github.com/SmallTeddy/auto-monster
+
+Temporary creature and item tiles: Dungeon Crawl 32x32 tiles.
+License: CC0. Author/maintainer: Chris Hamons.
+https://opengameart.org/content/dungeon-crawl-32x32-tiles
+
+The six named dragons (Vorathion, Nyxarion, Kaelith, Verdraxis, Aurion, Umbraxis)
+use those tiles only as placeholders. Photoreal DragonVerse portraits are not in this build.
+See MISSING_ASSETS.md.
+
+Duplicate-copy leveling (1→10 via duplicate summons) is not in this build.
+Training already raises a dragon through 10 ranks. That system was kept on purpose.
