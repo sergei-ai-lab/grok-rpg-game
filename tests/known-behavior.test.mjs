@@ -15,7 +15,7 @@ test('Stage 1: legacy Tower ends safely on floor 40', async () => {
   state.run.status = 'waveClear'
   assert.equal(state.nextTowerFloor(), false)
   assert.equal(state.run.floor, 40)
-  assert.equal(state.run.status, 'runOver')
+  assert.equal(state.run.status, 'towerClear')
 })
 
 test('Stage 1: ineffective pet rarity upgrade cannot spend resources', async () => {
