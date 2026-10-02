@@ -159,3 +159,15 @@ test('Stage 1: confirmation never auto-accepts destructive actions', async () =>
   assert.equal(state.hasSave.value, true)
   assert.equal(state.interactionPaused.value, false)
 })
+
+
+test('Stage 1: reselecting the current lead cannot refresh the active encounter', async () => {
+  const { state } = await fresh()
+  const hero = state.run.units.find(u => u.side === 'hero')
+  hero.hp = Math.max(1, hero.maxHp - 25)
+  const damaged = hero.hp
+  assert.equal(state.setLead(state.profile.value.heroId), true)
+  state.continueRun()
+  const resumed = state.run.units.find(u => u.side === 'hero')
+  assert.equal(resumed.hp, damaged)
+})
