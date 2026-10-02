@@ -50,7 +50,7 @@ export interface RewardInfo {
 
 export type RunStatus =
   | 'idle' | 'fighting' | 'waveClear' | 'boon'
-  | 'runOver' | 'dungeonClear' | 'dungeonLost'
+  | 'runOver' | 'towerClear' | 'dungeonClear' | 'dungeonLost'
 
 export interface RunState {
   started: boolean
@@ -1155,7 +1155,7 @@ export const useGlobalState = createGlobalState(() => {
     if (run.mode !== 'tower' || (run.status !== 'waveClear' && run.status !== 'boon'))
       return false
     if (run.floor >= TOWER_MAX_FLOOR) {
-      run.status = 'runOver'
+      run.status = 'towerClear'
       run.boonOffer = []
       pushLog(tr('Tower floor 40 cleared.', 'Башня пройдена до 40 этажа.'), 'reward')
       return false
