@@ -126,10 +126,6 @@
       <div v-if="run.status === 'boon'" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black/80 p-6">
         <h2 class="mb-1 text-24px font-black text-white">{{ t('battle.boonTitle') }}</h2>
         <p class="mb-4 text-13px text-white/50">{{ t('battle.boonSubtitle') }}</p>
-        <div class="mb-6 flex items-center gap-2 text-13px text-amber-300">
-          <span class="i-mdi-timer-sand" />
-          <span>{{ tr(`Auto-pick in ${boonCountdown}s`, `Автовыбор через ${boonCountdown} с`) }}</span>
-        </div>
         <div class="grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
           <button
             v-for="id in run.boonOffer"
@@ -159,6 +155,9 @@
           <template v-else>
             <div v-if="run.lastReward" class="mb-4 space-y-1 text-13px text-white/75">
               <div>+{{ run.lastReward.gold }} {{ tr('gold', 'золота') }}</div>
+              <div>+{{ run.lastReward.exp }} {{ tr('EXP', 'опыта') }}</div>
+              <div v-if="run.lastReward.stone">+{{ run.lastReward.stone }} {{ t('common.stone') }}</div>
+              <div v-if="run.lastReward.drops.length">{{ tr(`Gear drops: ${run.lastReward.drops.length}`, `Снаряжение: ${run.lastReward.drops.length}`) }}</div>
               <div v-if="run.lastReward.copyOf">{{ tr(`${dragonName(run.lastReward.copyOf)} copy +1`, `${dragonName(run.lastReward.copyOf)}: копия +1`) }}</div>
               <div v-if="run.lastReward.extraCopy" class="text-amber-200">{{ tr(`${dragonName(run.lastReward.extraCopy)} also answered the summon`, `${dragonName(run.lastReward.extraCopy)} тоже откликнулся`) }}</div>
               <div v-if="leadBond" class="text-white/50">{{ tr(`Lv${leadBond.rank} · ${leadBond.copies} copies spare`, `Ур.${leadBond.rank} · копий в запасе: ${leadBond.copies}`) }}</div>
@@ -172,7 +171,8 @@
               {{ tr(`Raise to Lv${leadBond.rank + 1} · ${leadBond.copies}/${leadNeed}`, `Поднять до ур.${leadBond.rank + 1} · ${leadBond.copies}/${leadNeed}`) }}
             </button>
             <button class="game-btn w-full py-2" @click="goNextFloor">
-              {{ tr('Next battle', 'Следующий бой') }} <span class="i-mdi-arrow-right" />
+              {{ run.floor >= store.TOWER_MAX_FLOOR ? tr('Finish Tower', 'Завершить башню') : tr('Next battle', 'Следующий бой') }}
+              <span class="i-mdi-arrow-right" />
             </button>
           </template>
         </div>
@@ -198,24 +198,33 @@
 
     <!-- ===== 失败结算 ===== -->
     <Teleport to="body">
-      <div v-if="run.status === 'runOver' || run.status === 'dungeonLost'" class="fixed inset-0 z-[55] flex items-center justify-center bg-black/80">
-        <div class="panel-in w-80 rounded-2xl border border-red-400/30 bg-[#1b1416] p-6 text-center">
-          <span class="i-mdi-emoticon-dead-outline mb-2 text-48px text-red-400" />
-          <div class="mb-1 text-20px font-black text-red-300">
-            {{ run.status === 'runOver' ? t('battle.runOver') : t('battle.defeat') }}
+      <div v-if="run.status === 'runOver' || run.status === 'towerClear' || run.status === 'dungeonLost'" class="fixed inset-0 z-[55] flex items-center justify-center bg-black/80">
+        <div
+          class="panel-in w-80 rounded-2xl bg-[#1b1416] p-6 text-center"
+          :class="run.status === 'towerClear' ? 'border border-yellow-400/30' : 'border border-red-400/30'"
+        >
+          <span
+            :class="run.status === 'towerClear' ? 'i-mdi-trophy-award text-yellow-400' : 'i-mdi-emoticon-dead-outline text-red-400'"
+            class="mb-2 text-48px"
+          />
+          <div
+            class="mb-1 text-20px font-black"
+            :class="run.status === 'towerClear' ? 'text-yellow-300' : 'text-red-300'"
+          >
+            {{ run.status === 'towerClear' ? tr('Tower cleared', 'Башня пройдена') : run.status === 'runOver' ? t('battle.runOver') : t('battle.defeat') }}
           </div>
           <div class="mb-4 text-13px text-white/55">
-            <template v-if="run.status === 'runOver'">
+            <template v-if="run.status === 'runOver' || run.status === 'towerClear'">
               {{ t('battle.reachedFloor') }}：{{ run.floor }} <span class="text-white/35">/</span> {{ t('common.gold') }} +{{ run.goldGained }}
             </template>
             <template v-else>{{ dungeonLabel(run.dungeonDefId) }}</template>
           </div>
           <div class="space-y-2">
-            <button v-if="run.status === 'runOver'" class="game-btn w-full py-2" @click="store.startRun()">
+            <button v-if="run.status === 'runOver' || run.status === 'towerClear'" class="game-btn w-full py-2" @click="store.startRun()">
               <span class="i-mdi-restart mr-1" />{{ t('battle.restartRun') }}
             </button>
             <button class="game-btn-ghost w-full py-2" @click="run.status === 'dungeonLost' ? store.exitToTower() : goHome()">
-              {{ run.status === 'dungeonLost' ? t('common.back') : t('common.back') }}
+              {{ t('common.back') }}
             </button>
           </div>
         </div>
@@ -225,7 +234,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useIntervalFn } from '@vueuse/core'
 import { useGlobalState } from '@/store'
@@ -252,7 +261,7 @@ const pf = store.profile
 const paused = ref(false)
 const speed = ref(1)
 
-const SPEEDS = [1, 3, 5, 8, 10, 15]
+const SPEEDS = [1, 3, 5, 8]
 const speedOptions = SPEEDS.map(value => ({ label: `${value}x`, value }))
 
 onMounted(() => {
@@ -260,20 +269,15 @@ onMounted(() => {
     router.replace('/')
     return
   }
-  if (!run.started || run.status === 'idle') {
-    // 刷新页面：若存档中保存了层数（>1），则恢复；否则从第 1 层开始
-    const savedFloor = pf.value!.runFloor ?? 1
-    if (savedFloor > 1)
-      store.continueRun()
-    else
-      store.startRun()
-  }
+  // A reload must resume the exact persisted encounter/choice even on floor 1.
+  if (!run.started || run.status === 'idle')
+    store.continueRun()
 })
 
 // 自动战斗心跳（倍速控制间隔）
 const baseInterval = 520
 useIntervalFn(() => {
-  if (run.status !== 'fighting' || paused.value || store.activePanel.value)
+  if (run.status !== 'fighting' || paused.value || store.interactionPaused.value || store.activePanel.value)
     return
   // 技能就绪时自动释放
   const hero = run.units.find(u => u.side === 'hero')
@@ -282,60 +286,21 @@ useIntervalFn(() => {
   store.battleTick()
 }, () => Math.max(60, Math.round(baseInterval / speed.value)))
 
-// Short pause on the reward so a copy can be spent before the next fight.
-let nextTimer: ReturnType<typeof setTimeout> | null = null
-function clearNextTimer() {
-  if (nextTimer) {
-    clearTimeout(nextTimer)
-    nextTimer = null
-  }
-}
 function goNextFloor() {
-  clearNextTimer()
   store.nextTowerFloor()
 }
 function raiseLead() {
   if (!pf.value)
     return
   store.raiseBond(pf.value.heroId)
-  clearNextTimer()
 }
-watch(() => run.status, (s) => {
-  clearNextTimer()
-  if (s === 'waveClear' && run.mode === 'tower')
-    nextTimer = setTimeout(goNextFloor, 12000)
-})
 
-// 祝福选择 5 秒倒计时，到 0 自动随机选一个
-const boonCountdown = ref(5)
-let boonTimer: ReturnType<typeof setInterval> | null = null
-function clearBoonTimer() {
-  if (boonTimer) {
-    clearInterval(boonTimer)
-    boonTimer = null
-  }
+function onVisibilityChange() {
+  if (document.hidden)
+    paused.value = true
 }
-watch(() => run.status, (s) => {
-  clearBoonTimer()
-  if (s === 'boon') {
-    boonCountdown.value = 5
-    boonTimer = setInterval(() => {
-      boonCountdown.value -= 1
-      if (boonCountdown.value <= 0) {
-        clearBoonTimer()
-        const offer = run.boonOffer
-        if (offer.length) {
-          const pick = offer[Math.floor(Math.random() * offer.length)]
-          store.chooseBoon(pick)
-        }
-      }
-    }, 1000)
-  }
-})
-onUnmounted(() => {
-  clearBoonTimer()
-  clearNextTimer()
-})
+onMounted(() => document.addEventListener('visibilitychange', onVisibilityChange))
+onUnmounted(() => document.removeEventListener('visibilitychange', onVisibilityChange))
 
 const enemies = computed(() => run.units.filter(u => u.side === 'enemy'))
 const allies = computed(() => run.units.filter(u => u.side !== 'enemy'))
@@ -348,7 +313,13 @@ const skillCd = computed(() => {
   const hero = run.units.find(u => u.side === 'hero')
   return hero?.skillCd ?? 0
 })
-const skillReady = computed(() => run.status === 'fighting' && skillCd.value <= 0)
+const skillReady = computed(() =>
+  run.status === 'fighting'
+  && !paused.value
+  && !store.interactionPaused.value
+  && !store.activePanel.value
+  && skillCd.value <= 0,
+)
 
 const leadBond = computed(() => pf.value ? pf.value.bonds?.[pf.value.heroId] : undefined)
 const leadNeed = computed(() => copiesToNext(leadBond.value?.rank ?? 1))
@@ -386,9 +357,17 @@ function goHome() {
   router.push('/')
 }
 
-function openPanel(key: string) {
+async function openPanel(key: string) {
   if (key === 'summon') {
-    store.summonDragon()
+    const ok = await store.confirm(
+      tr(
+        `Spend ${store.SUMMON_COST} gold: unlock one of the six dragons or gain +1 copy. While species remain locked, there is a 70% chance to draw from the locked pool.`,
+        `Потратить ${store.SUMMON_COST} золота: открыть одного из шести драконов или получить +1 копию. Пока есть закрытые виды, шанс выбора из них — 70%.`,
+      ),
+      tr('Summon dragon', 'Призвать дракона'),
+    )
+    if (ok)
+      store.summonDragon()
     return
   }
   if (key === 'more') {

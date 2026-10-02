@@ -118,6 +118,38 @@ function addFloat(events: BattleEvents, unit: BattleUnit, text: string, crit: bo
     events.floats.shift()
 }
 
+/** Apply damage through shield first and return the amount actually absorbed/dealt. */
+function applyDamage(target: BattleUnit, amount: number, events: BattleEvents, crit = false): number {
+  let remain = Math.max(1, Math.round(amount))
+  let dealt = 0
+  if (target.shield && target.shield > 0) {
+    const absorbed = Math.min(target.shield, remain)
+    target.shield -= absorbed
+    remain -= absorbed
+    dealt += absorbed
+    if (absorbed > 0)
+      addFloat(events, target, `shield -${absorbed}`, false)
+  }
+  if (remain > 0 && target.hp > 0) {
+    const hpDamage = Math.min(target.hp, remain)
+    target.hp -= hpDamage
+    dealt += hpDamage
+    if (hpDamage > 0)
+      addFloat(events, target, `-${hpDamage}`, crit)
+  }
+  return dealt
+}
+
+function applyHealing(unit: BattleUnit, amount: number, events: BattleEvents): number {
+  const reduced = Math.max(0, Math.round(amount * (1 - (unit.healReduce ?? 0))))
+  const actual = Math.min(reduced, Math.max(0, unit.maxHp - unit.hp))
+  if (actual > 0) {
+    unit.hp += actual
+    addFloat(events, unit, `+${actual}`, false)
+  }
+  return actual
+}
+
 function attack(attacker: BattleUnit, foes: BattleUnit[], events: BattleEvents) {
   const target = pick(foes)
   const hits = chance(attacker.doubleHit) ? 2 : 1
@@ -127,29 +159,17 @@ function attack(attacker: BattleUnit, foes: BattleUnit[], events: BattleEvents) 
     const isCrit = chance(attacker.crit)
     const variance = 0.9 + Math.random() * 0.2
     let dmg = attacker.atk * variance * (isCrit ? attacker.critMul : 1) - target.def * 0.5
-    // 百分比伤害：按目标最大生命计算，无视防御
+    // Percentage bonus damage ignores DEF but follows the same shield pipeline.
     if (attacker.side === 'enemy' && chance(attacker.pctDmgChance ?? 0)) {
       const pct = Math.round(target.maxHp * (attacker.pctDmgPower ?? 0))
       dmg += pct
-      addLog(events.logs, `${attacker.name} corrodes ${target.name} for ${pct} unblocked damage`, 'crit')
+      addLog(events.logs, `${attacker.name} corrodes ${target.name} for ${pct} bonus damage`, 'crit')
     }
     dmg = Math.max(1, Math.round(dmg * (i === 1 ? 0.8 : 1)))
-    // 护盾优先吸收
-    let remain = dmg
-    if (target.shield && target.shield > 0) {
-      const absorbed = Math.min(target.shield, remain)
-      target.shield -= absorbed
-      remain -= absorbed
-      if (absorbed > 0)
-        addFloat(events, target, `shield -${absorbed}`, false)
-    }
-    if (remain > 0) {
-      target.hp -= remain
-      addFloat(events, target, `-${remain}`, isCrit)
-    }
+    const dealt = applyDamage(target, dmg, events, isCrit)
     addLog(
       events.logs,
-      `${attacker.name} ${hits === 2 && i === 1 ? 'strikes again' : 'hits'} ${target.name} for ${dmg}${isCrit ? ' CRIT' : ''}`,
+      `${attacker.name} ${hits === 2 && i === 1 ? 'strikes again' : 'hits'} ${target.name} for ${dealt}${isCrit ? ' CRIT' : ''}`,
       isCrit ? 'crit' : 'hit',
     )
     // 敌人攻击附加减治疗 debuff
@@ -158,12 +178,8 @@ function attack(attacker: BattleUnit, foes: BattleUnit[], events: BattleEvents) 
       target.healReduceTurns = (target.healReduceTurns ?? 0) + (attacker.healReduceTurns ?? 2)
       addLog(events.logs, `${target.name} is wounded — healing reduced`, 'hit')
     }
-    if (attacker.lifesteal > 0) {
-      const heal = Math.round(dmg * attacker.lifesteal)
-      attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal)
-      if (heal > 0)
-        addFloat(events, attacker, `+${heal}`, false)
-    }
+    if (attacker.lifesteal > 0)
+      applyHealing(attacker, dealt * attacker.lifesteal, events)
     if (target.hp <= 0) {
       target.alive = false
       target.hp = 0
@@ -184,13 +200,8 @@ export function stepRound(units: BattleUnit[], events: BattleEvents): 'fighting'
     if (u.side === 'enemy' && u.shieldRegen && u.shieldRegen > 0) {
       u.shield = Math.min((u.shield ?? 0) + u.shieldRegen, u.maxHp)
     }
-    if (u.regen > 0) {
-      const heal = Math.round(u.maxHp * u.regen * (1 - (u.healReduce ?? 0)))
-      if (heal > 0 && u.hp < u.maxHp) {
-        u.hp = Math.min(u.maxHp, u.hp + heal)
-        addFloat(events, u, `+${heal}`, false)
-      }
-    }
+    if (u.regen > 0)
+      applyHealing(u, u.maxHp * u.regen, events)
     const foes = units.filter(x => x.alive && (x.side === 'enemy') !== (u.side === 'enemy'))
     if (!foes.length)
       break
@@ -237,18 +248,15 @@ export function castHeroSkill(units: BattleUnit[], heroDefId: string, events: Ba
 
   switch (skill.type) {
     case 'heal': {
-      const heal = Math.round(hero.maxHp * skill.power * (1 - (hero.healReduce ?? 0)))
-      hero.hp = Math.min(hero.maxHp, hero.hp + heal)
-      addFloat(events, hero, `+${heal}`, false)
+      const heal = applyHealing(hero, hero.maxHp * skill.power, events)
       addLog(events.logs, `${hero.name} casts ${skill.name} and restores ${heal} HP`, 'heal')
       break
     }
     case 'burst': {
       const target = pick(foes)
-      const dmg = Math.max(1, Math.round(hero.atk * skill.power - target.def * 0.5))
-      target.hp -= dmg
-      addFloat(events, target, `-${dmg}`, true)
-      addLog(events.logs, `${hero.name} casts ${skill.name} — ${dmg} burst on ${target.name}`, 'crit')
+      const raw = Math.max(1, Math.round(hero.atk * skill.power - target.def * 0.5))
+      const dealt = applyDamage(target, raw, events, true)
+      addLog(events.logs, `${hero.name} casts ${skill.name} — ${dealt} burst on ${target.name}`, 'crit')
       if (target.hp <= 0) {
         target.alive = false
         target.hp = 0
@@ -258,9 +266,8 @@ export function castHeroSkill(units: BattleUnit[], heroDefId: string, events: Ba
     }
     case 'aoe': {
       for (const target of foes) {
-        const dmg = Math.max(1, Math.round(hero.atk * skill.power - target.def * 0.5))
-        target.hp -= dmg
-        addFloat(events, target, `-${dmg}`, false)
+        const raw = Math.max(1, Math.round(hero.atk * skill.power - target.def * 0.5))
+        applyDamage(target, raw, events, false)
         if (target.hp <= 0) {
           target.alive = false
           target.hp = 0
@@ -272,13 +279,10 @@ export function castHeroSkill(units: BattleUnit[], heroDefId: string, events: Ba
     }
     case 'lifesteal': {
       const target = pick(foes)
-      const dmg = Math.max(1, Math.round(hero.atk * skill.power - target.def * 0.5))
-      target.hp -= dmg
-      addFloat(events, target, `-${dmg}`, true)
-      const heal = Math.round(dmg * skill.power * 0.5)
-      hero.hp = Math.min(hero.maxHp, hero.hp + heal)
-      addFloat(events, hero, `+${heal}`, false)
-      addLog(events.logs, `${hero.name} casts ${skill.name} — ${dmg} on ${target.name}, +${heal} HP`, 'crit')
+      const raw = Math.max(1, Math.round(hero.atk * skill.power - target.def * 0.5))
+      const dealt = applyDamage(target, raw, events, true)
+      const heal = applyHealing(hero, dealt * 0.5, events)
+      addLog(events.logs, `${hero.name} casts ${skill.name} — ${dealt} on ${target.name}, +${heal} HP`, 'crit')
       if (target.hp <= 0) {
         target.alive = false
         target.hp = 0

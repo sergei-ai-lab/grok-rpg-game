@@ -49,22 +49,22 @@ export function equipPrice(item: BagItem): number {
   return Math.round(def.price * RARITY_META[item.rarity ?? 'common'].mul * (1 + (item.enhance ?? 0) * 0.12))
 }
 
-/** 装备出售价 */
+/** Gear resale is based on the item itself, never the permanent slot enhancement. */
 export function sellPrice(item: BagItem): number {
   if (item.kind === 'equip')
-    return Math.max(6, Math.floor(equipPrice(item) * 0.4))
+    return Math.max(6, Math.floor(equipPrice({ ...item, enhance: 0 }) * 0.4))
   return 0
 }
 
-/** 回收收益 */
+/** Salvage is likewise independent from the equipped slot's permanent enhancement. */
 export function recycleGain(item: BagItem): { stone: number, soul: number } {
   if (item.kind !== 'equip')
     return { stone: 0, soul: 0 }
   const idx = RARITY_ORDER.indexOf(item.rarity ?? 'common')
   const soulTable = [1, 3, 8, 20, 50]
   return {
-    stone: idx + 1 + Math.floor((item.enhance ?? 0) / 5),
-    soul: (soulTable[idx] ?? 1) + (item.enhance ?? 0),
+    stone: idx + 1,
+    soul: soulTable[idx] ?? 1,
   }
 }
 

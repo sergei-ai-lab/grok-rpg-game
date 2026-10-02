@@ -29,7 +29,7 @@ const RU: Record<string, string> = {
   'hero.nyxarion.skillDesc': 'Атаки лечат на 15% урона.',
   'hero.nyxarion.active': 'Нулевой шторм',
   'hero.nyxarion.activeDesc': '180% атаки по всем врагам.',
-  'hero.aurion.desc': 'Свет. Золотая чешуя. Лечит полёт каждый ход.',
+  'hero.aurion.desc': 'Свет. Золотая чешуя. Лечит себя каждый ход.',
   'hero.aurion.skill': 'Золотая мантия',
   'hero.aurion.skillDesc': 'Восстанавливает 3% ОЗ каждый ход. Крит +8%.',
   'hero.aurion.active': 'Рассветное лечение',
@@ -241,6 +241,7 @@ export function localizeLog(text: string): string {
   const rules: [RegExp, (...m: string[]) => string][] = [
     [/^(.+) hits (.+) for (\d+)( CRIT)?$/, (a, b, n, crit) => `${a} бьёт ${b} на ${n}${crit ? ' КРИТ' : ''}`],
     [/^(.+) strikes again (.+) for (\d+)( CRIT)?$/, (a, b, n, crit) => `${a} бьёт снова ${b} на ${n}${crit ? ' КРИТ' : ''}`],
+    [/^(.+) corrodes (.+) for (\d+) bonus damage$/, (a, b, n) => `${a} разъедает ${b}: +${n} урона`],
     [/^(.+) corrodes (.+) for (\d+) unblocked damage$/, (a, b, n) => `${a} разъедает ${b} на ${n} сквозь защиту`],
     [/^(.+) is wounded — healing reduced$/, a => `${a} ранен — лечение слабее`],
     [/^(.+) falls\.$/, a => `${a} падает.`],

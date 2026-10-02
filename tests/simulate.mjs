@@ -81,7 +81,7 @@ function trajectory(heroId, seed, policy, speed) {
   const counters = { wins: 0, deaths: 0, totalGoldEarned: 0, totalLeadCopies: 0, totalExtraGrants: 0, crashed: 0, crashAtFloor: 0 }
   if (policy === 'caretaker') {
     caretaker()
-    state.continueRun() // Apply prep to the units at the start of floor 1.
+    state.startRun() // Rebuild floor 1 once after preparation; real resume preserves exact combat state.
   }
   const result = []
   let target = 0

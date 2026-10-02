@@ -155,7 +155,17 @@ const pf = store.profile
 const hero = computed(() => getHero(pf.value!.heroId))
 const heroSpriteUrl = computed(() => spriteByName(hero.value.sprite).url)
 const bonus = computed(() => boonsToBonus(pf.value!.boons))
-const combat = computed(() => heroCombatStats(pf.value!.heroId, pf.value!.level, pf.value!.equipped, bonus.value))
+const combat = computed(() => {
+  const stats = heroCombatStats(pf.value!.heroId, pf.value!.level, pf.value!.equipped, bonus.value)
+  const rank = pf.value!.bonds?.[pf.value!.heroId]?.rank ?? 1
+  const bondMul = 1 + Math.max(0, rank - 1) * 0.14
+  return {
+    ...stats,
+    hp: Math.round(stats.hp * bondMul),
+    atk: Math.round(stats.atk * bondMul),
+    def: Math.round(stats.def * bondMul),
+  }
+})
 
 interface MergedBoon {
   def: BoonDef

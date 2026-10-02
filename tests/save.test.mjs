@@ -80,3 +80,94 @@ test('explicit delete removes the one save slot; empty/corrupt JSON does not inv
     assert.equal(loaded.state.hasSave.value, false)
   }
 })
+
+
+test('Stage 1: exact battle state survives reload without free heal or cooldown reset', async () => {
+  const first = await fresh()
+  const hero = first.state.run.units.find(u => u.side === 'hero')
+  hero.hp = Math.max(1, hero.maxHp - 37)
+  hero.skillCd = 2
+  first.state.run.round = 7
+  await first.flush()
+
+  const profileRaw = first.storage.getItem('dragonverse-profile')
+  const runRaw = first.storage.getItem('dragonverse-run')
+  assert.ok(profileRaw)
+  assert.ok(runRaw)
+
+  const second = await fresh({ save: profileRaw, runSave: runRaw, create: false })
+  second.state.continueRun()
+  const restored = second.state.run.units.find(u => u.side === 'hero')
+  assert.deepEqual(
+    [second.state.run.status, second.state.run.round, restored.hp, restored.maxHp, restored.skillCd],
+    ['fighting', 7, hero.hp, hero.maxHp, 2],
+  )
+})
+
+test('Stage 1: reloading a settled reward cannot pay the same encounter twice', async () => {
+  const first = await fresh()
+  const p = first.state.profile.value
+  const { forceVictory, withRandom } = await import('./helpers.mjs')
+  withRandom(0.99, () => forceVictory(first.state))
+  const paid = [p.gold, p.exp, p.bonds.vorathion.copies]
+  assert.equal(first.state.run.status, 'waveClear')
+  await first.flush()
+
+  const second = await fresh({
+    save: first.storage.getItem('dragonverse-profile'),
+    runSave: first.storage.getItem('dragonverse-run'),
+    create: false,
+  })
+  second.state.continueRun()
+  assert.equal(second.state.run.status, 'waveClear')
+  second.state.battleTick()
+  assert.deepEqual(
+    [second.state.profile.value.gold, second.state.profile.value.exp, second.state.profile.value.bonds.vorathion.copies],
+    paid,
+  )
+})
+
+test('Stage 1: sparse old save receives safe defaults instead of crashing migration', async () => {
+  const base = await fresh()
+  const old = JSON.parse(JSON.stringify(base.state.profile.value))
+  delete old.daily
+  delete old.achievements
+  delete old.pets
+  delete old.dungeonCount
+  delete old.stats
+  delete old.createdAt
+  delete old.shop
+  old.runFloor = 99
+
+  const loaded = await fresh({ save: old, create: false })
+  const p = loaded.state.profile.value
+  assert.ok(Array.isArray(p.pets))
+  assert.ok(p.daily && p.achievements && p.shop)
+  assert.equal(p.runFloor, 40)
+  assert.ok(p.createdAt)
+})
+
+test('Stage 1: confirmation never auto-accepts destructive actions', async () => {
+  const { state } = await fresh()
+  const pending = state.confirm('Delete save?')
+  assert.equal(state.confirmDialog.open, true)
+  assert.equal(state.confirmDialog.countdown, -1)
+  assert.equal(state.interactionPaused.value, true)
+  assert.equal(state.hasSave.value, true)
+  state.resolveConfirm(false)
+  assert.equal(await pending, false)
+  assert.equal(state.hasSave.value, true)
+  assert.equal(state.interactionPaused.value, false)
+})
+
+
+test('Stage 1: reselecting the current lead cannot refresh the active encounter', async () => {
+  const { state } = await fresh()
+  const hero = state.run.units.find(u => u.side === 'hero')
+  hero.hp = Math.max(1, hero.maxHp - 25)
+  const damaged = hero.hp
+  assert.equal(state.setLead(state.profile.value.heroId), true)
+  state.continueRun()
+  const resumed = state.run.units.find(u => u.side === 'hero')
+  assert.equal(resumed.hp, damaged)
+})

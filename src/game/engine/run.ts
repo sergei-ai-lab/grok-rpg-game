@@ -4,14 +4,18 @@ import { BOONS } from '../data/boons'
 import { createEnemyUnit } from './battle'
 import { clamp, pick, randInt, uid } from './rng'
 
+export const TOWER_MAX_FLOOR = 40
+
 function tierRange(floor: number): [number, number] {
-  // 层数上限 99999，tier 随层数缓慢提升
-  const min = clamp(1 + Math.floor((floor - 1) / 8), 1, 10)
-  return [min, Math.min(12, min + 2)]
+  // Stage 1 keeps the legacy Tower finite: bundled enemy art has tiers 1–5.
+  const min = clamp(1 + Math.floor((floor - 1) / 8), 1, 5)
+  return [min, Math.min(5, min + 2)]
 }
 
-/** 生成无尽魔塔某一层的敌人 */
+/** Generate one floor of the legacy Tower. Floors outside 1..40 are closed. */
 export function genTowerWave(floor: number): BattleUnit[] {
+  if (floor < 1 || floor > TOWER_MAX_FLOOR)
+    return []
   const [tMin, tMax] = tierRange(floor)
   const units: BattleUnit[] = []
   if (floor % 5 === 0) {
