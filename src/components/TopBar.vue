@@ -4,7 +4,7 @@
       <button
         class="flex min-h-8 items-center gap-2 rounded-lg px-1 py-0.5 transition hover:bg-white/10"
         :title="t('hero.infoTitle')"
-        @click="showHeroInfo = true"
+        @click="openHeroInfo"
       >
         <img src="/icons/game.svg" alt="logo" class="h-5 w-5">
         <span class="hidden text-14px font-bold tracking-wide text-white sm:inline">{{ t('app.title') }}</span>
@@ -44,11 +44,6 @@
       <div class="game-chip flex shrink-0 items-center gap-1 px-1.5 py-1 sm:px-2">
         <span class="i-mdi-lightning-bolt text-green-400" />
         <span class="text-11px font-semibold sm:text-12px">{{ Math.floor(pf.stamina) }}/{{ store.STAMINA_MAX }}</span>
-        <button
-          class="ml-0.5 rounded bg-green-500/20 px-1 text-10px text-green-300 transition hover:bg-green-500/40"
-          :title="`Spend ${store.STAMINA_BUY_COST} gold for ${store.STAMINA_BUY_AMOUNT} stamina`"
-          @click="store.buyStamina()"
-        >+</button>
       </div>
     </div>
 
@@ -65,12 +60,12 @@
     </div>
 
     <!-- 角色信息弹框 -->
-    <HeroInfoPanel v-if="showHeroInfo" @close="showHeroInfo = false" />
+    <HeroInfoPanel v-if="showHeroInfo" @close="closeHeroInfo" />
   </header>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useIntervalFn } from '@vueuse/core'
 import { useGlobalState } from '@/store'
@@ -86,6 +81,19 @@ const pf = store.profile
 const { run } = store
 
 const showHeroInfo = ref(false)
+
+function openHeroInfo() {
+  showHeroInfo.value = true
+  store.interactionPaused.value = true
+}
+function closeHeroInfo() {
+  showHeroInfo.value = false
+  store.interactionPaused.value = false
+}
+onUnmounted(() => {
+  if (showHeroInfo.value)
+    store.interactionPaused.value = false
+})
 
 useIntervalFn(() => store.syncStamina(), 5000)
 
