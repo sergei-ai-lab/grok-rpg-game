@@ -29,7 +29,7 @@ const RU: Record<string, string> = {
   'hero.nyxarion.skillDesc': 'Атаки лечат на 15% урона.',
   'hero.nyxarion.active': 'Нулевой шторм',
   'hero.nyxarion.activeDesc': '180% атаки по всем врагам.',
-  'hero.aurion.desc': 'Свет. Золотая чешуя. Лечит полёт каждый ход.',
+  'hero.aurion.desc': 'Свет. Золотая чешуя. Лечит себя каждый ход.',
   'hero.aurion.skill': 'Золотая мантия',
   'hero.aurion.skillDesc': 'Восстанавливает 3% ОЗ каждый ход. Крит +8%.',
   'hero.aurion.active': 'Рассветное лечение',
