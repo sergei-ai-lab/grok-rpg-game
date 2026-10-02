@@ -241,6 +241,7 @@ export function localizeLog(text: string): string {
   const rules: [RegExp, (...m: string[]) => string][] = [
     [/^(.+) hits (.+) for (\d+)( CRIT)?$/, (a, b, n, crit) => `${a} бьёт ${b} на ${n}${crit ? ' КРИТ' : ''}`],
     [/^(.+) strikes again (.+) for (\d+)( CRIT)?$/, (a, b, n, crit) => `${a} бьёт снова ${b} на ${n}${crit ? ' КРИТ' : ''}`],
+    [/^(.+) corrodes (.+) for (\d+) bonus damage$/, (a, b, n) => `${a} разъедает ${b}: +${n} урона`],
     [/^(.+) corrodes (.+) for (\d+) unblocked damage$/, (a, b, n) => `${a} разъедает ${b} на ${n} сквозь защиту`],
     [/^(.+) is wounded — healing reduced$/, a => `${a} ранен — лечение слабее`],
     [/^(.+) falls\.$/, a => `${a} падает.`],
