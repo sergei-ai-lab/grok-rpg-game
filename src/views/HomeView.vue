@@ -15,6 +15,7 @@
         <LangSwitch />
         </div>
         <p class="mb-1 text-14px text-primary">{{ t('app.subtitle') }} <span class="mx-1 text-white/35">/</span> {{ tr('Roguelike Auto Battler', 'Автобой') }}</p>
+        <div class="mb-2 text-10px font-bold tracking-[0.18em] text-white/30">{{ tr('BUILD STAGE 1', 'СБОРКА STAGE 1') }}</div>
         <p class="max-w-[42rem] text-center text-13px leading-5 text-white/45">{{ t('home.heroTip') }}</p>
       </header>
 
