@@ -21,9 +21,9 @@ test('tower victory awards gold/XP/lead copy and every third floor an extra spec
 test('first boss pays triple gold, 2.5x XP, guaranteed gear and one boon offer', async () => {
   const { state } = await fresh()
   const p = state.profile.value
-  state.setLead(p.heroId) // Invalidate the persisted floor-1 encounter.
-  p.runFloor = 5
-  state.continueRun()
+  state.run.floor = 4
+  state.run.status = 'waveClear'
+  assert.equal(state.nextTowerFloor(), true)
   withRandom(0.5, () => forceVictory(state))
   assert.equal(p.gold, 296)
   assert.equal(p.level, 2)
@@ -38,9 +38,9 @@ test('first boss pays triple gold, 2.5x XP, guaranteed gear and one boon offer',
   assert.deepEqual([p.lastBoonFloor, state.run.floor], [5, 6])
   state.startRun()
   assert.equal(p.boons[0], boon)
-  state.setLead(p.heroId)
-  p.runFloor = 5
-  state.continueRun()
+  state.run.floor = 4
+  state.run.status = 'waveClear'
+  assert.equal(state.nextTowerFloor(), true)
   withRandom(0.99, () => forceVictory(state))
   assert.equal(state.run.status, 'waveClear')
   assert.equal(p.boons.length, 1)
