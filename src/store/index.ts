@@ -189,6 +189,7 @@ export const useGlobalState = createGlobalState(() => {
     pf.achievements.claimed ??= {}
     pf.dungeonCount ??= {}
     pf.stats ??= {}
+    pf.createdAt ??= Date.now()
     if (!pf.shop) {
       const stock = genShopStock(pf.level ?? 1)
       pf.shop = { stock, sold: stock.map(() => false), refreshCount: 0 }
@@ -1121,11 +1122,16 @@ export const useGlobalState = createGlobalState(() => {
   function continueRun() {
     const pf = p()
     const saved = runSnapshot.value
-    if (saved && saved.profileCreatedAt === pf.createdAt) {
+    if (
+      saved
+      && saved.profileCreatedAt === pf.createdAt
+      && (saved.run.mode !== 'tower' || saved.run.floor <= TOWER_MAX_FLOOR)
+    ) {
       Object.assign(run, JSON.parse(JSON.stringify(saved.run)) as RunState)
-      run.floor = Math.min(TOWER_MAX_FLOOR, Math.max(1, run.floor))
       return
     }
+    if (saved)
+      clearRunSnapshot()
 
     run.started = true
     run.mode = pf.runMode
@@ -1342,6 +1348,6 @@ export const useGlobalState = createGlobalState(() => {
     dungeonDef, enterDungeon, sweepDungeon, nextDungeonWave, abandonDungeon, exitToTower,
     startRun, continueRun, nextTowerFloor, chooseBoon, battleTick,
     castSkill, heroActiveSkill, heroSkillCd,
-    track, STAMINA_MAX,
+    track, STAMINA_MAX, TOWER_MAX_FLOOR,
   }
 })
