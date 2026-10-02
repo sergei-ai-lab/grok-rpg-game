@@ -1,0 +1,7142 @@
+{
+  "baseline": "2931ea69bfbf653c105f145520d41747c85f4f07",
+  "seedRange": [
+    1,
+    20
+  ],
+  "assumptions": {
+    "engine": "real store and battle engine; current auto-skill order",
+    "timing": "520ms round / speed, min 60ms; passive next 12s; caretaker next/restart 2s; boon 5s",
+    "passive": "no summons, equipment, pets, quests, bond upgrades or restarts after death",
+    "caretaker": "summon to six; raise affordable bonds; five pets; best gear by power; salvage leftovers; enhance to +5; claim quests; restart after death",
+    "exclusions": "no training, shop, upgrades, dungeons, sweeps, daily refresh, latency or time spent navigating menus",
+    "clocks": "deterministic simulated elapsed time; no waiting; saves are reset between runs"
+  },
+  "simulations": [
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "vorathion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 36,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 3,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 36,
+          "max": 36
+        },
+        "gold": {
+          "min": 216,
+          "median": 236,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "vorathion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 36,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 3,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 36,
+          "max": 36
+        },
+        "gold": {
+          "min": 216,
+          "median": 236,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "vorathion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 36,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 3,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 36,
+          "max": 36
+        },
+        "gold": {
+          "min": 216,
+          "median": 236,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 2,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "kaelith",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "kaelith",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "kaelith",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "verdraxis",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 16,
+          "max": 60
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 2,
+          "max": 4
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 16,
+          "max": 60
+        },
+        "gold": {
+          "min": 216,
+          "median": 216,
+          "max": 260
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "verdraxis",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 16,
+          "max": 60
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 2,
+          "max": 4
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 16,
+          "max": 60
+        },
+        "gold": {
+          "min": 216,
+          "median": 216,
+          "max": 260
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "verdraxis",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 16,
+          "max": 60
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 2,
+          "max": 4
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 16,
+          "max": 60
+        },
+        "gold": {
+          "min": 216,
+          "median": 216,
+          "max": 260
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "nyxarion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 8
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "nyxarion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 8
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "nyxarion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 8
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 2
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "aurion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "aurion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "aurion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 0,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 200,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 0,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "umbraxis",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 216,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "umbraxis",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 216,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "passive",
+      "speed": 1,
+      "hero": "umbraxis",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "deaths": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "totalGoldEarned": {
+          "min": 16,
+          "median": 16,
+          "max": 36
+        },
+        "totalLeadCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "totalExtraGrants": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 2,
+          "max": 3
+        },
+        "bestFloor": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "level": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "exp": {
+          "min": 16,
+          "median": 16,
+          "max": 36
+        },
+        "gold": {
+          "min": 216,
+          "median": 216,
+          "max": 236
+        },
+        "stone": {
+          "min": 5,
+          "median": 5,
+          "max": 7
+        },
+        "soul": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bond": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "spareCopies": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "owned": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "boons": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 109,
+          "median": 122,
+          "max": 131
+        },
+        "deaths": {
+          "min": 9,
+          "median": 13,
+          "max": 17
+        },
+        "totalGoldEarned": {
+          "min": 4396,
+          "median": 5024,
+          "max": 7888
+        },
+        "totalLeadCopies": {
+          "min": 109,
+          "median": 122,
+          "max": 131
+        },
+        "totalExtraGrants": {
+          "min": 34,
+          "median": 39,
+          "max": 43
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 3,
+          "median": 9,
+          "max": 25
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 14,
+          "max": 24
+        },
+        "level": {
+          "min": 17,
+          "median": 18,
+          "max": 22
+        },
+        "exp": {
+          "min": 2,
+          "median": 166,
+          "max": 420
+        },
+        "gold": {
+          "min": 3812,
+          "median": 5196,
+          "max": 11688
+        },
+        "stone": {
+          "min": 73,
+          "median": 90,
+          "max": 130
+        },
+        "soul": {
+          "min": 93,
+          "median": 148,
+          "max": 265
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 85,
+          "median": 97,
+          "max": 109
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 2,
+          "max": 4
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 232,
+          "median": 367,
+          "max": 404
+        },
+        "deaths": {
+          "min": 12,
+          "median": 27,
+          "max": 40
+        },
+        "totalGoldEarned": {
+          "min": 14256,
+          "median": 20924,
+          "max": 33332
+        },
+        "totalLeadCopies": {
+          "min": 232,
+          "median": 367,
+          "max": 404
+        },
+        "totalExtraGrants": {
+          "min": 73,
+          "median": 117,
+          "max": 128
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 1,
+          "median": 14,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 14,
+          "median": 24,
+          "max": 44
+        },
+        "level": {
+          "min": 29,
+          "median": 35,
+          "max": 45
+        },
+        "exp": {
+          "min": 68,
+          "median": 584,
+          "max": 1184
+        },
+        "gold": {
+          "min": 15716,
+          "median": 25880,
+          "max": 40648
+        },
+        "stone": {
+          "min": 256,
+          "median": 327,
+          "max": 399
+        },
+        "soul": {
+          "min": 280,
+          "median": 438,
+          "max": 615
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 211,
+          "median": 349,
+          "max": 382
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 4,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 232,
+          "median": 509,
+          "max": 764
+        },
+        "deaths": {
+          "min": 12,
+          "median": 32,
+          "max": 57
+        },
+        "totalGoldEarned": {
+          "min": 18960,
+          "median": 37468,
+          "max": 64680
+        },
+        "totalLeadCopies": {
+          "min": 232,
+          "median": 509,
+          "max": 764
+        },
+        "totalExtraGrants": {
+          "min": 73,
+          "median": 161,
+          "max": 249
+        },
+        "crashed": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 6,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 24,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 34,
+          "median": 47,
+          "max": 62
+        },
+        "exp": {
+          "min": 68,
+          "median": 686,
+          "max": 1604
+        },
+        "gold": {
+          "min": 25880,
+          "median": 44952,
+          "max": 80120
+        },
+        "stone": {
+          "min": 256,
+          "median": 461,
+          "max": 745
+        },
+        "soul": {
+          "min": 407,
+          "median": 637,
+          "max": 1001
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 211,
+          "median": 498,
+          "max": 833
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 4,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "kaelith",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 86,
+          "median": 104,
+          "max": 129
+        },
+        "deaths": {
+          "min": 12,
+          "median": 14,
+          "max": 19
+        },
+        "totalGoldEarned": {
+          "min": 2728,
+          "median": 3520,
+          "max": 4724
+        },
+        "totalLeadCopies": {
+          "min": 86,
+          "median": 104,
+          "max": 129
+        },
+        "totalExtraGrants": {
+          "min": 26,
+          "median": 32,
+          "max": 41
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 4,
+          "median": 6,
+          "max": 10
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 9
+        },
+        "level": {
+          "min": 14,
+          "median": 15,
+          "max": 17
+        },
+        "exp": {
+          "min": 28,
+          "median": 210,
+          "max": 478
+        },
+        "gold": {
+          "min": 3008,
+          "median": 4520,
+          "max": 7124
+        },
+        "stone": {
+          "min": 56,
+          "median": 71,
+          "max": 109
+        },
+        "soul": {
+          "min": 95,
+          "median": 118,
+          "max": 169
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 62,
+          "median": 77,
+          "max": 105
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "kaelith",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 308,
+          "median": 348,
+          "max": 380
+        },
+        "deaths": {
+          "min": 32,
+          "median": 39,
+          "max": 46
+        },
+        "totalGoldEarned": {
+          "min": 11720,
+          "median": 13280,
+          "max": 18724
+        },
+        "totalLeadCopies": {
+          "min": 308,
+          "median": 348,
+          "max": 380
+        },
+        "totalExtraGrants": {
+          "min": 96,
+          "median": 109,
+          "max": 123
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 9,
+          "max": 25
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 24
+        },
+        "level": {
+          "min": 27,
+          "median": 28,
+          "max": 34
+        },
+        "exp": {
+          "min": 34,
+          "median": 476,
+          "max": 964
+        },
+        "gold": {
+          "min": 12284,
+          "median": 13900,
+          "max": 25164
+        },
+        "stone": {
+          "min": 233,
+          "median": 263,
+          "max": 338
+        },
+        "soul": {
+          "min": 288,
+          "median": 338,
+          "max": 516
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 283,
+          "median": 328,
+          "max": 360
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 4
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "kaelith",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 641,
+          "median": 703,
+          "max": 772
+        },
+        "deaths": {
+          "min": 54,
+          "median": 68,
+          "max": 81
+        },
+        "totalGoldEarned": {
+          "min": 25948,
+          "median": 32224,
+          "max": 51212
+        },
+        "totalLeadCopies": {
+          "min": 641,
+          "median": 703,
+          "max": 772
+        },
+        "totalExtraGrants": {
+          "min": 194,
+          "median": 225,
+          "max": 246
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 11,
+          "max": 31
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 19,
+          "max": 31
+        },
+        "level": {
+          "min": 40,
+          "median": 44,
+          "max": 55
+        },
+        "exp": {
+          "min": 96,
+          "median": 730,
+          "max": 1696
+        },
+        "gold": {
+          "min": 30484,
+          "median": 36132,
+          "max": 65652
+        },
+        "stone": {
+          "min": 527,
+          "median": 575,
+          "max": 746
+        },
+        "soul": {
+          "min": 585,
+          "median": 686,
+          "max": 1078
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 655,
+          "median": 752,
+          "max": 840
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 3,
+          "max": 6
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 66,
+          "median": 80,
+          "max": 100
+        },
+        "deaths": {
+          "min": 5,
+          "median": 9,
+          "max": 13
+        },
+        "totalGoldEarned": {
+          "min": 2288,
+          "median": 3132,
+          "max": 4024
+        },
+        "totalLeadCopies": {
+          "min": 66,
+          "median": 80,
+          "max": 100
+        },
+        "totalExtraGrants": {
+          "min": 20,
+          "median": 24,
+          "max": 32
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 10,
+          "max": 25
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 14,
+          "max": 24
+        },
+        "level": {
+          "min": 13,
+          "median": 14,
+          "max": 16
+        },
+        "exp": {
+          "min": 24,
+          "median": 240,
+          "max": 482
+        },
+        "gold": {
+          "min": 1728,
+          "median": 5120,
+          "max": 7912
+        },
+        "stone": {
+          "min": 43,
+          "median": 63,
+          "max": 82
+        },
+        "soul": {
+          "min": 54,
+          "median": 118,
+          "max": 182
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 37,
+          "median": 52,
+          "max": 76
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 2,
+          "max": 4
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 152,
+          "median": 237,
+          "max": 288
+        },
+        "deaths": {
+          "min": 7,
+          "median": 15,
+          "max": 27
+        },
+        "totalGoldEarned": {
+          "min": 9512,
+          "median": 15144,
+          "max": 24372
+        },
+        "totalLeadCopies": {
+          "min": 152,
+          "median": 237,
+          "max": 288
+        },
+        "totalExtraGrants": {
+          "min": 48,
+          "median": 74,
+          "max": 90
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 6,
+          "median": 24,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 14,
+          "median": 34,
+          "max": 44
+        },
+        "level": {
+          "min": 24,
+          "median": 30,
+          "max": 38
+        },
+        "exp": {
+          "min": 34,
+          "median": 392,
+          "max": 1024
+        },
+        "gold": {
+          "min": 11212,
+          "median": 21136,
+          "max": 31332
+        },
+        "stone": {
+          "min": 147,
+          "median": 231,
+          "max": 291
+        },
+        "soul": {
+          "min": 226,
+          "median": 333,
+          "max": 522
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 130,
+          "median": 213,
+          "max": 264
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 6,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 152,
+          "median": 410,
+          "max": 673
+        },
+        "deaths": {
+          "min": 7,
+          "median": 22,
+          "max": 38
+        },
+        "totalGoldEarned": {
+          "min": 12188,
+          "median": 35192,
+          "max": 65560
+        },
+        "totalLeadCopies": {
+          "min": 152,
+          "median": 410,
+          "max": 673
+        },
+        "totalExtraGrants": {
+          "min": 48,
+          "median": 129,
+          "max": 213
+        },
+        "crashed": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 3,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 24,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 27,
+          "median": 46,
+          "max": 63
+        },
+        "exp": {
+          "min": 16,
+          "median": 326,
+          "max": 1540
+        },
+        "gold": {
+          "min": 16668,
+          "median": 40244,
+          "max": 80960
+        },
+        "stone": {
+          "min": 179,
+          "median": 410,
+          "max": 682
+        },
+        "soul": {
+          "min": 283,
+          "median": 634,
+          "max": 1024
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 130,
+          "median": 391,
+          "max": 713
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 4,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "nyxarion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 100,
+          "median": 112,
+          "max": 127
+        },
+        "deaths": {
+          "min": 13,
+          "median": 15,
+          "max": 17
+        },
+        "totalGoldEarned": {
+          "min": 3264,
+          "median": 3872,
+          "max": 5804
+        },
+        "totalLeadCopies": {
+          "min": 100,
+          "median": 112,
+          "max": 127
+        },
+        "totalExtraGrants": {
+          "min": 30,
+          "median": 35,
+          "max": 39
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 7,
+          "max": 10
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 14
+        },
+        "level": {
+          "min": 15,
+          "median": 16,
+          "max": 19
+        },
+        "exp": {
+          "min": 16,
+          "median": 206,
+          "max": 490
+        },
+        "gold": {
+          "min": 2656,
+          "median": 5500,
+          "max": 8184
+        },
+        "stone": {
+          "min": 66,
+          "median": 90,
+          "max": 106
+        },
+        "soul": {
+          "min": 104,
+          "median": 144,
+          "max": 197
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 74,
+          "median": 86,
+          "max": 103
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "nyxarion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 338,
+          "median": 349,
+          "max": 389
+        },
+        "deaths": {
+          "min": 30,
+          "median": 38,
+          "max": 43
+        },
+        "totalGoldEarned": {
+          "min": 12988,
+          "median": 14168,
+          "max": 20640
+        },
+        "totalLeadCopies": {
+          "min": 338,
+          "median": 349,
+          "max": 389
+        },
+        "totalExtraGrants": {
+          "min": 105,
+          "median": 110,
+          "max": 120
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 3,
+          "median": 10,
+          "max": 15
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 14,
+          "max": 19
+        },
+        "level": {
+          "min": 28,
+          "median": 29,
+          "max": 35
+        },
+        "exp": {
+          "min": 6,
+          "median": 488,
+          "max": 900
+        },
+        "gold": {
+          "min": 14288,
+          "median": 16760,
+          "max": 26020
+        },
+        "stone": {
+          "min": 251,
+          "median": 293,
+          "max": 339
+        },
+        "soul": {
+          "min": 291,
+          "median": 397,
+          "max": 499
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 317,
+          "median": 328,
+          "max": 370
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "nyxarion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 575,
+          "median": 717,
+          "max": 786
+        },
+        "deaths": {
+          "min": 39,
+          "median": 60,
+          "max": 77
+        },
+        "totalGoldEarned": {
+          "min": 29960,
+          "median": 36532,
+          "max": 46792
+        },
+        "totalLeadCopies": {
+          "min": 575,
+          "median": 717,
+          "max": 786
+        },
+        "totalExtraGrants": {
+          "min": 178,
+          "median": 223,
+          "max": 241
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 3,
+          "median": 13,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 14,
+          "median": 24,
+          "max": 44
+        },
+        "level": {
+          "min": 43,
+          "median": 47,
+          "max": 53
+        },
+        "exp": {
+          "min": 16,
+          "median": 542,
+          "max": 1264
+        },
+        "gold": {
+          "min": 34352,
+          "median": 42816,
+          "max": 61792
+        },
+        "stone": {
+          "min": 526,
+          "median": 612,
+          "max": 723
+        },
+        "soul": {
+          "min": 604,
+          "median": 822,
+          "max": 998
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 585,
+          "median": 759,
+          "max": 845
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 4,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "aurion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 71,
+          "median": 88,
+          "max": 113
+        },
+        "deaths": {
+          "min": 12,
+          "median": 15,
+          "max": 21
+        },
+        "totalGoldEarned": {
+          "min": 1732,
+          "median": 2680,
+          "max": 4020
+        },
+        "totalLeadCopies": {
+          "min": 71,
+          "median": 88,
+          "max": 113
+        },
+        "totalExtraGrants": {
+          "min": 20,
+          "median": 25,
+          "max": 36
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 6,
+          "max": 10
+        },
+        "bestFloor": {
+          "min": 4,
+          "median": 9,
+          "max": 9
+        },
+        "level": {
+          "min": 11,
+          "median": 13,
+          "max": 16
+        },
+        "exp": {
+          "min": 44,
+          "median": 260,
+          "max": 460
+        },
+        "gold": {
+          "min": 2248,
+          "median": 4120,
+          "max": 5740
+        },
+        "stone": {
+          "min": 43,
+          "median": 62,
+          "max": 87
+        },
+        "soul": {
+          "min": 54,
+          "median": 107,
+          "max": 165
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 45,
+          "median": 61,
+          "max": 88
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "aurion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 237,
+          "median": 289,
+          "max": 344
+        },
+        "deaths": {
+          "min": 31,
+          "median": 37,
+          "max": 45
+        },
+        "totalGoldEarned": {
+          "min": 7832,
+          "median": 10776,
+          "max": 13112
+        },
+        "totalLeadCopies": {
+          "min": 237,
+          "median": 289,
+          "max": 344
+        },
+        "totalExtraGrants": {
+          "min": 72,
+          "median": 92,
+          "max": 113
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 3,
+          "median": 8,
+          "max": 15
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 14
+        },
+        "level": {
+          "min": 22,
+          "median": 26,
+          "max": 28
+        },
+        "exp": {
+          "min": 0,
+          "median": 340,
+          "max": 712
+        },
+        "gold": {
+          "min": 9288,
+          "median": 12616,
+          "max": 14944
+        },
+        "stone": {
+          "min": 167,
+          "median": 222,
+          "max": 276
+        },
+        "soul": {
+          "min": 206,
+          "median": 274,
+          "max": 371
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 217,
+          "median": 267,
+          "max": 327
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "aurion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 536,
+          "median": 585,
+          "max": 639
+        },
+        "deaths": {
+          "min": 51,
+          "median": 68,
+          "max": 77
+        },
+        "totalGoldEarned": {
+          "min": 19580,
+          "median": 23764,
+          "max": 28436
+        },
+        "totalLeadCopies": {
+          "min": 536,
+          "median": 585,
+          "max": 639
+        },
+        "totalExtraGrants": {
+          "min": 159,
+          "median": 186,
+          "max": 206
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 3,
+          "median": 10,
+          "max": 20
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 14,
+          "max": 19
+        },
+        "level": {
+          "min": 34,
+          "median": 38,
+          "max": 41
+        },
+        "exp": {
+          "min": 154,
+          "median": 484,
+          "max": 1138
+        },
+        "gold": {
+          "min": 24744,
+          "median": 28532,
+          "max": 33296
+        },
+        "stone": {
+          "min": 428,
+          "median": 486,
+          "max": 523
+        },
+        "soul": {
+          "min": 433,
+          "median": 564,
+          "max": 685
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 531,
+          "median": 586,
+          "max": 662
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 100,
+          "median": 117,
+          "max": 133
+        },
+        "deaths": {
+          "min": 9,
+          "median": 14,
+          "max": 17
+        },
+        "totalGoldEarned": {
+          "min": 3432,
+          "median": 4468,
+          "max": 5792
+        },
+        "totalLeadCopies": {
+          "min": 100,
+          "median": 117,
+          "max": 133
+        },
+        "totalExtraGrants": {
+          "min": 31,
+          "median": 37,
+          "max": 43
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 9,
+          "max": 30
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 29
+        },
+        "level": {
+          "min": 15,
+          "median": 17,
+          "max": 19
+        },
+        "exp": {
+          "min": 14,
+          "median": 192,
+          "max": 546
+        },
+        "gold": {
+          "min": 3580,
+          "median": 5680,
+          "max": 7912
+        },
+        "stone": {
+          "min": 61,
+          "median": 89,
+          "max": 122
+        },
+        "soul": {
+          "min": 112,
+          "median": 138,
+          "max": 199
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 73,
+          "median": 91,
+          "max": 109
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 5
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 317,
+          "median": 348,
+          "max": 365
+        },
+        "deaths": {
+          "min": 20,
+          "median": 30,
+          "max": 40
+        },
+        "totalGoldEarned": {
+          "min": 13448,
+          "median": 17120,
+          "max": 29448
+        },
+        "totalLeadCopies": {
+          "min": 317,
+          "median": 348,
+          "max": 365
+        },
+        "totalExtraGrants": {
+          "min": 98,
+          "median": 107,
+          "max": 114
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 1,
+          "median": 15,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 13,
+          "median": 19,
+          "max": 44
+        },
+        "level": {
+          "min": 29,
+          "median": 32,
+          "max": 42
+        },
+        "exp": {
+          "min": 26,
+          "median": 316,
+          "max": 928
+        },
+        "gold": {
+          "min": 16028,
+          "median": 22072,
+          "max": 34568
+        },
+        "stone": {
+          "min": 264,
+          "median": 298,
+          "max": 370
+        },
+        "soul": {
+          "min": 314,
+          "median": 390,
+          "max": 510
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 298,
+          "median": 327,
+          "max": 346
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 3,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 352,
+          "median": 647,
+          "max": 745
+        },
+        "deaths": {
+          "min": 20,
+          "median": 43,
+          "max": 62
+        },
+        "totalGoldEarned": {
+          "min": 22416,
+          "median": 40392,
+          "max": 54696
+        },
+        "totalLeadCopies": {
+          "min": 352,
+          "median": 647,
+          "max": 745
+        },
+        "totalExtraGrants": {
+          "min": 112,
+          "median": 200,
+          "max": 233
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 3,
+          "median": 29,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 24,
+          "median": 39,
+          "max": 44
+        },
+        "level": {
+          "min": 37,
+          "median": 49,
+          "max": 57
+        },
+        "exp": {
+          "min": 24,
+          "median": 520,
+          "max": 1484
+        },
+        "gold": {
+          "min": 28056,
+          "median": 46520,
+          "max": 68920
+        },
+        "stone": {
+          "min": 347,
+          "median": 586,
+          "max": 716
+        },
+        "soul": {
+          "min": 503,
+          "median": 781,
+          "max": 1034
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 329,
+          "median": 667,
+          "max": 798
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 4,
+          "median": 7,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 232,
+          "median": 236,
+          "max": 240
+        },
+        "deaths": {
+          "min": 12,
+          "median": 21,
+          "max": 27
+        },
+        "totalGoldEarned": {
+          "min": 9016,
+          "median": 12224,
+          "max": 20588
+        },
+        "totalLeadCopies": {
+          "min": 232,
+          "median": 236,
+          "max": 240
+        },
+        "totalExtraGrants": {
+          "min": 70,
+          "median": 74,
+          "max": 78
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 2,
+          "median": 8,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 19,
+          "max": 44
+        },
+        "level": {
+          "min": 23,
+          "median": 27,
+          "max": 35
+        },
+        "exp": {
+          "min": 80,
+          "median": 478,
+          "max": 950
+        },
+        "gold": {
+          "min": 9212,
+          "median": 14680,
+          "max": 27388
+        },
+        "stone": {
+          "min": 168,
+          "median": 185,
+          "max": 265
+        },
+        "soul": {
+          "min": 167,
+          "median": 284,
+          "max": 438
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 206,
+          "median": 215,
+          "max": 222
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 3,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 232,
+          "median": 509,
+          "max": 734
+        },
+        "deaths": {
+          "min": 12,
+          "median": 32,
+          "max": 57
+        },
+        "totalGoldEarned": {
+          "min": 18960,
+          "median": 37468,
+          "max": 64680
+        },
+        "totalLeadCopies": {
+          "min": 232,
+          "median": 509,
+          "max": 734
+        },
+        "totalExtraGrants": {
+          "min": 73,
+          "median": 161,
+          "max": 239
+        },
+        "crashed": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 1,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 24,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 34,
+          "median": 47,
+          "max": 62
+        },
+        "exp": {
+          "min": 24,
+          "median": 512,
+          "max": 1604
+        },
+        "gold": {
+          "min": 25880,
+          "median": 44784,
+          "max": 80120
+        },
+        "stone": {
+          "min": 256,
+          "median": 461,
+          "max": 745
+        },
+        "soul": {
+          "min": 407,
+          "median": 637,
+          "max": 1001
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 211,
+          "median": 498,
+          "max": 793
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 4,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 232,
+          "median": 509,
+          "max": 1206
+        },
+        "deaths": {
+          "min": 12,
+          "median": 32,
+          "max": 61
+        },
+        "totalGoldEarned": {
+          "min": 18960,
+          "median": 37468,
+          "max": 108964
+        },
+        "totalLeadCopies": {
+          "min": 232,
+          "median": 509,
+          "max": 1206
+        },
+        "totalExtraGrants": {
+          "min": 73,
+          "median": 161,
+          "max": 377
+        },
+        "crashed": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 45,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 45,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 44,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 34,
+          "median": 47,
+          "max": 81
+        },
+        "exp": {
+          "min": 68,
+          "median": 686,
+          "max": 1646
+        },
+        "gold": {
+          "min": 25880,
+          "median": 44952,
+          "max": 121084
+        },
+        "stone": {
+          "min": 256,
+          "median": 461,
+          "max": 1107
+        },
+        "soul": {
+          "min": 407,
+          "median": 637,
+          "max": 1374
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 211,
+          "median": 498,
+          "max": 1404
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 8,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "kaelith",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 223,
+          "median": 229,
+          "max": 238
+        },
+        "deaths": {
+          "min": 25,
+          "median": 28,
+          "max": 32
+        },
+        "totalGoldEarned": {
+          "min": 7832,
+          "median": 8624,
+          "max": 10180
+        },
+        "totalLeadCopies": {
+          "min": 223,
+          "median": 229,
+          "max": 238
+        },
+        "totalExtraGrants": {
+          "min": 68,
+          "median": 72,
+          "max": 79
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 5,
+          "max": 10
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 14
+        },
+        "level": {
+          "min": 22,
+          "median": 23,
+          "max": 25
+        },
+        "exp": {
+          "min": 64,
+          "median": 326,
+          "max": 696
+        },
+        "gold": {
+          "min": 7620,
+          "median": 9348,
+          "max": 12120
+        },
+        "stone": {
+          "min": 148,
+          "median": 171,
+          "max": 197
+        },
+        "soul": {
+          "min": 205,
+          "median": 244,
+          "max": 310
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 199,
+          "median": 206,
+          "max": 216
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "kaelith",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 692,
+          "median": 708,
+          "max": 734
+        },
+        "deaths": {
+          "min": 53,
+          "median": 68,
+          "max": 83
+        },
+        "totalGoldEarned": {
+          "min": 26592,
+          "median": 33064,
+          "max": 47016
+        },
+        "totalLeadCopies": {
+          "min": 692,
+          "median": 708,
+          "max": 734
+        },
+        "totalExtraGrants": {
+          "min": 209,
+          "median": 225,
+          "max": 233
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 8,
+          "max": 19
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 19,
+          "max": 29
+        },
+        "level": {
+          "min": 40,
+          "median": 45,
+          "max": 53
+        },
+        "exp": {
+          "min": 56,
+          "median": 830,
+          "max": 1266
+        },
+        "gold": {
+          "min": 30476,
+          "median": 36828,
+          "max": 61456
+        },
+        "stone": {
+          "min": 532,
+          "median": 584,
+          "max": 690
+        },
+        "soul": {
+          "min": 588,
+          "median": 702,
+          "max": 942
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 726,
+          "median": 752,
+          "max": 789
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 3,
+          "max": 5
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "kaelith",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1148,
+          "median": 1449,
+          "max": 1495
+        },
+        "deaths": {
+          "min": 65,
+          "median": 107,
+          "max": 139
+        },
+        "totalGoldEarned": {
+          "min": 64444,
+          "median": 86024,
+          "max": 120076
+        },
+        "totalLeadCopies": {
+          "min": 1148,
+          "median": 1449,
+          "max": 1495
+        },
+        "totalExtraGrants": {
+          "min": 370,
+          "median": 457,
+          "max": 486
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 2,
+          "median": 16,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 14,
+          "median": 29,
+          "max": 44
+        },
+        "level": {
+          "min": 63,
+          "median": 72,
+          "max": 85
+        },
+        "exp": {
+          "min": 58,
+          "median": 1148,
+          "max": 2200
+        },
+        "gold": {
+          "min": 76144,
+          "median": 99064,
+          "max": 135316
+        },
+        "stone": {
+          "min": 1008,
+          "median": 1256,
+          "max": 1352
+        },
+        "soul": {
+          "min": 1364,
+          "median": 1534,
+          "max": 1841
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 1340,
+          "median": 1723,
+          "max": 1799
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 5,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 152,
+          "median": 212,
+          "max": 220
+        },
+        "deaths": {
+          "min": 7,
+          "median": 14,
+          "max": 26
+        },
+        "totalGoldEarned": {
+          "min": 8012,
+          "median": 14052,
+          "max": 19820
+        },
+        "totalLeadCopies": {
+          "min": 152,
+          "median": 212,
+          "max": 220
+        },
+        "totalExtraGrants": {
+          "min": 48,
+          "median": 67,
+          "max": 69
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 1,
+          "median": 20,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 14,
+          "median": 30,
+          "max": 44
+        },
+        "level": {
+          "min": 22,
+          "median": 29,
+          "max": 34
+        },
+        "exp": {
+          "min": 130,
+          "median": 404,
+          "max": 850
+        },
+        "gold": {
+          "min": 9712,
+          "median": 18012,
+          "max": 26660
+        },
+        "stone": {
+          "min": 151,
+          "median": 203,
+          "max": 240
+        },
+        "soul": {
+          "min": 187,
+          "median": 299,
+          "max": 413
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 130,
+          "median": 189,
+          "max": 196
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 6,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 152,
+          "median": 410,
+          "max": 730
+        },
+        "deaths": {
+          "min": 7,
+          "median": 22,
+          "max": 44
+        },
+        "totalGoldEarned": {
+          "min": 12188,
+          "median": 37452,
+          "max": 72328
+        },
+        "totalLeadCopies": {
+          "min": 152,
+          "median": 410,
+          "max": 730
+        },
+        "totalExtraGrants": {
+          "min": 48,
+          "median": 129,
+          "max": 232
+        },
+        "crashed": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 10,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 33,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 27,
+          "median": 47,
+          "max": 66
+        },
+        "exp": {
+          "min": 16,
+          "median": 404,
+          "max": 1730
+        },
+        "gold": {
+          "min": 16668,
+          "median": 44692,
+          "max": 87728
+        },
+        "stone": {
+          "min": 179,
+          "median": 410,
+          "max": 737
+        },
+        "soul": {
+          "min": 283,
+          "median": 681,
+          "max": 1026
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 130,
+          "median": 391,
+          "max": 783
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 6,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 152,
+          "median": 410,
+          "max": 877
+        },
+        "deaths": {
+          "min": 7,
+          "median": 22,
+          "max": 46
+        },
+        "totalGoldEarned": {
+          "min": 12188,
+          "median": 37452,
+          "max": 90820
+        },
+        "totalLeadCopies": {
+          "min": 152,
+          "median": 410,
+          "max": 877
+        },
+        "totalExtraGrants": {
+          "min": 48,
+          "median": 129,
+          "max": 280
+        },
+        "crashed": {
+          "min": 1,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 45,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 45,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 44,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 27,
+          "median": 47,
+          "max": 74
+        },
+        "exp": {
+          "min": 16,
+          "median": 484,
+          "max": 1916
+        },
+        "gold": {
+          "min": 16668,
+          "median": 44692,
+          "max": 102740
+        },
+        "stone": {
+          "min": 179,
+          "median": 410,
+          "max": 875
+        },
+        "soul": {
+          "min": 283,
+          "median": 681,
+          "max": 1202
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 130,
+          "median": 391,
+          "max": 978
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 8,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 228,
+          "median": 232,
+          "max": 242
+        },
+        "deaths": {
+          "min": 21,
+          "median": 27,
+          "max": 31
+        },
+        "totalGoldEarned": {
+          "min": 8192,
+          "median": 8800,
+          "max": 11912
+        },
+        "totalLeadCopies": {
+          "min": 228,
+          "median": 232,
+          "max": 242
+        },
+        "totalExtraGrants": {
+          "min": 69,
+          "median": 74,
+          "max": 76
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 7,
+          "max": 15
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 19
+        },
+        "level": {
+          "min": 22,
+          "median": 23,
+          "max": 27
+        },
+        "exp": {
+          "min": 6,
+          "median": 362,
+          "max": 738
+        },
+        "gold": {
+          "min": 9292,
+          "median": 10468,
+          "max": 14292
+        },
+        "stone": {
+          "min": 159,
+          "median": 188,
+          "max": 209
+        },
+        "soul": {
+          "min": 208,
+          "median": 263,
+          "max": 354
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 203,
+          "median": 209,
+          "max": 221
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 3
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 575,
+          "median": 715,
+          "max": 740
+        },
+        "deaths": {
+          "min": 39,
+          "median": 61,
+          "max": 76
+        },
+        "totalGoldEarned": {
+          "min": 29408,
+          "median": 36484,
+          "max": 46332
+        },
+        "totalLeadCopies": {
+          "min": 575,
+          "median": 715,
+          "max": 740
+        },
+        "totalExtraGrants": {
+          "min": 178,
+          "median": 222,
+          "max": 233
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 45
+        },
+        "floor": {
+          "min": 2,
+          "median": 12,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 14,
+          "median": 24,
+          "max": 44
+        },
+        "level": {
+          "min": 42,
+          "median": 47,
+          "max": 53
+        },
+        "exp": {
+          "min": 84,
+          "median": 714,
+          "max": 1516
+        },
+        "gold": {
+          "min": 34420,
+          "median": 42684,
+          "max": 61332
+        },
+        "stone": {
+          "min": 543,
+          "median": 614,
+          "max": 702
+        },
+        "soul": {
+          "min": 621,
+          "median": 821,
+          "max": 995
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 585,
+          "median": 757,
+          "max": 784
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 4,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 575,
+          "median": 1393,
+          "max": 1502
+        },
+        "deaths": {
+          "min": 39,
+          "median": 77,
+          "max": 119
+        },
+        "totalGoldEarned": {
+          "min": 43492,
+          "median": 84072,
+          "max": 121524
+        },
+        "totalLeadCopies": {
+          "min": 575,
+          "median": 1393,
+          "max": 1502
+        },
+        "totalExtraGrants": {
+          "min": 178,
+          "median": 432,
+          "max": 475
+        },
+        "crashed": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 2,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 24,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 51,
+          "median": 71,
+          "max": 86
+        },
+        "exp": {
+          "min": 162,
+          "median": 950,
+          "max": 2274
+        },
+        "gold": {
+          "min": 55172,
+          "median": 99072,
+          "max": 135724
+        },
+        "stone": {
+          "min": 565,
+          "median": 1258,
+          "max": 1405
+        },
+        "soul": {
+          "min": 766,
+          "median": 1527,
+          "max": 2062
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 585,
+          "median": 1646,
+          "max": 1797
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 4,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "aurion",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 201,
+          "median": 218,
+          "max": 230
+        },
+        "deaths": {
+          "min": 26,
+          "median": 29,
+          "max": 38
+        },
+        "totalGoldEarned": {
+          "min": 6024,
+          "median": 7832,
+          "max": 8864
+        },
+        "totalLeadCopies": {
+          "min": 201,
+          "median": 218,
+          "max": 230
+        },
+        "totalExtraGrants": {
+          "min": 58,
+          "median": 68,
+          "max": 75
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 6,
+          "max": 12
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 9,
+          "max": 14
+        },
+        "level": {
+          "min": 19,
+          "median": 22,
+          "max": 23
+        },
+        "exp": {
+          "min": 44,
+          "median": 326,
+          "max": 656
+        },
+        "gold": {
+          "min": 7464,
+          "median": 9440,
+          "max": 11804
+        },
+        "stone": {
+          "min": 135,
+          "median": 167,
+          "max": 203
+        },
+        "soul": {
+          "min": 181,
+          "median": 214,
+          "max": 335
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 176,
+          "median": 193,
+          "max": 205
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 1,
+          "max": 2
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "aurion",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 652,
+          "median": 677,
+          "max": 690
+        },
+        "deaths": {
+          "min": 60,
+          "median": 75,
+          "max": 85
+        },
+        "totalGoldEarned": {
+          "min": 24120,
+          "median": 27156,
+          "max": 33008
+        },
+        "totalLeadCopies": {
+          "min": 652,
+          "median": 677,
+          "max": 690
+        },
+        "totalExtraGrants": {
+          "min": 193,
+          "median": 212,
+          "max": 224
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 6,
+          "max": 20
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 14,
+          "max": 19
+        },
+        "level": {
+          "min": 38,
+          "median": 41,
+          "max": 45
+        },
+        "exp": {
+          "min": 2,
+          "median": 510,
+          "max": 1194
+        },
+        "gold": {
+          "min": 29004,
+          "median": 31644,
+          "max": 38876
+        },
+        "stone": {
+          "min": 486,
+          "median": 555,
+          "max": 601
+        },
+        "soul": {
+          "min": 560,
+          "median": 624,
+          "max": 762
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 681,
+          "median": 707,
+          "max": 727
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 2,
+          "max": 3
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "aurion",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 1320,
+          "median": 1374,
+          "max": 1408
+        },
+        "deaths": {
+          "min": 95,
+          "median": 120,
+          "max": 149
+        },
+        "totalGoldEarned": {
+          "min": 54940,
+          "median": 68744,
+          "max": 92536
+        },
+        "totalLeadCopies": {
+          "min": 1320,
+          "median": 1374,
+          "max": 1408
+        },
+        "totalExtraGrants": {
+          "min": 407,
+          "median": 421,
+          "max": 446
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 2,
+          "median": 12,
+          "max": 28
+        },
+        "bestFloor": {
+          "min": 14,
+          "median": 19,
+          "max": 39
+        },
+        "level": {
+          "min": 58,
+          "median": 65,
+          "max": 75
+        },
+        "exp": {
+          "min": 6,
+          "median": 946,
+          "max": 1972
+        },
+        "gold": {
+          "min": 68240,
+          "median": 82404,
+          "max": 107296
+        },
+        "stone": {
+          "min": 1086,
+          "median": 1176,
+          "max": 1259
+        },
+        "soul": {
+          "min": 1115,
+          "median": 1441,
+          "max": 1660
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 1556,
+          "median": 1621,
+          "max": 1674
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 2,
+          "median": 3,
+          "max": 7
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "minutes": 10,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 225,
+          "median": 234,
+          "max": 237
+        },
+        "deaths": {
+          "min": 16,
+          "median": 23,
+          "max": 28
+        },
+        "totalGoldEarned": {
+          "min": 8624,
+          "median": 10396,
+          "max": 16956
+        },
+        "totalLeadCopies": {
+          "min": 225,
+          "median": 234,
+          "max": 237
+        },
+        "totalExtraGrants": {
+          "min": 70,
+          "median": 73,
+          "max": 76
+        },
+        "crashed": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "floor": {
+          "min": 1,
+          "median": 9,
+          "max": 19
+        },
+        "bestFloor": {
+          "min": 9,
+          "median": 14,
+          "max": 29
+        },
+        "level": {
+          "min": 23,
+          "median": 25,
+          "max": 32
+        },
+        "exp": {
+          "min": 106,
+          "median": 438,
+          "max": 814
+        },
+        "gold": {
+          "min": 9460,
+          "median": 11940,
+          "max": 22076
+        },
+        "stone": {
+          "min": 167,
+          "median": 194,
+          "max": 231
+        },
+        "soul": {
+          "min": 206,
+          "median": 278,
+          "max": 364
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 202,
+          "median": 213,
+          "max": 218
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 1,
+          "median": 2,
+          "max": 5
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "minutes": 30,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 352,
+          "median": 647,
+          "max": 734
+        },
+        "deaths": {
+          "min": 20,
+          "median": 43,
+          "max": 62
+        },
+        "totalGoldEarned": {
+          "min": 22416,
+          "median": 41164,
+          "max": 56124
+        },
+        "totalLeadCopies": {
+          "min": 352,
+          "median": 647,
+          "max": 734
+        },
+        "totalExtraGrants": {
+          "min": 112,
+          "median": 200,
+          "max": 234
+        },
+        "crashed": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 2,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 24,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 37,
+          "median": 50,
+          "max": 58
+        },
+        "exp": {
+          "min": 24,
+          "median": 828,
+          "max": 1648
+        },
+        "gold": {
+          "min": 28056,
+          "median": 54960,
+          "max": 71644
+        },
+        "stone": {
+          "min": 347,
+          "median": 607,
+          "max": 715
+        },
+        "soul": {
+          "min": 503,
+          "median": 809,
+          "max": 1033
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 329,
+          "median": 667,
+          "max": 785
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 4,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "minutes": 60,
+      "seeds": 20,
+      "stats": {
+        "wins": {
+          "min": 352,
+          "median": 647,
+          "max": 1489
+        },
+        "deaths": {
+          "min": 20,
+          "median": 48,
+          "max": 73
+        },
+        "totalGoldEarned": {
+          "min": 22416,
+          "median": 47956,
+          "max": 125636
+        },
+        "totalLeadCopies": {
+          "min": 352,
+          "median": 647,
+          "max": 1489
+        },
+        "totalExtraGrants": {
+          "min": 112,
+          "median": 200,
+          "max": 473
+        },
+        "crashed": {
+          "min": 0,
+          "median": 1,
+          "max": 1
+        },
+        "crashAtFloor": {
+          "min": 0,
+          "median": 45,
+          "max": 45
+        },
+        "floor": {
+          "min": 28,
+          "median": 45,
+          "max": 45
+        },
+        "bestFloor": {
+          "min": 34,
+          "median": 44,
+          "max": 44
+        },
+        "level": {
+          "min": 37,
+          "median": 54,
+          "max": 87
+        },
+        "exp": {
+          "min": 24,
+          "median": 1068,
+          "max": 2022
+        },
+        "gold": {
+          "min": 28056,
+          "median": 60944,
+          "max": 140876
+        },
+        "stone": {
+          "min": 347,
+          "median": 627,
+          "max": 1387
+        },
+        "soul": {
+          "min": 503,
+          "median": 810,
+          "max": 1920
+        },
+        "bond": {
+          "min": 10,
+          "median": 10,
+          "max": 10
+        },
+        "spareCopies": {
+          "min": 329,
+          "median": 667,
+          "max": 1782
+        },
+        "owned": {
+          "min": 6,
+          "median": 6,
+          "max": 6
+        },
+        "boons": {
+          "min": 6,
+          "median": 8,
+          "max": 8
+        },
+        "bag": {
+          "min": 0,
+          "median": 0,
+          "max": 0
+        },
+        "stamina": {
+          "min": 1000,
+          "median": 1000,
+          "max": 1000
+        }
+      }
+    }
+  ],
+  "runtimeErrors": [
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 1801880,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 2,
+      "floor": 45,
+      "elapsedMs": 1100240,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 3,
+      "floor": 45,
+      "elapsedMs": 2246480,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 4,
+      "floor": 45,
+      "elapsedMs": 1896560,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 5,
+      "floor": 45,
+      "elapsedMs": 1103760,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 6,
+      "floor": 45,
+      "elapsedMs": 3257880,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 7,
+      "floor": 45,
+      "elapsedMs": 3284640,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 9,
+      "floor": 45,
+      "elapsedMs": 3408040,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 2224040,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 12,
+      "floor": 45,
+      "elapsedMs": 2306960,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 13,
+      "floor": 45,
+      "elapsedMs": 1959560,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 14,
+      "floor": 45,
+      "elapsedMs": 3399200,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 15,
+      "floor": 45,
+      "elapsedMs": 1896680,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 2304360,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "vorathion",
+      "seed": 18,
+      "floor": 45,
+      "elapsedMs": 2987160,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 1079360,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 3,
+      "floor": 45,
+      "elapsedMs": 3414840,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 7,
+      "floor": 45,
+      "elapsedMs": 3095000,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 9,
+      "floor": 45,
+      "elapsedMs": 2663560,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 2676000,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 12,
+      "floor": 45,
+      "elapsedMs": 1870280,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 14,
+      "floor": 45,
+      "elapsedMs": 3540360,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 15,
+      "floor": 45,
+      "elapsedMs": 1839120,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 2072280,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 17,
+      "floor": 45,
+      "elapsedMs": 2649240,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 19,
+      "floor": 45,
+      "elapsedMs": 1345880,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "verdraxis",
+      "seed": 20,
+      "floor": 45,
+      "elapsedMs": 1926640,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "nyxarion",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 2783920,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 3167560,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 2,
+      "floor": 45,
+      "elapsedMs": 3163320,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 7,
+      "floor": 45,
+      "elapsedMs": 1766880,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 8,
+      "floor": 45,
+      "elapsedMs": 3208360,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 9,
+      "floor": 45,
+      "elapsedMs": 1912720,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 3322360,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 11,
+      "floor": 45,
+      "elapsedMs": 2916520,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 12,
+      "floor": 45,
+      "elapsedMs": 3092760,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 2155800,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 1,
+      "hero": "umbraxis",
+      "seed": 17,
+      "floor": 45,
+      "elapsedMs": 2420920,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 988140,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 2,
+      "floor": 45,
+      "elapsedMs": 588720,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 3,
+      "floor": 45,
+      "elapsedMs": 1154440,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 4,
+      "floor": 45,
+      "elapsedMs": 963680,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 5,
+      "floor": 45,
+      "elapsedMs": 580280,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 6,
+      "floor": 45,
+      "elapsedMs": 1616140,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 7,
+      "floor": 45,
+      "elapsedMs": 1751920,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 8,
+      "floor": 45,
+      "elapsedMs": 1871860,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 9,
+      "floor": 45,
+      "elapsedMs": 1739620,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 1176620,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 11,
+      "floor": 45,
+      "elapsedMs": 1903860,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 12,
+      "floor": 45,
+      "elapsedMs": 1203880,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 13,
+      "floor": 45,
+      "elapsedMs": 1015180,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 14,
+      "floor": 45,
+      "elapsedMs": 1761600,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 15,
+      "floor": 45,
+      "elapsedMs": 972540,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 1249580,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 17,
+      "floor": 45,
+      "elapsedMs": 2941660,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 18,
+      "floor": 45,
+      "elapsedMs": 1522980,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 19,
+      "floor": 45,
+      "elapsedMs": 2181420,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "vorathion",
+      "seed": 20,
+      "floor": 45,
+      "elapsedMs": 2418920,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "kaelith",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 2875560,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "kaelith",
+      "seed": 5,
+      "floor": 45,
+      "elapsedMs": 3504400,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "kaelith",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 2815840,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 427080,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 2,
+      "floor": 45,
+      "elapsedMs": 1634780,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 3,
+      "floor": 45,
+      "elapsedMs": 1590020,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 4,
+      "floor": 45,
+      "elapsedMs": 2079080,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 5,
+      "floor": 45,
+      "elapsedMs": 2008020,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 6,
+      "floor": 45,
+      "elapsedMs": 2141700,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 7,
+      "floor": 45,
+      "elapsedMs": 1128500,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 8,
+      "floor": 45,
+      "elapsedMs": 1954180,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 9,
+      "floor": 45,
+      "elapsedMs": 1052180,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 1089000,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 11,
+      "floor": 45,
+      "elapsedMs": 1574980,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 12,
+      "floor": 45,
+      "elapsedMs": 633340,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 13,
+      "floor": 45,
+      "elapsedMs": 1965340,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 14,
+      "floor": 45,
+      "elapsedMs": 1542580,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 15,
+      "floor": 45,
+      "elapsedMs": 709360,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 674340,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 17,
+      "floor": 45,
+      "elapsedMs": 1068220,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 18,
+      "floor": 45,
+      "elapsedMs": 1768400,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 19,
+      "floor": 45,
+      "elapsedMs": 555140,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "verdraxis",
+      "seed": 20,
+      "floor": 45,
+      "elapsedMs": 577920,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 2318060,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 2,
+      "floor": 45,
+      "elapsedMs": 3442640,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 5,
+      "floor": 45,
+      "elapsedMs": 2708480,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 6,
+      "floor": 45,
+      "elapsedMs": 3417160,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 8,
+      "floor": 45,
+      "elapsedMs": 2173340,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 9,
+      "floor": 45,
+      "elapsedMs": 2559500,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 1428760,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 13,
+      "floor": 45,
+      "elapsedMs": 2325880,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 14,
+      "floor": 45,
+      "elapsedMs": 2955900,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 15,
+      "floor": 45,
+      "elapsedMs": 3450520,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 2636780,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 17,
+      "floor": 45,
+      "elapsedMs": 2715460,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 18,
+      "floor": 45,
+      "elapsedMs": 3588280,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 19,
+      "floor": 45,
+      "elapsedMs": 3451960,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "nyxarion",
+      "seed": 20,
+      "floor": 45,
+      "elapsedMs": 3573700,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 1,
+      "floor": 45,
+      "elapsedMs": 1579180,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 2,
+      "floor": 45,
+      "elapsedMs": 1534460,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 3,
+      "floor": 45,
+      "elapsedMs": 2237800,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 5,
+      "floor": 45,
+      "elapsedMs": 1779980,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 6,
+      "floor": 45,
+      "elapsedMs": 2440360,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 7,
+      "floor": 45,
+      "elapsedMs": 895640,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 8,
+      "floor": 45,
+      "elapsedMs": 1601580,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 9,
+      "floor": 45,
+      "elapsedMs": 953160,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 10,
+      "floor": 45,
+      "elapsedMs": 1623580,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 11,
+      "floor": 45,
+      "elapsedMs": 1444060,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 12,
+      "floor": 45,
+      "elapsedMs": 1499780,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 13,
+      "floor": 45,
+      "elapsedMs": 2689280,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 14,
+      "floor": 45,
+      "elapsedMs": 2337140,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 15,
+      "floor": 45,
+      "elapsedMs": 2883100,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 16,
+      "floor": 45,
+      "elapsedMs": 1090900,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 17,
+      "floor": 45,
+      "elapsedMs": 1192260,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 18,
+      "floor": 45,
+      "elapsedMs": 3001840,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 19,
+      "floor": 45,
+      "elapsedMs": 2469680,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "policy": "caretaker",
+      "speed": 15,
+      "hero": "umbraxis",
+      "seed": 20,
+      "floor": 45,
+      "elapsedMs": 2188420,
+      "error": "Cannot read properties of undefined (reading 'name')"
+    }
+  ],
+  "first20": [
+    {
+      "floor": 1,
+      "gold": 16,
+      "xp": 16,
+      "cumulativeGold": 16,
+      "cumulativeXP": 16,
+      "leadCopies": 1,
+      "extraGrants": 0,
+      "bosses": 0
+    },
+    {
+      "floor": 2,
+      "gold": 20,
+      "xp": 20,
+      "cumulativeGold": 36,
+      "cumulativeXP": 36,
+      "leadCopies": 2,
+      "extraGrants": 0,
+      "bosses": 0
+    },
+    {
+      "floor": 3,
+      "gold": 24,
+      "xp": 24,
+      "cumulativeGold": 60,
+      "cumulativeXP": 60,
+      "leadCopies": 3,
+      "extraGrants": 1,
+      "bosses": 0
+    },
+    {
+      "floor": 4,
+      "gold": 28,
+      "xp": 28,
+      "cumulativeGold": 88,
+      "cumulativeXP": 88,
+      "leadCopies": 4,
+      "extraGrants": 1,
+      "bosses": 0
+    },
+    {
+      "floor": 5,
+      "gold": 96,
+      "xp": 80,
+      "cumulativeGold": 184,
+      "cumulativeXP": 168,
+      "leadCopies": 5,
+      "extraGrants": 1,
+      "bosses": 1
+    },
+    {
+      "floor": 6,
+      "gold": 36,
+      "xp": 36,
+      "cumulativeGold": 220,
+      "cumulativeXP": 204,
+      "leadCopies": 6,
+      "extraGrants": 2,
+      "bosses": 1
+    },
+    {
+      "floor": 7,
+      "gold": 40,
+      "xp": 40,
+      "cumulativeGold": 260,
+      "cumulativeXP": 244,
+      "leadCopies": 7,
+      "extraGrants": 2,
+      "bosses": 1
+    },
+    {
+      "floor": 8,
+      "gold": 44,
+      "xp": 44,
+      "cumulativeGold": 304,
+      "cumulativeXP": 288,
+      "leadCopies": 8,
+      "extraGrants": 2,
+      "bosses": 1
+    },
+    {
+      "floor": 9,
+      "gold": 48,
+      "xp": 48,
+      "cumulativeGold": 352,
+      "cumulativeXP": 336,
+      "leadCopies": 9,
+      "extraGrants": 3,
+      "bosses": 1
+    },
+    {
+      "floor": 10,
+      "gold": 156,
+      "xp": 130,
+      "cumulativeGold": 508,
+      "cumulativeXP": 466,
+      "leadCopies": 10,
+      "extraGrants": 3,
+      "bosses": 2
+    },
+    {
+      "floor": 11,
+      "gold": 56,
+      "xp": 56,
+      "cumulativeGold": 564,
+      "cumulativeXP": 522,
+      "leadCopies": 11,
+      "extraGrants": 3,
+      "bosses": 2
+    },
+    {
+      "floor": 12,
+      "gold": 60,
+      "xp": 60,
+      "cumulativeGold": 624,
+      "cumulativeXP": 582,
+      "leadCopies": 12,
+      "extraGrants": 4,
+      "bosses": 2
+    },
+    {
+      "floor": 13,
+      "gold": 64,
+      "xp": 64,
+      "cumulativeGold": 688,
+      "cumulativeXP": 646,
+      "leadCopies": 13,
+      "extraGrants": 4,
+      "bosses": 2
+    },
+    {
+      "floor": 14,
+      "gold": 68,
+      "xp": 68,
+      "cumulativeGold": 756,
+      "cumulativeXP": 714,
+      "leadCopies": 14,
+      "extraGrants": 4,
+      "bosses": 2
+    },
+    {
+      "floor": 15,
+      "gold": 216,
+      "xp": 180,
+      "cumulativeGold": 972,
+      "cumulativeXP": 894,
+      "leadCopies": 15,
+      "extraGrants": 5,
+      "bosses": 3
+    },
+    {
+      "floor": 16,
+      "gold": 76,
+      "xp": 76,
+      "cumulativeGold": 1048,
+      "cumulativeXP": 970,
+      "leadCopies": 16,
+      "extraGrants": 5,
+      "bosses": 3
+    },
+    {
+      "floor": 17,
+      "gold": 80,
+      "xp": 80,
+      "cumulativeGold": 1128,
+      "cumulativeXP": 1050,
+      "leadCopies": 17,
+      "extraGrants": 5,
+      "bosses": 3
+    },
+    {
+      "floor": 18,
+      "gold": 84,
+      "xp": 84,
+      "cumulativeGold": 1212,
+      "cumulativeXP": 1134,
+      "leadCopies": 18,
+      "extraGrants": 6,
+      "bosses": 3
+    },
+    {
+      "floor": 19,
+      "gold": 88,
+      "xp": 88,
+      "cumulativeGold": 1300,
+      "cumulativeXP": 1222,
+      "leadCopies": 19,
+      "extraGrants": 6,
+      "bosses": 3
+    },
+    {
+      "floor": 20,
+      "gold": 276,
+      "xp": 230,
+      "cumulativeGold": 1576,
+      "cumulativeXP": 1452,
+      "leadCopies": 20,
+      "extraGrants": 6,
+      "bosses": 4
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "method": "Real Chromium 153, Playwright runtime outside repository; no screenshot/visual changes; mobile viewport is not physical iPhone Safari.",
+  "checks": [
+    {
+      "mode": "dev",
+      "device": "mobile",
+      "viewport": "393x852",
+      "checks": [
+        "six dragons",
+        "RU/EN",
+        "new save",
+        "battle mount",
+        "pause",
+        "summon -40 gold",
+        "Flight panel",
+        "home",
+        "reload preserves save",
+        "continue"
+      ],
+      "pageErrors": [],
+      "httpErrors": [],
+      "overflow": {
+        "scroll": 393,
+        "viewport": 393
+      }
+    },
+    {
+      "mode": "dev",
+      "device": "desktop",
+      "viewport": "1366x768",
+      "checks": [
+        "six dragons",
+        "RU/EN",
+        "new save",
+        "battle mount",
+        "pause",
+        "summon -40 gold",
+        "Flight panel",
+        "home",
+        "reload preserves save",
+        "continue"
+      ],
+      "pageErrors": [],
+      "httpErrors": [],
+      "overflow": {
+        "scroll": 1366,
+        "viewport": 1366
+      }
+    },
+    {
+      "mode": "production",
+      "device": "mobile",
+      "viewport": "393x852",
+      "checks": [
+        "six dragons",
+        "RU/EN",
+        "new save",
+        "battle mount",
+        "pause",
+        "summon -40 gold",
+        "Flight panel",
+        "home",
+        "reload preserves save",
+        "continue"
+      ],
+      "pageErrors": [],
+      "httpErrors": [],
+      "overflow": {
+        "scroll": 393,
+        "viewport": 393
+      }
+    },
+    {
+      "mode": "production",
+      "device": "desktop",
+      "viewport": "1366x768",
+      "checks": [
+        "six dragons",
+        "RU/EN",
+        "new save",
+        "battle mount",
+        "pause",
+        "summon -40 gold",
+        "Flight panel",
+        "home",
+        "reload preserves save",
+        "continue"
+      ],
+      "pageErrors": [],
+      "httpErrors": [],
+      "overflow": {
+        "scroll": 1366,
+        "viewport": 1366
+      }
+    }
+  ]
+}

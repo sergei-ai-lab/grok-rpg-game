@@ -1,4 +1,4 @@
-DRAGONVERSE
+GROK RPG GAME — separate playable build (in-game title: DragonVerse)
 Playable build adapted from Auto Monster by SmallTeddy.
 Code license: MIT (Copyright (c) 2024 SmallTeddy).
 https://github.com/SmallTeddy/auto-monster
@@ -11,5 +11,18 @@ The six named dragons (Vorathion, Nyxarion, Kaelith, Verdraxis, Aurion, Umbraxis
 use those tiles only as placeholders. Photoreal DragonVerse portraits are not in this build.
 See MISSING_ASSETS.md.
 
-Duplicate-copy leveling (1→10 via duplicate summons) is not in this build.
-Training already raises a dragon through 10 ranks. That system was kept on purpose.
+Duplicate/bond rank 1→10 is implemented. Copies come from summons and tower
+victories. Required copies per rank: 1, 2, 2, 3, 3, 4, 4, 5, 6 (30 total).
+Pet training 0→10 is a separate system, as are profile XP level and pet XP level.
+
+Public logo: Shark bite icon, icons made by Delapouite, Game-icons.net.
+https://game-icons.net/1x1/delapouite/shark-bite.html
+License: Creative Commons Attribution 3.0 Unported (CC BY 3.0).
+https://creativecommons.org/licenses/by/3.0/
+Inherited adaptation changes the background color to brown and uses SVG/PNG
+exports. The icon path matches the original; Stage 0 did not change these files.
+
+See THIRD_PARTY_NOTICES.txt for the full code/runtime notices and the
+Material Design Icons collection license. The unused pixel.ttf font has
+unresolved license provenance; see docs/stage0/LICENSES.md in the source
+repository. Do not assume the code's MIT license clears every asset.

@@ -1,0 +1,44 @@
+{
+  "baseline": "2931ea69bfbf653c105f145520d41747c85f4f07",
+  "baselineTree": "3f7bbb1911dd22b696073be445783222fbe838f6",
+  "upstreamAutoMonster": "efb10dfe5eb4c771840c4ca59e4a0e889c02b5e3",
+  "assetFiles": 1311,
+  "assetsByteIdentical": 1311,
+  "fileProvenance": {
+    "LICENSE": {
+      "sha256": "bbf32898383d1f60fe19afe5ca443f777f6ce529424fa019112f2e749685e8e0",
+      "upstreamByteIdentical": true
+    },
+    "src/styles/pixel.ttf": {
+      "sha256": "f8cb1ce27493308942b349838095c53f0426d100a25688053e1a39d50a6ad0fb",
+      "upstreamByteIdentical": true
+    },
+    "public/icons/game.svg": {
+      "sha256": "812ef0a2d8593d9080bd40b110fa6593e9d5a99656e023eaa27c5eed3dd3d3f2",
+      "upstreamByteIdentical": true
+    },
+    "public/icons/game.png": {
+      "sha256": "7365b1566053deb943e22419a5cf02454ba3fcb0b2bec027f1bb7504ef0fc610",
+      "upstreamByteIdentical": true
+    }
+  },
+  "unchangedScopes": [
+    "src/game",
+    "src/components",
+    "src/views",
+    "src/styles",
+    "src/assets",
+    "public/icons",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "bun.lockb",
+    "LICENSE",
+    "tsconfig.json",
+    "tsconfig.node.json"
+  ],
+  "changedFilesWithinProtectedScopes": [],
+  "runtimeEdits": [
+    "src/locales/index.ts",
+    "src/store/index.ts"
+  ]
+}
