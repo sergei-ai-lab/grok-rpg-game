@@ -155,6 +155,9 @@
           <template v-else>
             <div v-if="run.lastReward" class="mb-4 space-y-1 text-13px text-white/75">
               <div>+{{ run.lastReward.gold }} {{ tr('gold', 'золота') }}</div>
+              <div>+{{ run.lastReward.exp }} {{ tr('EXP', 'опыта') }}</div>
+              <div v-if="run.lastReward.stone">+{{ run.lastReward.stone }} {{ t('common.stone') }}</div>
+              <div v-if="run.lastReward.drops.length">{{ tr(`Gear drops: ${run.lastReward.drops.length}`, `Снаряжение: ${run.lastReward.drops.length}`) }}</div>
               <div v-if="run.lastReward.copyOf">{{ tr(`${dragonName(run.lastReward.copyOf)} copy +1`, `${dragonName(run.lastReward.copyOf)}: копия +1`) }}</div>
               <div v-if="run.lastReward.extraCopy" class="text-amber-200">{{ tr(`${dragonName(run.lastReward.extraCopy)} also answered the summon`, `${dragonName(run.lastReward.extraCopy)} тоже откликнулся`) }}</div>
               <div v-if="leadBond" class="text-white/50">{{ tr(`Lv${leadBond.rank} · ${leadBond.copies} copies spare`, `Ур.${leadBond.rank} · копий в запасе: ${leadBond.copies}`) }}</div>
