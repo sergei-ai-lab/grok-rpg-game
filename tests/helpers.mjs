@@ -10,10 +10,12 @@ globalThis.setTimeout = (...args) => {
   return timer
 }
 
-export async function fresh({ save, lang = 'en-US', create = true, heroId = 'vorathion' } = {}) {
+export async function fresh({ save, runSave, lang = 'en-US', create = true, heroId = 'vorathion' } = {}) {
   const values = new Map([['dragonverse-lang', lang]])
   if (save !== undefined)
     values.set('dragonverse-profile', typeof save === 'string' ? save : JSON.stringify(save))
+  if (runSave !== undefined)
+    values.set('dragonverse-run', typeof runSave === 'string' ? runSave : JSON.stringify(runSave))
   const storage = {
     getItem: key => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
