@@ -1,11 +1,12 @@
 import { DRAGONS, RUNES, ATTACKS, ABILITIES, stageForLevel, previewDragon, attackResourceGain, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js';
 import { FAMILIES, STARTERS, loadProfile, adoptProfile, awardBattle, saveProfile, upgradeCost, canUpgrade, upgradeDragon } from './profile.js';
 import { ENCOUNTERS, campaignMatch, recordCampaign } from './campaign.js';
+import { feel, setFeel, unlockAudio, transition, feedbackEffect } from './feel.js';
 const app = document.querySelector('#app');
 const artBase = new URL('./assets/dragons/', import.meta.url);
 const artFamilies = FAMILIES;
 let artFamily = 'vorathion', artStage = 1;
-let tutorialSeen = false, aiMoves = [];
+let tutorialSeen = false, aiMoves = [], pendingEffect = null;
 const artName = id => id[0].toUpperCase() + id.slice(1);
 let mode = 'charge', team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }));
 let match = null, selection = { zone: 'field', index: 0 }, dialog = '', busy = false, generation = 0, started = 0, seed = Date.now(), feedback = '';
@@ -40,7 +41,7 @@ function overlay() {
     <p lang="ru">Switch: выбери дракона на скамье. Смена стоит 1 ресурс и доступна раз за ход.</p>
     <p lang="ru">Fuse: выбери дракона на скамье. Он исчезнет, а передний получит +35 HP и +12 урона. Цена 2 ресурса; в Energy складываются ресурсы обеих карт. Раз за бой, руна переднего сохраняется.</p>
     <p lang="ru">Руны выбираются до боя: Fury повышает урон; Ward добавляет HP и защиту; Life лечит после каждой атаки.</p>`;
-  const settings = `<label for="mode">Resource mode</label><select id="mode"><option value="charge" ${mode === 'charge' ? 'selected' : ''}>Charge · shared team bar</option><option value="energy" ${mode === 'energy' ? 'selected' : ''}>Energy · attached to a dragon</option></select><p lang="ru">Charge автоматически растёт на 1 в начале хода. В Energy ты сам выбираешь, кому дать +1. Максимум 4, сильные атаки тратят ресурс.</p>${match ? '<p>Changes apply to the next battle.</p>' : ''}`;
+  const settings = `<label for="mode">Resource mode</label><select id="mode"><option value="charge" ${mode === 'charge' ? 'selected' : ''}>Charge · shared team bar</option><option value="energy" ${mode === 'energy' ? 'selected' : ''}>Energy · attached to a dragon</option></select><p lang="ru">Charge автоматически растёт на 1 в начале хода. В Energy ты сам выбираешь, кому дать +1. Максимум 4, сильные атаки тратят ресурс.</p>${match ? '<p>Resource changes apply to the next battle.</p>' : ''}<div class="feel-settings">${Object.entries(feel).map(([id, checked]) => `<label><input type="checkbox" data-feel="${id}" ${checked ? 'checked' : ''}>${({ sound: 'Sound · WebAudio', vibration: 'Vibration · supported devices', motion: 'Motion effects' })[id]}</label>`).join('')}</div>`;
   const quit = `<p>End this battle and return to your squad?</p>${button('End battle', 'quit', false, 'class="primary"')}`;
   const tutorial = `<p lang="ru"><b>1. Один боец впереди.</b> Он атакует, запасные ждут. Claw бесплатна и копит ресурс.</p><p lang="ru"><b>2. Подготовка, затем атака.</b> Нажми запасного: Switch выводит его вперёд за 1 ресурс. Fuse поглощает его и усиливает бойца за 2. Атака завершает ход.</p><p lang="ru"><b>3. Следи за ИИ.</b> Его смена и слияние будут объяснены над бойцами. Победа — 3 выбитых врага. На серых кнопках написано, чего не хватает.</p>${button('Let’s battle', 'begin-tutorial', false, 'class="primary"')}`;
   const evolved = evolution ? `<img class="art-preview evolution-art" src="${artUrl(evolution.id, evolution.stage)}" alt="${artName(evolution.id)} · Stage ${evolution.stage}" loading="lazy" decoding="async"><p>Lv${profile.cards[evolution.id].level} · Stage ${evolution.stage}</p><p>${ABILITIES[evolution.id][evolution.stage - 2]}</p><p lang="ru">Новый вид и умение активны со следующего боя. Слияние не меняет стадию эволюции.</p>` : '';
@@ -98,12 +99,14 @@ function render() {
   if (match && match.winner !== null && battleReward === null) { const awarded = awardBattle(profile, battleId, match.winner === 0); profile = recordCampaign(awarded.profile, battleEncounter, match.winner === 0, (Date.now() - started) / 1000); encounter = Math.min(9, profile.campaign.cleared); restoreTeam(); battleReward = awarded.reward || { xp: 0, copies: 0 }; persist(); }
   if (match && !match.players[0][selection.zone]?.[selection.index]) selection = { zone: 'field', index: 0 };
   app.classList.toggle('in-battle', !!match); app.innerHTML = !profile.starter ? adoption() : match ? battle() : squad();
+  if (pendingEffect) { const effect = pendingEffect; pendingEffect = null; feedbackEffect(effect.type, app.querySelector(effect.selector)); if (effect.result) feedbackEffect(effect.result, app.querySelector('.result')); }
 }
 function play(action) {
   const side = match.actor, target = match.players[1 - side].field[0], oldName = target?.name;
   const player = match.players[side], chosenName = (action.type === 'deploy' ? player.hand : player.field)[action.index]?.name;
   const damage = action.type === 'attack' ? attackDamage(match.players[side].field[0], target, action.attack) : 0;
   if (!act(match, action)) return false;
+  pendingEffect = { type: action.attack || action.type, selector: `.fighters .fighter:nth-child(${action.type === 'attack' ? side === 0 ? 2 : 1 : side === 0 ? 1 : 2}) .dragon`, result: match.winner === null ? null : match.winner === 0 ? 'victory' : 'defeat' };
   if (side === 0) aiMoves = [];
   if (side === 1 && action.type === 'switch') aiMoves.push(`ИИ Switch: спасает раненого, выводит ${player.field[0].name} за 1 ресурс.`);
   if (side === 1 && action.type === 'fuse') aiMoves.push(`ИИ Fuse: поглощает ${chosenName}, получает +35 HP и +12 урона.`);
@@ -120,7 +123,7 @@ function play(action) {
 }
 function start(sameSeed = false) {
   battleId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`; battleReward = null;
-  generation++; if (!sameSeed) seed = Date.now(); battleEncounter = sameSeed ? battleEncounter : encounter; match = campaignMatch(profile, battleEncounter, mode, seed); started = Date.now(); selection = { zone: 'field', index: 0 }; busy = false; feedback = ''; aiMoves = []; render(); window.scrollTo(0, 0);
+  generation++; if (!sameSeed) seed = Date.now(); battleEncounter = sameSeed ? battleEncounter : encounter; match = campaignMatch(profile, battleEncounter, mode, seed); started = Date.now(); selection = { zone: 'field', index: 0 }; busy = false; feedback = ''; aiMoves = []; render(); transition(app); window.scrollTo(0, 0);
 }
 function aiTurn() {
   busy = true; aiMoves = []; render(); const token = generation;
@@ -134,11 +137,12 @@ function aiTurn() {
 }
 app.addEventListener('click', event => {
   const control = event.target.closest('[data-command]'); if (!control || control.disabled) return;
+  unlockAudio();
   const [command, value, index] = control.dataset.command.split(':');
   if (command === 'upgrade' && (!match || match.winner !== null)) {
     const upgraded = upgradeDragon(profile, value); if (!upgraded) return;
     profile = upgraded.profile; persist(); restoreTeam();
-    if (upgraded.evolved) { evolution = upgraded; dialog = 'evolution'; }
+    if (upgraded.evolved) { evolution = upgraded; dialog = 'evolution'; feedbackEffect('evolution', null); }
     render(); return;
   }
   if (command === 'cub' && STARTERS.includes(value)) { heroName = app.querySelector('#hero-name')?.value || ''; selectedCub = value; render(); return; }
@@ -168,6 +172,7 @@ function confirmFusion() {
 }
 function saveMode() { try { localStorage.setItem('dragon-prototype-mode', mode); } catch { /* Optional preference. */ } }
 app.addEventListener('change', event => {
+  if (event.target.dataset.feel) { setFeel(event.target.dataset.feel, event.target.checked); return; }
   if (event.target.id === 'art-family' && artFamilies.includes(event.target.value)) { artFamily = event.target.value; render(); app.querySelector('#art-family')?.focus(); }
   if (event.target.id === 'mode') { mode = event.target.value; saveMode(); }
   if (event.target.dataset.rune) { const c = profile.cards[event.target.dataset.rune]; if (c?.owned && RUNES[event.target.value]) { c.rune = event.target.value; persist(); restoreTeam(); render(); } }
