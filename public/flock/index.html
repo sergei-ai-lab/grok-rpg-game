@@ -24,7 +24,8 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); 
 body { overflow: hidden; }
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; touch-action: manipulation; }
-#app { height: 100dvh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; }
+#app { height: 100dvh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; transition: opacity .18s ease; }
+#app.is-swapping { opacity: 0; }
 .screen { flex: 1 1 auto; height: auto; min-height: 0; display: flex; flex-direction: column; }
 .art-screen {
   position: relative; flex: 1; min-height: 0; margin: 0;
@@ -110,8 +111,12 @@ h1 { font-family: Palatino, "Iowan Old Style", Georgia, serif; font-weight: 560;
   position: absolute; left: 50%; top: 42%; font-family: Palatino, Georgia, serif;
   font-size: 32px; font-weight: 700; text-shadow: 0 2px 8px #000; animation: float .7s ease forwards; pointer-events: none;
 }
-.pop.heal { color: #9ddeb5; }
-.pop.hit { color: #fff; }
+.spark { position: absolute; left: 50%; top: 42%; width: 7px; height: 7px; border-radius: 50%; background: #ffe7b0; pointer-events: none; animation: spark .65s ease-out forwards; }
+.spark.evo { background: #fff6d8; width: 8px; height: 8px; }
+@keyframes spark { to { transform: translate(var(--dx), var(--dy)) scale(.4); opacity: 0; } }
+.card.struck { animation: struck .2s linear; }
+@keyframes struck { 0% { filter: brightness(1.85); } 100% { filter: none; } }
+.pop.crit { color: #ffe08a; font-size: 40px; }
 body.shake { animation: shake .28s linear; }
 @keyframes float { to { transform: translate(-50%, -46px); opacity: 0; } }
 @keyframes lunge { 50% { transform: translateY(-8px) scale(1.03); } }
@@ -138,7 +143,8 @@ body.shake { animation: shake .28s linear; }
 .back { position: absolute; z-index: 3; top: calc(8px + var(--safe-t)); left: 10px; border: 0; background: rgba(14,12,11,.55); color: var(--ink); border-radius: 999px; min-height: 36px; padding: 6px 12px; }
 .sub { color: var(--muted); font-size: 13px; margin: 4px 0 8px; }
 @media (prefers-reduced-motion: reduce) {
-  .pop, .card.lunge, body.shake, .flash { animation: none; }
+  .pop, .card.lunge, body.shake, .flash, .spark, .card.struck { animation: none; }
+  #app { transition: none; }
 }
 </style>
 </head>
@@ -258,7 +264,10 @@ function grantXp(level, xp, amount) {
   if (lv >= 10) { lv = 10; cur = 0; }
   return { level: lv, xp: cur, evolutions };
 }
-function roll(amount) { return Math.max(1, Math.round(amount * (0.9 + Math.random() * 0.22))); }
+function roll(amount) {
+  const swing = 0.9 + Math.random() * 0.22;
+  return { dealt: Math.max(1, Math.round(amount * swing)), crit: swing >= 1.08 };
+}
 function hit(target, amount) {
   let dealt = amount;
   if (target.shield) {
@@ -276,12 +285,17 @@ function heal(target, amount) {
 function actOn(actor, target, allies, kind) {
   if (kind === "skill" && actor.cd > 0) kind = "attack";
   const events = [];
+  const strikeAt = (victim, amount) => {
+    const swung = roll(amount);
+    const dealt = hit(victim, swung.dealt);
+    events.push({ type: "hit", uid: victim.uid, amount: dealt, crit: swung.crit });
+  };
   if (kind === "skill") {
     actor.cd = 2;
     const power = strike(actor.rune, actor.level);
-    if (actor.rune === "fury") events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.round(power * 2.15))) });
+    if (actor.rune === "fury") strikeAt(target, Math.round(power * 2.15));
     else if (actor.rune === "ward") {
-      events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.max(4, Math.round(power * 0.8)))) });
+      strikeAt(target, Math.max(4, Math.round(power * 0.8)));
       actor.shield = true;
       events.push({ type: "shield", uid: actor.uid });
     } else {
@@ -291,32 +305,55 @@ function actOn(actor, target, allies, kind) {
         const extra = heal(other, Math.round(actor.max * 0.16));
         if (extra) events.push({ type: "heal", uid: other.uid, amount: extra });
       }
-      events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.max(3, Math.round(power * 0.45)))) });
+      strikeAt(target, Math.max(3, Math.round(power * 0.45)));
     }
     return { kind, events };
   }
-  events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(strike(actor.rune, actor.level))) });
+  strikeAt(target, strike(actor.rune, actor.level));
   if (actor.cd > 0) actor.cd -= 1;
   return { kind: "attack", events };
 }
 function wait(ms) { return new Promise((resolve) => setTimeout(resolve, reduced ? 16 : ms)); }
 function cue(kind) {
+  if (state.sound === false) return;
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if (!Ctx) return;
     audioCtx = audioCtx || new Ctx();
     if (audioCtx.state === "suspended") audioCtx.resume();
     const now = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = kind === "heal" ? "sine" : "triangle";
-    osc.frequency.setValueAtTime(kind === "heal" ? 520 : kind === "skill" ? 90 : 140, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.06, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
-    osc.start(now); osc.stop(now + 0.2);
-  } catch { /* optional */ }
+    const tone = (freq, dur, type, peak, delay) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now + delay);
+      gain.gain.setValueAtTime(0.0001, now + delay);
+      gain.gain.exponentialRampToValueAtTime(peak, now + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + dur);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now + delay); osc.stop(now + delay + dur + 0.02);
+    };
+    const noise = (dur, peak, hp) => {
+      const count = Math.floor(audioCtx.sampleRate * dur);
+      const buffer = audioCtx.createBuffer(1, count, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < count; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / count);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = "highpass";
+      filter.frequency.value = hp;
+      const gain = audioCtx.createGain();
+      gain.gain.value = peak;
+      src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+      src.start(now);
+    };
+    if (kind === "crit") { noise(0.12, 0.08, 900); tone(240, 0.16, "sawtooth", 0.05, 0); tone(480, 0.2, "triangle", 0.04, 0.04); }
+    else if (kind === "win") { [392, 494, 587].forEach((freq, i) => tone(freq, 0.22, "triangle", 0.05, i * 0.12)); }
+    else if (kind === "evolve") { [330, 392, 494, 659, 784].forEach((freq, i) => tone(freq, 0.28, "sine", 0.05, i * 0.11)); }
+    else if (kind === "heal") tone(560, 0.18, "sine", 0.04, 0);
+    else { noise(0.07, 0.05, 500); tone(110, 0.12, "triangle", 0.05, 0); }
+  } catch { /* sound is optional */ }
 }
 function buzz(pattern) { try { navigator.vibrate?.(pattern); } catch { /* iOS often ignores */ } }
 function hint(id) { return state.hints[id] ? "" : `<p class="hint" data-hint="${id}">${HINTS[id]}</p>`; }
@@ -329,7 +366,12 @@ function dismiss(id) {
 function img(src, alt) {
   return '<img src="' + src + '" alt="' + esc(alt || "") + '">';
 }
-function show(html) { app.innerHTML = html; }
+function show(html, fade) {
+  if (fade === false || reduced) { app.innerHTML = html; return; }
+  app.classList.add("is-swapping");
+  app.innerHTML = html;
+  requestAnimationFrame(() => app.classList.remove("is-swapping"));
+}
 function squadIds() {
   const ids = (state.squad || []).filter((id) => state.owned[id] && !spec(id).locked);
   if (state.partnerId && !ids.includes(state.partnerId)) ids.unshift(state.partnerId);
@@ -450,6 +492,7 @@ function openDen() {
           <div class="links">
             <button type="button" data-go="flock">Flock</button>
             <button type="button" data-go="map">Path</button>
+            <button type="button" data-go="settings">Settings</button>
           </div>
         </div>
       </div>
@@ -465,6 +508,7 @@ function openDen() {
   app.querySelector(".go").onclick = () => { dismiss("den"); startBattle(); };
   app.querySelector('[data-go="flock"]').onclick = () => openFlock();
   app.querySelector('[data-go="map"]').onclick = () => openMap();
+  app.querySelector('[data-go="settings"]').onclick = () => openSettings();
 }
 function openMap() {
   const nodes = Array.from({ length: 10 }, (_, i) => {
@@ -566,8 +610,7 @@ function renderBattle() {
         <button type="button" data-act="skill" ${cooling ? "disabled" : ""}>${esc(skill)}<small>${cooling ? "Cooling" : RUNES[you?.rune || "fury"].name}</small></button>
         <button type="button" data-act="switch" ${bench.length ? "" : "disabled"}>Switch</button>
       </div>
-    </section>`);
-  app.querySelectorAll("[data-act]").forEach((btn) => { btn.onclick = () => onAct(btn.dataset.act); });
+    </section>`, false);
 }
 function setStatus(text) {
   battle.note = text;
@@ -583,6 +626,18 @@ function sync() {
     if (card) card.classList.toggle("shield", !!f.shield);
   }
 }
+function burst(uid, kind) {
+  const card = document.querySelector(`[data-card="${uid}"]`) || document.getElementById("evo-art");
+  if (!card) return;
+  for (let i = 0; i < (kind === "evo" ? 16 : 10); i += 1) {
+    const bit = document.createElement("i");
+    bit.className = "spark " + (kind || "");
+    bit.style.setProperty("--dx", Math.round(Math.random() * 120 - 60) + "px");
+    bit.style.setProperty("--dy", Math.round(Math.random() * -90 - 8) + "px");
+    card.appendChild(bit);
+    setTimeout(() => bit.remove(), 700);
+  }
+}
 function pop(uid, text, kind) {
   const card = document.querySelector(`[data-card="${uid}"]`);
   if (!card) return;
@@ -595,10 +650,17 @@ function pop(uid, text, kind) {
 async function play(sideUid, result) {
   const card = document.querySelector(`[data-card="${sideUid}"]`);
   card?.classList.add("lunge");
-  cue(result.kind === "skill" ? "skill" : "hit");
-  buzz(result.kind === "skill" ? [16, 24, 16] : 18);
+  const crit = result.events.some((event) => event.crit);
+  cue(crit ? "crit" : result.kind === "skill" ? "skill" : "hit");
+  buzz(crit ? [18, 20, 28] : result.kind === "skill" ? [16, 24, 16] : 18);
   for (const event of result.events) {
-    if (event.type === "hit") pop(event.uid, "−" + event.amount, "hit");
+    if (event.type === "hit") {
+      pop(event.uid, "−" + event.amount, event.crit ? "crit" : "hit");
+      const victim = document.querySelector(`[data-card="${event.uid}"]`);
+      victim?.classList.add("struck");
+      setTimeout(() => victim?.classList.remove("struck"), 220);
+      if (event.crit) burst(event.uid, "crit");
+    }
     if (event.type === "heal" && event.amount) pop(event.uid, "+" + event.amount, "heal");
   }
   document.body.classList.add("shake");
@@ -666,6 +728,7 @@ function finish(won) {
     setTimeout(() => openDen(), reduced ? 200 : 900);
     return;
   }
+  cue("win");
   const index = battle.index;
   const first = state.wins === 0;
   if (state.wins < 10) state.wins += 1;
@@ -722,13 +785,32 @@ function openEvolve(evo, fromStage) {
         </div>
       </div>
     </section>`);
-  cue("skill");
+  cue("evolve");
   buzz([20, 40, 20, 40, 30]);
+  burst(null, "evo");
   setTimeout(() => {
     const node = document.getElementById("evo-art");
     if (node) node.style.backgroundImage = `url('${to.src}')`;
   }, reduced ? 20 : 420);
   app.querySelector(".go").onclick = () => { dismiss("evolve"); openDen(); };
+}
+function openSettings() {
+  const on = state.sound !== false;
+  show(`
+    <section class="grid-screen">
+      <p class="kicker">Settings</p>
+      <h1>Camp</h1>
+      <p class="sub">Звук можно выключить. Вибрация на iPhone часто молчит сама.</p>
+      <button class="go" type="button" data-sound>${on ? "Sound on" : "Sound off"}</button>
+      <button class="mini" type="button" data-back style="margin-top:10px">Den</button>
+    </section>`);
+  app.querySelector("[data-sound]").onclick = () => {
+    state.sound = state.sound === false;
+    save();
+    if (state.sound !== false) cue("hit");
+    openSettings();
+  };
+  app.querySelector("[data-back]").onclick = () => openDen();
 }
 boot();
 </script>
