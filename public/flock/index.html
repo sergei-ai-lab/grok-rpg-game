@@ -326,6 +326,9 @@ function dismiss(id) {
   save();
   document.querySelector(`[data-hint="${id}"]`)?.remove();
 }
+function img(src, alt) {
+  return '<img src="' + src + '" alt="' + esc(alt || "") + '">';
+}
 function show(html) { app.innerHTML = html; }
 function squadIds() {
   const ids = (state.squad || []).filter((id) => state.owned[id] && !spec(id).locked);
@@ -489,10 +492,10 @@ function openFlock() {
     const selected = squadIds().includes(item.id);
     if (!owned) {
       const ghost = artOf(item.id, 1);
-      return `<button class="tile silhouette" type="button" disabled><img src="${ghost.src}" alt=""><b>${esc(item.name)}</b></button>`;
+      return `<button class="tile silhouette" type="button" disabled>${img(ghost.src, "")}<b>${esc(item.name)}</b></button>`;
     }
     const art = artOf(item.id, owned.level);
-    return `<button class="tile ${selected ? "on" : ""} ${art.provisional ? "provisional" : ""}" type="button" data-id="${item.id}"><img src="${art.src}" alt=""><b>${esc(titleOf(item.id))} · ${owned.level}${owned.copies > 1 ? " ×" + owned.copies : ""}</b></button>`;
+    return `<button class="tile ${selected ? "on" : ""} ${art.provisional ? "provisional" : ""}" type="button" data-id="${item.id}">${img(art.src, "")}<b>${esc(titleOf(item.id))} · ${owned.level}${owned.copies > 1 ? " ×" + owned.copies : ""}</b></button>`;
   }).join("");
   show(`
     ${hint("flock")}
@@ -541,9 +544,9 @@ function renderBattle() {
     const art = artOf(f.id, f.level);
     const name = f.boss ? "Blacksun" : titleOf(f.id);
     return `<div class="card ${f.shield ? "shield" : ""} ${art.provisional ? "provisional" : ""}" data-card="${f.uid}">
-      <img src="${art.src}" alt="${esc(name)}">
+      ${img(art.src, name)}
       <span class="tag">${esc(name)}</span>
-      ${side === "you" ? `<div class="bench">${bench.map((b) => `<span><img src="${artOf(b.id, b.level).src}" alt="${esc(titleOf(b.id))}"></span>`).join("")}</div>` : ""}
+      ${side === "you" ? `<div class="bench">${bench.map((b) => `<span>${img(artOf(b.id, b.level).src, titleOf(b.id))}</span>`).join("")}</div>` : ""}
       <div class="life" style="width:${trackWidth(f.max)}%"><i data-hp="${f.uid}" style="transform:scaleX(${f.hp / f.max})"></i></div>
     </div>`;
   };
