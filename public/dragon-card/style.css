@@ -128,3 +128,7 @@ ol { padding-left: 20px; line-height: 1.5; }
 .daily-panel { padding: 12px; margin: 12px 0; border: 1px solid var(--line); border-radius: 10px; }
 .daily-panel h2 { margin-bottom: 6px; font-size: 19px; }
 .daily-panel > button { margin: 8px 0; width: 100%; font-size: 13px; }
+
+.home-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 12px 0; }
+.home-tabs button { font-size: 13px; padding: 8px 3px; }
+.map-nodes button { min-height: 56px; }
