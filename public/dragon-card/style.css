@@ -25,7 +25,7 @@ p { line-height: 1.45; }
 .roster { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); padding-bottom: 9px; min-width: 0; }
 .roster > button { padding: 0; width: 100%; border: 0; border-radius: 0; background: transparent; text-align: left; }
 .roster > button:disabled { opacity: .65; }
-.roster img { width: 100%; height: 112px; object-fit: cover; object-position: 50% 36%; display: block; }
+.roster img { width: 100%; height: 180px; object-fit: contain; background: #050505; display: block; }
 .roster button span { display: block; padding: 8px 9px 5px; }
 .roster label { display: block; font-size: 12px; color: var(--muted); padding: 0 8px; }
 .roster select { width: 100%; font-size: 14px; margin: 3px 0 6px; padding: 5px; }
@@ -46,9 +46,9 @@ p { line-height: 1.45; }
 .dragon:disabled { opacity: 1; }
 .fighter .dragon { height: 100%; }
 .fighter { display: flex; flex-direction: column; min-width: 0; }
-.dragon > img { width: 32px; height: 32px; object-fit: cover; object-position: 50% 36%; border-radius: 5px; position: absolute; right: 7px; top: 7px; }
+.dragon > img { width: 60px; height: 60px; object-fit: contain; background: #050505; border-radius: 5px; position: absolute; right: 7px; top: 7px; }
 .card-info { padding: 7px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.card-info b { font-size: 14px; line-height: 1.15; min-height: 32px; padding-right: 36px; overflow-wrap: anywhere; }
+.card-info b { font-size: 14px; line-height: 1.15; min-height: 32px; padding-right: 64px; overflow-wrap: anywhere; }
 .card-info .hp { font-size: 21px; font-weight: 650; white-space: nowrap; }
 .card-info small { font-size: 11px; }
 .hp small { display: inline; font-weight: 400; }
@@ -90,6 +90,9 @@ ol { padding-left: 20px; line-height: 1.5; }
 .scrim section p { font-size: 15px; }
 .scrim select { width: 100%; margin: 8px 0; padding: 8px; }
 .scrim button { width: 100%; margin-top: 10px; }
+.stage-tabs { display: flex; gap: 6px; margin-bottom: 8px; }
+.stage-tabs button { flex: 1; margin: 0; font-size: 14px; padding: 8px 3px; }
+.art-preview { display: block; width: 100%; height: min(44svh, 420px); object-fit: contain; background: #050505; border-radius: 8px; }
 .result { position: fixed; z-index: 5; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 780px); padding: 16px 20px max(20px, env(safe-area-inset-bottom)); background: #182534; border-top: 2px solid var(--gold); box-shadow: 0 -20px 50px #0008; }
 .result h1 { color: var(--gold); margin-top: 0; }
 .result button { margin: 0 4px 8px 0; }

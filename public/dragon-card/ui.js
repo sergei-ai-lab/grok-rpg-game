@@ -1,12 +1,17 @@
 import { DRAGONS, RUNES, ATTACKS, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js';
 const app = document.querySelector('#app');
+const artBase = new URL('./assets/dragons/', import.meta.url);
+const artFamilies = ['magma', 'gold', 'bloom', 'flame'];
+let artFamily = 'magma', artStage = 1;
+const artName = id => id[0].toUpperCase() + id.slice(1);
 let mode = 'charge', team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }));
 let match = null, selection = { zone: 'field', index: 0 }, dialog = '', busy = false, generation = 0, started = 0, seed = Date.now(), feedback = '';
 try { const saved = localStorage.getItem('dragon-prototype-mode'); if (['charge', 'energy'].includes(saved)) mode = saved; } catch { /* Preference storage is optional. */ }
 const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const button = (label, command, disabled = false, extra = '') => `<button data-command="${command}" ${disabled ? 'disabled' : ''} ${extra}>${label}</button>`;
 const pips = n => `<span class="pips" aria-label="${n} of 4">${[0, 1, 2, 3].map(i => `<i class="${i < n ? 'filled' : ''}"></i>`).join('')}</span>`;
-const image = (d, compact = false) => `<img src="./art/${d.art}-temp.webp" alt="${esc(d.name)} placeholder portrait" ${compact ? 'loading="lazy"' : ''}>`;
+const artUrl = (family, stage = 1) => new URL(`${family}/stage${stage}.webp`, artBase).href;
+const image = (d, compact = false) => `<img src="${artUrl(d.art)}" alt="${esc(d.name)} · ${artName(d.art)} · Stage 1" ${compact ? 'loading="lazy"' : ''}>`;
 function header() {
   return `<header><strong>DRAGON <span>CARD GAME</span></strong><nav>${button('Rules', 'rules')}${button('Settings', 'settings')}${match ? button('Exit', 'back') : ''}</nav></header>`;
 }
@@ -21,10 +26,12 @@ function overlay() {
     <p lang="ru">Руны выбираются до боя: Fury повышает урон; Ward добавляет HP и защиту; Life лечит после каждой атаки. Карту из руки можно вывести на свободную скамью через Deploy.</p>`;
   const settings = `<label for="mode">Resource mode</label><select id="mode"><option value="charge" ${mode === 'charge' ? 'selected' : ''}>Charge · shared team bar</option><option value="energy" ${mode === 'energy' ? 'selected' : ''}>Energy · attached to a dragon</option></select><p lang="ru">Charge автоматически растёт на 1 в начале хода. В Energy ты сам выбираешь, кому дать +1. Максимум 4, сильные атаки тратят ресурс.</p>${match ? '<p>Changes apply to the next battle.</p>' : ''}`;
   const quit = `<p>End this battle and return to your squad?</p>${button('End battle', 'quit', false, 'class="primary"')}`;
-  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${dialog === 'rules' ? 'Rules' : dialog === 'settings' ? 'Settings' : 'End battle'}"><h2>${dialog === 'rules' ? 'Rules' : dialog === 'settings' ? 'Settings' : 'End battle?'}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : quit}${button('Close', 'close')}</section></div>`;
+  const collection = `<label for="art-family">Dragon family · temporary names</label><select id="art-family">${artFamilies.map(id => `<option value="${id}" ${artFamily === id ? 'selected' : ''}>${artName(id)}</option>`).join('')}</select><div class="stage-tabs">${[1, 2, 3].map(stage => button(`Stage ${stage}`, `art-stage:${stage}`, false, `aria-pressed="${stage === artStage}" class="${stage === artStage ? 'selected' : ''}"`)).join('')}</div><img class="art-preview" src="${artUrl(artFamily, artStage)}" alt="${artName(artFamily)} · Stage ${artStage}"><p lang="ru">Три стадии одного дракона. Здесь можно рассмотреть арты целиком; в бою используется первая стадия.</p>`;
+  const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?' }[dialog];
+  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : quit}${button('Close', 'close')}</section></div>`;
 }
 function squad() {
-  return `${header()}<section class="squad"><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p><p class="tip" lang="ru">Можно сразу начать с готовой командой. Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
+  return `${header()}<section class="squad"><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Четыре семейства артов временно распределены между десятью тестовыми картами. Стартовый состав сохранён до уточнения имён.</p><p class="tip" lang="ru">Можно сразу начать с готовой командой. Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
     const chosen = team.find(x => x.id === d.id), index = team.findIndex(x => x.id === d.id), rune = RUNES[chosen?.rune || 'fury'];
     return `<article class="roster ${chosen ? 'chosen' : ''}">${button(`${image(d, true)}<span><b>${d.name}</b><small>${chosen ? ['FIGHTER', 'RESERVE', 'RESERVE', 'REINFORCEMENT', 'REINFORCEMENT'][index] : 'ADD TO SQUAD'}</small></span>`, `pick:${d.id}`, !chosen && team.length === 5, `aria-pressed="${!!chosen}"`)}<label>Rune<select data-rune="${d.id}" ${!chosen ? 'disabled' : ''}>${Object.entries(RUNES).map(([id]) => `<option value="${id}" ${chosen?.rune === id ? 'selected' : ''}>${runeEffect(id)}</option>`).join('')}</select></label><small>${d.hp + rune.hp} HP · ${d.damage + rune.damage} attack · ${d.guard + rune.guard} block${rune.heal ? ` · heals ${rune.heal}` : ''}</small></article>`;
   }).join('')}</div></section><footer class="setup-dock"><span>${team.length}/5 dragons · ${mode === 'charge' ? 'Charge' : 'Energy'}</span>${button('Start battle · ~3–5 min', 'start', team.length !== 5, 'class="primary"')}</footer>${overlay()}`;
@@ -97,7 +104,8 @@ function aiTurn() {
 app.addEventListener('click', event => {
   const control = event.target.closest('[data-command]'); if (!control || control.disabled) return;
   const [command, value, index] = control.dataset.command.split(':');
-  if (['rules', 'settings', 'back'].includes(command)) { dialog = command === 'back' ? 'back' : command; render(); app.querySelector('[role="dialog"] button')?.focus(); return; }
+  if (['rules', 'settings', 'back', 'collection'].includes(command)) { dialog = command; render(); app.querySelector('[role="dialog"] button')?.focus(); return; }
+  if (command === 'art-stage' && dialog === 'collection' && ['1', '2', '3'].includes(value)) { artStage = Number(value); render(); app.querySelector(`[data-command="art-stage:${value}"]`)?.focus(); return; }
   if (command === 'close') { dialog = ''; render(); return; }
   if (command === 'pick') { const found = team.findIndex(d => d.id === value); if (found >= 0) team.splice(found, 1); else if (team.length < 5) team.push({ id: value, rune: 'fury' }); render(); return; }
   if (command === 'quit') { generation++; busy = false; match = null; dialog = ''; render(); window.scrollTo(0, 0); return; }
@@ -116,6 +124,7 @@ function confirmFusion() {
 }
 function saveMode() { try { localStorage.setItem('dragon-prototype-mode', mode); } catch { /* Optional preference. */ } }
 app.addEventListener('change', event => {
+  if (event.target.id === 'art-family' && artFamilies.includes(event.target.value)) { artFamily = event.target.value; render(); app.querySelector('#art-family')?.focus(); }
   if (event.target.id === 'mode') { mode = event.target.value; saveMode(); }
   if (event.target.dataset.rune) { const card = team.find(d => d.id === event.target.dataset.rune); if (card) card.rune = event.target.value; render(); }
 });
