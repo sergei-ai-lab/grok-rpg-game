@@ -3,15 +3,17 @@ const app = document.querySelector('#app');
 const artBase = new URL('./assets/dragons/', import.meta.url);
 const artFamilies = ['magma', 'gold', 'bloom', 'flame'];
 let artFamily = 'magma', artStage = 1;
+let tutorialSeen = false, aiMoves = [];
 const artName = id => id[0].toUpperCase() + id.slice(1);
 let mode = 'charge', team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }));
 let match = null, selection = { zone: 'field', index: 0 }, dialog = '', busy = false, generation = 0, started = 0, seed = Date.now(), feedback = '';
 try { const saved = localStorage.getItem('dragon-prototype-mode'); if (['charge', 'energy'].includes(saved)) mode = saved; } catch { /* Preference storage is optional. */ }
+try { tutorialSeen = localStorage.getItem('dragon-tutorial-seen') === '1'; } catch { /* Optional storage. */ }
 const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const button = (label, command, disabled = false, extra = '') => `<button data-command="${command}" ${disabled ? 'disabled' : ''} ${extra}>${label}</button>`;
 const pips = n => `<span class="pips" aria-label="${n} of 4">${[0, 1, 2, 3].map(i => `<i class="${i < n ? 'filled' : ''}"></i>`).join('')}</span>`;
 const artUrl = (family, stage = 1) => new URL(`${family}/stage${stage}.webp`, artBase).href;
-const image = (d, compact = false) => `<img src="${artUrl(d.art)}" alt="${esc(d.name)} · ${artName(d.art)} · Stage 1" ${compact ? 'loading="lazy"' : ''}>`;
+const image = (d, compact = false) => `<img src="${new URL(`${d.art}/thumb1.webp`, artBase).href}" alt="${esc(d.name)} · ${artName(d.art)} · Stage 1" loading="lazy" decoding="async" width="320" height="397">`;
 function header() {
   return `<header><strong>DRAGON <span>CARD GAME</span></strong><nav>${button('Rules', 'rules')}${button('Settings', 'settings')}${match ? button('Exit', 'back') : ''}</nav></header>`;
 }
@@ -26,9 +28,10 @@ function overlay() {
     <p lang="ru">Руны выбираются до боя: Fury повышает урон; Ward добавляет HP и защиту; Life лечит после каждой атаки. Карту из руки можно вывести на свободную скамью через Deploy.</p>`;
   const settings = `<label for="mode">Resource mode</label><select id="mode"><option value="charge" ${mode === 'charge' ? 'selected' : ''}>Charge · shared team bar</option><option value="energy" ${mode === 'energy' ? 'selected' : ''}>Energy · attached to a dragon</option></select><p lang="ru">Charge автоматически растёт на 1 в начале хода. В Energy ты сам выбираешь, кому дать +1. Максимум 4, сильные атаки тратят ресурс.</p>${match ? '<p>Changes apply to the next battle.</p>' : ''}`;
   const quit = `<p>End this battle and return to your squad?</p>${button('End battle', 'quit', false, 'class="primary"')}`;
+  const tutorial = `<p lang="ru"><b>1. Один боец впереди.</b> Он атакует, запасные ждут. Claw бесплатна и копит ресурс.</p><p lang="ru"><b>2. Подготовка, затем атака.</b> Нажми запасного: Switch выводит его вперёд за 1 ресурс. Fuse поглощает его и усиливает бойца за 2. Атака завершает ход.</p><p lang="ru"><b>3. Следи за ИИ.</b> Его смена и слияние будут объяснены над бойцами. Победа — 3 выбитых врага. На серых кнопках написано, чего не хватает.</p>${button('Let’s battle', 'begin-tutorial', false, 'class="primary"')}`;
   const collection = `<label for="art-family">Dragon family · temporary names</label><select id="art-family">${artFamilies.map(id => `<option value="${id}" ${artFamily === id ? 'selected' : ''}>${artName(id)}</option>`).join('')}</select><div class="stage-tabs">${[1, 2, 3].map(stage => button(`Stage ${stage}`, `art-stage:${stage}`, false, `aria-pressed="${stage === artStage}" class="${stage === artStage ? 'selected' : ''}"`)).join('')}</div><img class="art-preview" src="${artUrl(artFamily, artStage)}" alt="${artName(artFamily)} · Stage ${artStage}"><p lang="ru">Три стадии одного дракона. Здесь можно рассмотреть арты целиком; в бою используется первая стадия.</p>`;
-  const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?' }[dialog];
-  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : quit}${button('Close', 'close')}</section></div>`;
+  const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?', tutorial: 'Your first battle' }[dialog];
+  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : dialog === 'tutorial' ? tutorial : quit}${button('Close', 'close')}</section></div>`;
 }
 function squad() {
   return `${header()}<section class="squad"><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Четыре семейства артов временно распределены между десятью тестовыми картами. Стартовый состав сохранён до уточнения имён.</p><p class="tip" lang="ru">Можно сразу начать с готовой командой. Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
@@ -39,7 +42,7 @@ function squad() {
 function card(d, side, zone, index, small = false) {
   const selected = side === 0 && selection.zone === zone && selection.index === index;
   const label = `${d.name}, ${d.hp} of ${d.maxHp} HP, ${RUNES[d.rune].role}${match.mode === 'energy' ? `, ${d.energy} Energy` : ''}`;
-  const content = `${image(d, small)}<span class="card-info"><b>${esc(d.name)}</b><span class="hp">${d.hp}<small> / ${d.maxHp} HP</small></span><progress value="${d.hp}" max="${d.maxHp}" aria-label="Health"></progress><small>${d.fused ? 'Fused · ' : ''}${small ? RUNES[d.rune].name : runeEffect(d.rune)}</small>${match.mode === 'energy' ? `<span class="energy-label">Energy ${d.energy}/4 ${pips(d.energy)}</span>` : ''}</span>`;
+  const content = `${small ? '' : image(d)}<span class="card-info"><b>${esc(d.name)}</b><span class="hp">${d.hp}<small> / ${d.maxHp} HP</small></span><progress value="${d.hp}" max="${d.maxHp}" aria-label="Health"></progress><small>${d.fused ? 'Fused · ' : ''}${small ? RUNES[d.rune].name : runeEffect(d.rune)}</small>${match.mode === 'energy' ? `<span class="energy-label">Energy ${d.energy}/4 ${pips(d.energy)}</span>` : ''}</span>`;
   return side === 1 ? `<article class="dragon ${small ? 'mini' : ''}" aria-label="${esc(label)}">${content}</article>` : button(content, `select:${zone}:${index}`, busy || match.actor !== 0 || match.winner !== null, `class="dragon ${small ? 'mini' : ''} ${selected ? 'selected' : ''}" aria-pressed="${selected}" aria-label="${esc(label)}"`);
 }
 function can(type, index, attack) { return !busy && match.actor === 0 && legalActions(match).some(a => a.type === type && a.index === index && a.attack === attack); }
@@ -59,7 +62,7 @@ function dock() {
 function battle() {
   const [you, foe] = match.players, over = match.winner !== null;
   return `${header()}<div class="match-bar"><b>Knockouts · You ${you.kos}/3 · AI ${foe.kos}/3</b><span>${match.mode === 'charge' ? 'Charge' : 'Energy'} · Turn ${match.turn}</span></div>
-    <p class="turn-status" role="status">${over ? match.winner === 0 ? 'Victory!' : 'Defeat' : busy || match.actor === 1 ? 'AI is choosing…' : 'Your turn'}</p><p class="battle-guide" lang="ru" aria-live="polite">${esc(feedback || 'Победа — выбить 3 врагов. Атакует только боец; запасные ждут смены или слияния.')}</p>
+    <p class="turn-status" role="status">${over ? match.winner === 0 ? 'Victory!' : 'Defeat' : busy || match.actor === 1 ? 'AI is choosing…' : 'Your turn'}</p><p class="battle-guide" lang="ru" aria-live="polite">${esc([...aiMoves, feedback || 'Победа — выбить 3 врагов. Атакует только боец; запасные ждут смены или слияния.'].join(' '))}</p>
     <section class="arena"><div class="fighters"><div class="fighter"><div class="front-label">YOUR FIGHTER · ATTACKS</div>${you.field[0] ? card(you.field[0], 0, 'field', 0) : ''}</div><div class="fighter"><div class="front-label">ENEMY FIGHTER · TARGET</div>${foe.field[0] ? card(foe.field[0], 1, 'field', 0) : ''}</div></div>
     <div class="front-label">YOUR RESERVES · TAP TO CHOOSE</div><div class="bench your-bench">${you.field.slice(1).map((d, i) => card(d, 0, 'field', i + 1, true)).join('') || '<p>No reserves left.</p>'}</div></section>${over ? result() : dock()}
     <section class="extras"><div class="hand"><span>REINFORCEMENTS · ${you.hand.length}</span>${you.hand.map((d, i) => button(`${esc(d.name)}<small>${RUNES[d.rune].name} · ${d.hp} HP</small>`, `select:hand:${i}`, busy || match.actor !== 0 || over, `class="${selection.zone === 'hand' && selection.index === i ? 'selected' : ''}"`)).join('')}</div><p class="tip" lang="ru">Нажми подкрепление, затем Deploy: оно займёт свободное место в запасе. Максимум 3 запасных.</p><details><summary>Enemy reserves · ${Math.max(0, foe.field.length - 1)} / Battle log</summary><div class="enemy-bench bench">${foe.field.slice(1).map((d, i) => card(d, 1, 'field', i + 1, true)).join('')}</div><ol>${match.log.map(line => `<li>${esc(line)}</li>`).join('')}</ol></details></section>${overlay()}`;
@@ -77,9 +80,12 @@ function play(action) {
   const player = match.players[side], chosenName = (action.type === 'deploy' ? player.hand : player.field)[action.index]?.name;
   const damage = action.type === 'attack' ? attackDamage(match.players[side].field[0], target, action.attack) : 0;
   if (!act(match, action)) return false;
+  if (side === 0) aiMoves = [];
+  if (side === 1 && action.type === 'switch') aiMoves.push(`ИИ Switch: спасает раненого, выводит ${player.field[0].name} за 1 ресурс.`);
+  if (side === 1 && action.type === 'fuse') aiMoves.push(`ИИ Fuse: поглощает ${chosenName}, получает +35 HP и +12 урона.`);
   if (action.type === 'attack') {
     feedback = `${side === 0 ? 'Ты' : 'ИИ'}: ${ATTACKS[action.attack].name} → ${damage} урона ${oldName}.`;
-    if (target.hp === 0) feedback = `${oldName} выбит.${match.players[1 - side].field[0] ? ` ${side === 1 ? 'Твой' : 'Вражеский'} новый боец: ${match.players[1 - side].field[0].name}.` : ''}`;
+    if (target.hp === 0) feedback = `${oldName} выбит.${match.winner !== null ? ' Бой завершён.' : match.players[1 - side].field[0] ? ` ${side === 1 ? 'Твой' : 'Вражеский'} новый боец: ${match.players[1 - side].field[0].name}.` : ''}`;
   } else feedback = `${side === 0 ? 'Ты' : 'ИИ'}: ${({
     attach: `${chosenName} получает +1 Energy.`,
     deploy: `${chosenName} добавлен в запас.`,
@@ -89,10 +95,10 @@ function play(action) {
   return true;
 }
 function start(sameSeed = false) {
-  generation++; if (!sameSeed) seed = Date.now(); match = createMatch(mode, seed, team); started = Date.now(); selection = { zone: 'field', index: 0 }; busy = false; feedback = ''; render(); window.scrollTo(0, 0);
+  generation++; if (!sameSeed) seed = Date.now(); match = createMatch(mode, seed, team); started = Date.now(); selection = { zone: 'field', index: 0 }; busy = false; feedback = ''; aiMoves = []; render(); window.scrollTo(0, 0);
 }
 function aiTurn() {
-  busy = true; render(); const token = generation;
+  busy = true; aiMoves = []; render(); const token = generation;
   const step = () => {
     if (token !== generation || !match || match.winner !== null) return;
     if (match.actor !== 1) { busy = false; selection = { zone: 'field', index: 0 }; render(); return; }
@@ -109,6 +115,8 @@ app.addEventListener('click', event => {
   if (command === 'close') { dialog = ''; render(); return; }
   if (command === 'pick') { const found = team.findIndex(d => d.id === value); if (found >= 0) team.splice(found, 1); else if (team.length < 5) team.push({ id: value, rune: 'fury' }); render(); return; }
   if (command === 'quit') { generation++; busy = false; match = null; dialog = ''; render(); window.scrollTo(0, 0); return; }
+  if (command === 'begin-tutorial') { tutorialSeen = true; try { localStorage.setItem('dragon-tutorial-seen', '1'); } catch { /* Optional storage. */ } dialog = ''; start(); return; }
+  if (command === 'start' && !tutorialSeen) { dialog = 'tutorial'; render(); return; }
   if (command === 'start' || command === 'replay') { start(); return; }
   if (command === 'compare') { mode = match.mode === 'charge' ? 'energy' : 'charge'; saveMode(); start(true); return; }
   if (!match || busy || match.actor !== 0 || match.winner !== null || dialog) return;
