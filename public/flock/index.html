@@ -323,6 +323,17 @@ function actOn(actor, target, allies, foes, kind) {
     const amp = 1 + (stageFor(actor.level) - 1) * 0.12;
     const power = strike(actor.rune, actor.level) * amp;
     const style = spec(actor.id).style;
+    const note = {
+      burst: "Тяжёлый удар.",
+      bulwark: "Щит поднят.",
+      mend: "Лечит.",
+      burn: "Горит.",
+      shell: "Шкура твердеет.",
+      flurry: "Два удара.",
+      frost: "Замер.",
+      arc: "Дуга.",
+      leech: "Пьёт силу."
+    }[style];
     if (style === "burst") strikeAt(target, Math.round(power * 2.05));
     else if (style === "bulwark") {
       strikeAt(target, Math.max(4, Math.round(power * 0.75)));
@@ -340,7 +351,6 @@ function actOn(actor, target, allies, foes, kind) {
       strikeAt(target, Math.round(power * 0.7));
       target.burn = Math.max(2, Math.round(power * 0.26));
       target.burnLeft = 2;
-      events.push({ type: "note", text: "Горит." });
     } else if (style === "shell") {
       strikeAt(target, Math.round(power * 0.85));
       actor.shell = true;
@@ -351,7 +361,6 @@ function actOn(actor, target, allies, foes, kind) {
     } else if (style === "frost") {
       strikeAt(target, Math.round(power * 0.75));
       target.frozen = 1;
-      events.push({ type: "note", text: "Замер." });
     } else if (style === "arc") {
       strikeAt(target, Math.round(power * 0.95));
       const next = (foes || []).find((f) => f !== target && f.hp > 0);
@@ -363,6 +372,7 @@ function actOn(actor, target, allies, foes, kind) {
       if (sipped) events.push({ type: "heal", uid: actor.uid, amount: sipped });
       void dealt;
     }
+    if (note) events.push({ type: "note", text: note });
     return { kind, events };
   }
   strikeAt(target, strike(actor.rune, actor.level));
@@ -642,7 +652,7 @@ function renderBattle() {
     const art = artOf(f.id, f.level);
     const name = f.boss ? "Blacksun" : titleOf(f.id);
     const mark = (f.burnLeft ? " · burn" : "") + (f.frozen ? " · frozen" : "");
-    return `<div class="card ${f.shield ? "shield" : ""} ${f.shell && !f.shield ? "shell" : ""} ${art.provisional ? "provisional" : ""}" data-card="${f.uid}">
+    return `<div class="card ${f.shield ? "shield" : ""} ${f.shell && !f.shield ? "shell" : ""} ${f.burnLeft > 0 ? "burning" : ""} ${f.frozen > 0 ? "frozen" : ""} ${art.provisional ? "provisional" : ""}" data-card="${f.uid}">
       ${img(art.src, name, art.tint ? "tint-" + art.tint : "")}
       <span class="tag">${esc(name + mark)}</span>
       ${side === "you" ? `<div class="bench">${bench.map((b) => `<span>${img(artOf(b.id, b.level).src, titleOf(b.id))}</span>`).join("")}</div>` : ""}
@@ -681,6 +691,8 @@ function sync() {
     if (card) {
       card.classList.toggle("shield", !!f.shield);
       card.classList.toggle("shell", !!f.shell && !f.shield);
+      card.classList.toggle("burning", f.burnLeft > 0);
+      card.classList.toggle("frozen", f.frozen > 0);
     }
   }
 }
