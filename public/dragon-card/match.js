@@ -16,20 +16,30 @@ export const RUNES = {
   life: { name: 'Life', role: 'Sustain', hp: 10, damage: -4, guard: 0, heal: 8 },
 };
 export const ATTACKS = { strike: { name: 'Claw', cost: 0, bonus: 0 }, power: { name: 'Breath', cost: 2, bonus: 18 }, burst: { name: 'Ultimate', cost: 3, bonus: 36 } };
+export const ABILITIES = {
+  vorathion: ['Molten Breath · Breath +6 damage', 'Tyrant Flame · Ultimate +12 damage'],
+  aurion: ['Golden Aegis · +3 block', 'Golden Heart · Claw heals 8 HP'],
+  sylvara: ['Bloomguard · Breath heals 12 HP', 'Living Grove · attacks heal reserves 8 HP'],
+  cinder: ['Flare Claw · Claw gives +2 resource', 'Flame Heart · Breath refunds 1 resource'],
+};
+export const stageForLevel = level => level >= 10 ? 3 : level >= 5 ? 2 : 1;
 function random(seed) {
   return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let n = Math.imul(seed ^ seed >>> 15, 1 | seed); n ^= n + Math.imul(n ^ n >>> 7, 61 | n); return ((n ^ n >>> 14) >>> 0) / 4294967296; };
 }
-function dragon(id, rune, uid) {
+function dragon(id, rune, uid, level = 1) {
   const base = DRAGONS.find(d => d.id === id), r = RUNES[rune];
   if (!base || !r) throw new Error('Unknown dragon or rune');
-  return { ...base, uid, rune, hp: base.hp + r.hp, maxHp: base.hp + r.hp, damage: base.damage + r.damage, guard: base.guard + r.guard, heal: r.heal, energy: 0, fused: false };
+  level = Math.max(1, Math.min(10, Number.isFinite(level) ? Math.floor(level) : 1)); const stage = stageForLevel(level), hp = base.hp + r.hp + (level - 1) * 7;
+  return { ...base, uid, rune, level, stage, hp, maxHp: hp, damage: base.damage + r.damage + (level - 1) * 2, guard: base.guard + r.guard + (base.art === 'aurion' && stage >= 2 ? 3 : 0), heal: r.heal, energy: 0, fused: false };
 }
+export const previewDragon = (id, rune, level = 1) => dragon(id, rune, 'preview', level);
+export const attackResourceGain = (a, type) => type === 'strike' ? a.art === 'cinder' && a.stage >= 2 ? 2 : 1 : a.art === 'cinder' && a.stage >= 3 && type === 'power' ? 1 : 0;
 export function createMatch(mode = 'charge', seed = Date.now(), team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }))) {
   if (!['charge', 'energy'].includes(mode) || team.length !== 5 || new Set(team.map(d => d.id)).size !== 5) throw new Error('Choose five different dragons and a resource mode');
   const rng = random(seed), enemies = [...DRAGONS];
   for (let i = enemies.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [enemies[i], enemies[j]] = [enemies[j], enemies[i]]; }
   const make = (loadout, side) => {
-    const cards = loadout.map((d, i) => ({ ...dragon(d.id, d.rune, `${side}-${i}`), ...(d.nickname ? { name: String(d.nickname).slice(0, 20) } : {}) }));
+    const cards = loadout.map((d, i) => ({ ...dragon(d.id, d.rune, `${side}-${i}`, d.level), ...(d.nickname ? { name: String(d.nickname).slice(0, 20) } : {}) }));
     return { field: cards.slice(0, 3), hand: cards.slice(3), charge: 1, kos: 0, attached: false, switched: false, fusionUsed: false };
   };
   const match = { mode, seed, players: [make(team, 0), make(enemies.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['ward', 'life', 'fury'][i % 3] })), 1)], actor: 0, turn: 1, winner: null, log: [], actions: 0 };
@@ -42,7 +52,10 @@ function beginTurn(m) {
 }
 export function resource(m, side = m.actor, card = m.players[side].field[0]) { return m.mode === 'charge' ? m.players[side].charge : card?.energy || 0; }
 function spend(m, amount) { const p = m.players[m.actor]; if (m.mode === 'charge') p.charge -= amount; else p.field[0].energy -= amount; }
-export function attackDamage(attacker, defender, type) { return Math.max(5, attacker.damage + ATTACKS[type].bonus - defender.guard); }
+export function attackDamage(attacker, defender, type) {
+  const evolved = attacker.art === 'vorathion' ? type === 'power' && attacker.stage >= 2 ? 6 : type === 'burst' && attacker.stage >= 3 ? 12 : 0 : 0;
+  return Math.max(5, attacker.damage + ATTACKS[type].bonus + evolved - defender.guard);
+}
 export function legalActions(m) {
   if (m.winner !== null) return [];
   const p = m.players[m.actor], a = p.field[0], actions = [];
@@ -77,7 +90,11 @@ export function act(m, action) {
   } else if (action.type === 'attack') {
     const target = enemy.field[0], spec = ATTACKS[action.attack], damage = attackDamage(a, target, action.attack);
     spend(m, spec.cost); target.hp = Math.max(0, target.hp - damage); a.hp = Math.min(a.maxHp, a.hp + a.heal);
-    if (action.attack === 'strike') { if (m.mode === 'charge') p.charge = Math.min(4, p.charge + 1); else a.energy = Math.min(4, a.energy + 1); }
+    const healing = (a.art === 'aurion' && a.stage >= 3 && action.attack === 'strike' ? 8 : 0) + (a.art === 'sylvara' && a.stage >= 2 && action.attack === 'power' ? 12 : 0);
+    a.hp = Math.min(a.maxHp, a.hp + healing);
+    if (a.art === 'sylvara' && a.stage >= 3) for (const reserve of p.field.slice(1)) reserve.hp = Math.min(reserve.maxHp, reserve.hp + 8);
+    const gain = attackResourceGain(a, action.attack);
+    if (m.mode === 'charge') p.charge = Math.min(4, p.charge + gain); else a.energy = Math.min(4, a.energy + gain);
     note(m, `${a.name}: ${action.attack === 'burst' ? a.skill : spec.name} hits ${target.name} for ${damage}.${a.heal ? ` Heals ${a.heal} HP.` : ''}`);
     if (target.hp === 0) {
       enemy.field.shift(); p.kos++; note(m, `${target.name} defeated. ${m.actor === 0 ? 'You' : 'AI'}: ${p.kos}/3.`);

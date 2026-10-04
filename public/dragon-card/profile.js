@@ -1,4 +1,4 @@
-import { DRAGONS } from './match.js';
+import { DRAGONS, stageForLevel } from './match.js';
 export const FAMILIES = ['vorathion', 'aurion', 'sylvara', 'cinder'];
 export const STARTERS = ['vorathion', 'sylvara', 'cinder'];
 export const PROFILE_KEY = 'dragon-journey-v1';
@@ -29,6 +29,18 @@ export function loadProfile(storage) {
 }
 export function saveProfile(p, storage) {
   try { storage.setItem(PROFILE_KEY, JSON.stringify(p)); return true; } catch { return false; }
+}
+export function upgradeCost(profile, id) {
+  const card = profile.cards[id];
+  if (!card?.owned || card.level >= 10) return null;
+  return { xp: 20 + (card.level - 1) * 5, copies: card.level < 5 ? 1 : card.level < 9 ? 2 : 3 };
+}
+export function canUpgrade(profile, id) { const cost = upgradeCost(profile, id), c = profile.cards[id]; return !!cost && c.xp >= cost.xp && c.copies >= cost.copies; }
+export function upgradeDragon(profile, id) {
+  if (!canUpgrade(profile, id)) return null;
+  const p = structuredClone(profile), cost = upgradeCost(p, id), c = p.cards[id], before = stageForLevel(c.level);
+  c.xp -= cost.xp; c.copies -= cost.copies; c.level++;
+  return { profile: p, evolved: stageForLevel(c.level) !== before, stage: stageForLevel(c.level), id };
 }
 export function awardBattle(profile, battleId, won) {
   if (!profile.starter || !battleId || profile.seenResults.includes(battleId)) return { profile, reward: null };

@@ -98,6 +98,11 @@ ol { padding-left: 20px; line-height: 1.5; }
 .stage-tabs { display: flex; gap: 6px; margin-bottom: 8px; }
 .stage-tabs button { flex: 1; margin: 0; font-size: 14px; padding: 8px 3px; }
 .art-preview { display: block; width: 100%; height: min(44svh, 420px); object-fit: contain; background: #050505; border-radius: 8px; }
+.hero-progress button { margin-top: 6px; font-size: 13px; padding: 7px; }
+.evolution-art { opacity: 0; }
+.evolution-art.ready { animation: awaken 1.2s ease both; }
+@keyframes awaken { from { transform: scale(.9); opacity: .15; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .evolution-art.ready { animation: none; opacity: 1; } }
 .result { position: fixed; z-index: 5; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 780px); padding: 16px 20px max(20px, env(safe-area-inset-bottom)); background: #182534; border-top: 2px solid var(--gold); box-shadow: 0 -20px 50px #0008; }
 .result h1 { color: var(--gold); margin-top: 0; }
 .result button { margin: 0 4px 8px 0; }

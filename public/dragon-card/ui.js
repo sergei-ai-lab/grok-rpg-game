@@ -1,5 +1,5 @@
-import { DRAGONS, RUNES, ATTACKS, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js';
-import { FAMILIES, STARTERS, loadProfile, adoptProfile, awardBattle, saveProfile } from './profile.js';
+import { DRAGONS, RUNES, ATTACKS, ABILITIES, stageForLevel, previewDragon, attackResourceGain, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js';
+import { FAMILIES, STARTERS, loadProfile, adoptProfile, awardBattle, saveProfile, upgradeCost, canUpgrade, upgradeDragon } from './profile.js';
 const app = document.querySelector('#app');
 const artBase = new URL('./assets/dragons/', import.meta.url);
 const artFamilies = FAMILIES;
@@ -9,10 +9,10 @@ const artName = id => id[0].toUpperCase() + id.slice(1);
 let mode = 'charge', team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }));
 let match = null, selection = { zone: 'field', index: 0 }, dialog = '', busy = false, generation = 0, started = 0, seed = Date.now(), feedback = '';
 const storage = { getItem: key => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) };
-let profile = loadProfile(storage), selectedCub = STARTERS[0], heroName = '', savedOK = true, battleId = '', battleReward = null;
+let profile = loadProfile(storage), selectedCub = STARTERS[0], heroName = '', savedOK = true, battleId = '', battleReward = null, evolution = null;
 function persist() { savedOK = saveProfile(profile, storage); }
 function restoreTeam() {
-  team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: profile.cards[d.id]?.rune || ['fury', 'ward', 'life'][i % 3], ...(d.id === profile.starter ? { nickname: profile.name } : {}) }));
+  team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: profile.cards[d.id]?.rune || ['fury', 'ward', 'life'][i % 3], level: profile.cards[d.id]?.level || 1, ...(d.id === profile.starter ? { nickname: profile.name } : {}) }));
   const first = team.findIndex(d => d.id === profile.starter); if (first > 0) [team[0], team[first]] = [team[first], team[0]];
 }
 if (profile.starter) restoreTeam();
@@ -22,15 +22,19 @@ const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', 
 const button = (label, command, disabled = false, extra = '') => `<button data-command="${command}" ${disabled ? 'disabled' : ''} ${extra}>${label}</button>`;
 const pips = n => `<span class="pips" aria-label="${n} of 4">${[0, 1, 2, 3].map(i => `<i class="${i < n ? 'filled' : ''}"></i>`).join('')}</span>`;
 const artUrl = (family, stage = 1) => new URL(`${family}/stage${stage}.webp`, artBase).href;
-const image = (d, compact = false) => `<img src="${new URL(`${d.art}/thumb1.webp`, artBase).href}" alt="${esc(d.name)} · ${artName(d.art)} · Stage 1" loading="lazy" decoding="async" width="320" height="397">`;
+const image = (d, compact = false) => { const stage = d.stage || stageForLevel(d.level || 1); return `<img src="${new URL(`${d.art}/thumb${stage}.webp`, artBase).href}" alt="${esc(d.name)} · Stage ${stage}" loading="lazy" decoding="async" width="320" height="397">`; };
 function header() {
   return `<header><strong>DRAGON <span>CARD GAME</span></strong><nav>${button('Rules', 'rules')}${button('Settings', 'settings')}${match ? button('Exit', 'back') : ''}</nav></header>`;
 }
 const runeEffect = rune => ({ fury: 'Fury · +8 attack', ward: 'Ward · +30 HP, +5 block', life: 'Life · heal 8 after attack' })[rune];
+function upgradeButton(id) {
+  const c = profile.cards[id], cost = upgradeCost(profile, id); if (!c?.owned) return '';
+  return button(cost ? `<b>Level up · Lv${c.level + 1}</b><small>${cost.xp} XP + ${cost.copies} copies · have ${c.xp} / ${c.copies}</small>` : 'Max level · Lv10', `upgrade:${id}`, !canUpgrade(profile, id), `class="${canUpgrade(profile, id) ? 'primary' : ''}"`);
+}
 function overlay() {
   if (!dialog) return '';
   const rules = `<p lang="ru">Победа: выбей 3 драконов соперника. Атакует только боец впереди; атака завершает ход.</p>
-    <p lang="ru">Claw бесплатна и даёт +1 ресурс. Breath тратит 2, Ultimate — 3. Каждый ход получаешь ещё +1.</p>
+    <p lang="ru">Claw бесплатна и копит ресурс. Breath тратит 2, Ultimate — 3. Каждый ход получаешь ещё +1.</p>
     <p lang="ru">Charge — общая шкала команды. Energy — нажми своего дракона, затем Attach: энергия остаётся на нём, в том числе на скамье.</p>
     <p lang="ru">Switch: выбери дракона на скамье. Смена стоит 1 ресурс и доступна раз за ход.</p>
     <p lang="ru">Fuse: выбери дракона на скамье. Он исчезнет, а передний получит +35 HP и +12 урона. Цена 2 ресурса; в Energy складываются ресурсы обеих карт. Раз за бой, руна переднего сохраняется.</p>
@@ -38,15 +42,17 @@ function overlay() {
   const settings = `<label for="mode">Resource mode</label><select id="mode"><option value="charge" ${mode === 'charge' ? 'selected' : ''}>Charge · shared team bar</option><option value="energy" ${mode === 'energy' ? 'selected' : ''}>Energy · attached to a dragon</option></select><p lang="ru">Charge автоматически растёт на 1 в начале хода. В Energy ты сам выбираешь, кому дать +1. Максимум 4, сильные атаки тратят ресурс.</p>${match ? '<p>Changes apply to the next battle.</p>' : ''}`;
   const quit = `<p>End this battle and return to your squad?</p>${button('End battle', 'quit', false, 'class="primary"')}`;
   const tutorial = `<p lang="ru"><b>1. Один боец впереди.</b> Он атакует, запасные ждут. Claw бесплатна и копит ресурс.</p><p lang="ru"><b>2. Подготовка, затем атака.</b> Нажми запасного: Switch выводит его вперёд за 1 ресурс. Fuse поглощает его и усиливает бойца за 2. Атака завершает ход.</p><p lang="ru"><b>3. Следи за ИИ.</b> Его смена и слияние будут объяснены над бойцами. Победа — 3 выбитых врага. На серых кнопках написано, чего не хватает.</p>${button('Let’s battle', 'begin-tutorial', false, 'class="primary"')}`;
+  const evolved = evolution ? `<img class="art-preview evolution-art" src="${artUrl(evolution.id, evolution.stage)}" alt="${artName(evolution.id)} · Stage ${evolution.stage}" loading="lazy" decoding="async"><p>Lv${profile.cards[evolution.id].level} · Stage ${evolution.stage}</p><p>${ABILITIES[evolution.id][evolution.stage - 2]}</p><p lang="ru">Новый вид и умение активны со следующего боя. Слияние не меняет стадию эволюции.</p>` : '';
   const collection = `<label for="art-family">Dragon family</label><select id="art-family">${artFamilies.map(id => `<option value="${id}" ${artFamily === id ? 'selected' : ''}>${artName(id)}</option>`).join('')}</select><div class="stage-tabs">${[1, 2, 3].map(stage => button(`Stage ${stage}`, `art-stage:${stage}`, false, `aria-pressed="${stage === artStage}" class="${stage === artStage ? 'selected' : ''}"`)).join('')}</div><img class="art-preview" src="${artUrl(artFamily, artStage)}" alt="${artName(artFamily)} · Stage ${artStage}" loading="lazy" decoding="async"><p lang="ru">Три стадии одного дракона. Здесь можно рассмотреть арты целиком; в бою используется первая стадия.</p>`;
-  const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?', tutorial: 'Your first battle' }[dialog];
-  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : dialog === 'tutorial' ? tutorial : quit}${button('Close', 'close')}</section></div>`;
+  const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?', tutorial: 'Your first battle', evolution: 'Awakening!' }[dialog];
+  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : dialog === 'tutorial' ? tutorial : dialog === 'evolution' ? evolved : quit}${button('Close', 'close')}</section></div>`;
 }
 function squad() {
   const hero = DRAGONS.find(d => d.id === profile.starter), progress = profile.cards[profile.starter];
-  return `${header()}<section class="squad"><div class="hero-progress">${image(hero)}<div><b>${esc(profile.name)} · ${hero.name}</b><small>Lv${progress.level} · XP ${progress.xp} · Copies ${progress.copies}</small><small>${savedOK ? 'Saved on this phone' : 'Session only · storage unavailable'}</small></div></div><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Выбранный детёныш — твой дракон. После боя вся стартовая тройка получает опыт; победа даёт дубликаты, 3 победы открывают Aurion. Прогресс сохраняется в этом браузере.</p><p class="tip" lang="ru">Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
+  return `${header()}<section class="squad"><div class="hero-progress">${image({ ...hero, level: progress.level })}<div><b>${esc(profile.name)} · ${hero.name}</b><small>Lv${progress.level} · XP ${progress.xp} · Copies ${progress.copies}</small>${upgradeButton(profile.starter)}<small>${savedOK ? 'Saved on this phone' : 'Session only · storage unavailable'}</small></div></div><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Выбранный детёныш — твой дракон. После боя вся стартовая тройка получает опыт; победа даёт дубликаты, 3 победы открывают Aurion. Прогресс сохраняется в этом браузере.</p><p class="tip" lang="ru">Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
+    const stats = previewDragon(d.id, team.find(x => x.id === d.id)?.rune || 'fury', profile.cards[d.id]?.level || 1);
     const chosen = team.find(x => x.id === d.id), index = team.findIndex(x => x.id === d.id), rune = RUNES[chosen?.rune || 'fury'];
-    return `<article class="roster ${chosen ? 'chosen' : ''}">${button(`${image(d, true)}<span><b>${d.name}</b><small>${chosen ? ['FIGHTER', 'RESERVE', 'RESERVE', 'REINFORCEMENT', 'REINFORCEMENT'][index] : 'ADD TO SQUAD'}</small></span>`, `pick:${d.id}`, !chosen && team.length === 5, `aria-pressed="${!!chosen}"`)}<label>Rune<select data-rune="${d.id}" ${!chosen ? 'disabled' : ''}>${Object.entries(RUNES).map(([id]) => `<option value="${id}" ${chosen?.rune === id ? 'selected' : ''}>${runeEffect(id)}</option>`).join('')}</select></label><small>${d.hp + rune.hp} HP · ${d.damage + rune.damage} attack · ${d.guard + rune.guard} block${rune.heal ? ` · heals ${rune.heal}` : ''}</small></article>`;
+    return `<article class="roster ${chosen ? 'chosen' : ''}">${button(`${image({ ...d, level: profile.cards[d.id]?.level || 1 }, true)}<span><b>${d.name}</b><small>${chosen ? ['FIGHTER', 'RESERVE', 'RESERVE', 'REINFORCEMENT', 'REINFORCEMENT'][index] : 'ADD TO SQUAD'}</small></span>`, `pick:${d.id}`, !chosen && team.length === 5, `aria-pressed="${!!chosen}"`)}<label>Rune<select data-rune="${d.id}" ${!chosen ? 'disabled' : ''}>${Object.entries(RUNES).map(([id]) => `<option value="${id}" ${chosen?.rune === id ? 'selected' : ''}>${runeEffect(id)}</option>`).join('')}</select></label><small>${stats.maxHp} HP · ${stats.damage} attack · ${stats.guard} block${rune.heal ? ` · heals ${rune.heal}` : ''}</small></article>`;
   }).join('')}</div></section><footer class="setup-dock"><span>${team.length}/5 dragons · ${mode === 'charge' ? 'Charge' : 'Energy'}</span>${button('Start battle · ~3–5 min', 'start', team.length !== 5, 'class="primary"')}</footer>${overlay()}`;
 }
 function adoption() {
@@ -55,7 +61,7 @@ function adoption() {
 function card(d, side, zone, index, small = false) {
   const selected = side === 0 && selection.zone === zone && selection.index === index;
   const label = `${d.name}, ${d.hp} of ${d.maxHp} HP, ${RUNES[d.rune].role}${match.mode === 'energy' ? `, ${d.energy} Energy` : ''}`;
-  const content = `${small ? '' : image(d)}<span class="card-info"><b>${esc(d.name)}</b><span class="hp">${d.hp}<small> / ${d.maxHp} HP</small></span><progress value="${d.hp}" max="${d.maxHp}" aria-label="Health"></progress><small>${d.fused ? 'Fused · ' : ''}${small ? RUNES[d.rune].name : runeEffect(d.rune)}</small>${match.mode === 'energy' ? `<span class="energy-label">Energy ${d.energy}/4 ${pips(d.energy)}</span>` : ''}</span>`;
+  const content = `${small ? '' : image(d)}<span class="card-info"><b>${esc(d.name)}</b><span class="hp">${d.hp}<small> / ${d.maxHp} HP</small></span><progress value="${d.hp}" max="${d.maxHp}" aria-label="Health"></progress><small>${d.fused ? 'Fused · ' : ''}${small ? RUNES[d.rune].name : runeEffect(d.rune)}</small>${d.stage > 1 ? `<small class="ability">Lv${d.level} · ${ABILITIES[d.art]?.[d.stage - 2]?.split(" · ")[0] || "Awakened"}</small>` : ""}${match.mode === 'energy' ? `<span class="energy-label">Energy ${d.energy}/4 ${pips(d.energy)}</span>` : ''}</span>`;
   return side === 1 ? `<article class="dragon ${small ? 'mini' : ''}" aria-label="${esc(label)}">${content}</article>` : button(content, `select:${zone}:${index}`, busy || match.actor !== 0 || match.winner !== null, `class="dragon ${small ? 'mini' : ''} ${selected ? 'selected' : ''}" aria-pressed="${selected}" aria-label="${esc(label)}"`);
 }
 function can(type, index, attack) { return !busy && match.actor === 0 && legalActions(match).some(a => a.type === type && a.index === index && a.attack === attack); }
@@ -66,11 +72,11 @@ function dock() {
   const switchReason = waiting ? 'Wait for AI' : p.switched ? 'Used this turn' : !reserve ? 'Pick a reserve' : amount < 1 ? `Need 1 ${pool}` : esc(chosen.name);
   const fusionEnergy = match.mode === 'charge' ? amount : a.energy + (reserve ? chosen.energy : 0);
   const fuseReason = waiting ? 'Wait for AI' : p.fusionUsed ? 'Used this battle' : !reserve ? 'Pick a reserve' : fusionEnergy < 2 ? (match.mode === 'charge' ? 'Need 2 Charge' : 'Need 2 combined') : '+35 HP · +12 attack';
-  const tip = waiting ? 'Сейчас ход ИИ. Затем снова выбираешь подготовку и одну атаку.' : zone === 'hand' ? 'Deploy бесплатно добавит подкрепление в запас. Атаковать оно сможет после Switch.' : reserve ? `${esc(chosen.name)}: Switch — вывести вперёд; Fuse — поглотить (+35 HP, +12 урона) для ${esc(a.name)}.` : match.mode === 'energy' ? 'Attach: +1 энергии выбранной карте, раз за ход. Claw тоже даёт +1 бойцу. Атака завершает ход.' : 'Подготовка по желанию: нажми запасного для Switch или Fuse. Затем одна атака; Claw даёт +1 Charge.';
+  const tip = waiting ? 'Сейчас ход ИИ. Затем снова выбираешь подготовку и одну атаку.' : zone === 'hand' ? 'Deploy бесплатно добавит подкрепление в запас. Атаковать оно сможет после Switch.' : reserve ? `${esc(chosen.name)}: Switch — вывести вперёд; Fuse — поглотить (+35 HP, +12 урона) для ${esc(a.name)}.` : match.mode === 'energy' ? `Attach: +1 энергии выбранной карте. Claw даёт +${attackResourceGain(a, 'strike')} бойцу. Атака завершает ход.` : `Подготовка: нажми запасного для Switch или Fuse. Затем атака; Claw даёт +${attackResourceGain(a, 'strike')} Charge.`;
   const attachReason = waiting ? 'Wait for AI' : zone !== 'field' ? 'Pick your dragon' : p.attached ? 'Used this turn' : chosen.energy === 4 ? 'Already full · 4/4' : esc(chosen.name);
   return `<footer class="action-dock"><div class="resource-row"><b>${pool} ${amount}/4 ${pips(amount)}</b><small>${match.mode === 'charge' ? 'Shared by your team' : 'On your fighter'}</small></div>
     <p class="tip" lang="ru">${tip}</p><div class="preparation">${match.mode === 'energy' ? button(`<b>Attach +1</b><small>${attachReason}</small>`, 'attach', zone !== 'field' || !can('attach', index)) : ''}${zone === 'hand' ? button(`<b>Deploy</b><small>${p.field.length === 4 ? 'Bench is full' : waiting ? 'Wait for AI' : 'Free · add to bench'}</small>`, 'deploy', !can('deploy', index)) : `${button(`<b>Switch · 1</b><small>${switchReason}</small>`, 'switch', !reserve || !can('switch', index))}${button(`<b>Fuse · 2</b><small>${fuseReason}</small>`, 'fuse', !reserve || !can('fuse', index))}`}</div>
-    <div class="front-label">ATTACK WITH ${esc(a.name)}</div><div class="attacks">${Object.entries(ATTACKS).map(([id, spec]) => button(`<b>${spec.name}</b><small>${attackDamage(a, target, id)} damage</small><small>${waiting ? 'Wait for AI' : amount < spec.cost ? `Need ${spec.cost} · have ${amount}` : spec.cost ? `Spend ${spec.cost} ${pool}` : `Free · +1 ${pool}`}</small>`, `attack:${id}`, !can('attack', undefined, id), `class="${id === 'burst' ? 'ultimate' : ''}"`)).join('')}</div></footer>`;
+    <div class="front-label">ATTACK WITH ${esc(a.name)}</div><div class="attacks">${Object.entries(ATTACKS).map(([id, spec]) => button(`<b>${spec.name}</b><small>${attackDamage(a, target, id)} damage</small><small>${waiting ? 'Wait for AI' : amount < spec.cost ? `Need ${spec.cost} · have ${amount}` : spec.cost ? `Spend ${spec.cost} ${pool}` : `Free · +${attackResourceGain(a, id)} ${pool}`}</small>`, `attack:${id}`, !can('attack', undefined, id), `class="${id === 'burst' ? 'ultimate' : ''}"`)).join('')}</div></footer>`;
 }
 function battle() {
   const [you, foe] = match.players, over = match.winner !== null;
@@ -82,7 +88,7 @@ function battle() {
 }
 function result() {
   const seconds = Math.round((Date.now() - started) / 1000);
-  return `<section class="result" role="region" aria-label="Battle result"><h1>${match.winner === 0 ? 'Victory!' : 'Defeat'}</h1><p>You ${match.players[0].kos} · AI ${match.players[1].kos} · ${Math.floor(seconds / 60)}m ${seconds % 60}s</p><p class="reward">XP +${battleReward?.xp || 0} · Copies +${battleReward?.copies || 0}${battleReward?.unlocked ? ` · ${battleReward.unlocked} unlocked` : ''}</p>${button('Play again', 'replay', false, 'class="primary"')}${button(`Try ${match.mode === 'charge' ? 'Energy' : 'Charge'}`, 'compare')}${button('Edit squad', 'quit')}<p lang="ru">${savedOK ? 'Награда сохранена в этом браузере.' : 'Сохранение недоступно: прогресс останется только до закрытия страницы.'}</p></section>`;
+  return `<section class="result" role="region" aria-label="Battle result"><h1>${match.winner === 0 ? 'Victory!' : 'Defeat'}</h1><p>You ${match.players[0].kos} · AI ${match.players[1].kos} · ${Math.floor(seconds / 60)}m ${seconds % 60}s</p><p class="reward">XP +${battleReward?.xp || 0} · Copies +${battleReward?.copies || 0}${battleReward?.unlocked ? ` · ${battleReward.unlocked} unlocked` : ''}</p>${upgradeButton(profile.starter)}${button('Play again', 'replay', false, 'class="primary"')}${button(`Try ${match.mode === 'charge' ? 'Energy' : 'Charge'}`, 'compare')}${button('Edit squad', 'quit')}<p lang="ru">${savedOK ? 'Награда сохранена в этом браузере.' : 'Сохранение недоступно: прогресс останется только до закрытия страницы.'}</p></section>`;
 }
 function render() {
   if (match && match.winner !== null && battleReward === null) { const awarded = awardBattle(profile, battleId, match.winner === 0); profile = awarded.profile; battleReward = awarded.reward || { xp: 0, copies: 0 }; persist(); }
@@ -125,6 +131,12 @@ function aiTurn() {
 app.addEventListener('click', event => {
   const control = event.target.closest('[data-command]'); if (!control || control.disabled) return;
   const [command, value, index] = control.dataset.command.split(':');
+  if (command === 'upgrade' && (!match || match.winner !== null)) {
+    const upgraded = upgradeDragon(profile, value); if (!upgraded) return;
+    profile = upgraded.profile; persist(); restoreTeam();
+    if (upgraded.evolved) { evolution = upgraded; dialog = 'evolution'; }
+    render(); return;
+  }
   if (command === 'cub' && STARTERS.includes(value)) { heroName = app.querySelector('#hero-name')?.value || ''; selectedCub = value; render(); return; }
   if (command === 'adopt') { profile = adoptProfile(selectedCub, app.querySelector('#hero-name')?.value); persist(); restoreTeam(); render(); window.scrollTo(0, 0); return; }
   if (['rules', 'settings', 'back', 'collection'].includes(command)) { dialog = command; render(); app.querySelector('[role="dialog"] button')?.focus(); return; }
@@ -153,5 +165,6 @@ app.addEventListener('change', event => {
   if (event.target.id === 'mode') { mode = event.target.value; saveMode(); }
   if (event.target.dataset.rune) { const card = team.find(d => d.id === event.target.dataset.rune); if (card) card.rune = event.target.value; render(); }
 });
+app.addEventListener('load', event => { if (event.target.classList?.contains('evolution-art')) event.target.classList.add('ready'); }, true);
 app.addEventListener('keydown', event => { if (event.key === 'Escape' && dialog) { dialog = ''; render(); } });
 render();
