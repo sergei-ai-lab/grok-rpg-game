@@ -124,3 +124,7 @@ ol { padding-left: 20px; line-height: 1.5; }
 .impact-layer i { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: sparks .6s ease-out both; }
 @keyframes sparks { from { opacity: 1; transform: translate(0, 0) scale(.6); } to { opacity: 0; transform: translate(var(--x), var(--y)) scale(1.3); } }
 @media (prefers-reduced-motion: reduce) { .impact-layer { display: none; } }
+
+.daily-panel { padding: 12px; margin: 12px 0; border: 1px solid var(--line); border-radius: 10px; }
+.daily-panel h2 { margin-bottom: 6px; font-size: 19px; }
+.daily-panel > button { margin: 8px 0; width: 100%; font-size: 13px; }

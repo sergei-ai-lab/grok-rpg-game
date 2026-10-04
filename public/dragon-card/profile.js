@@ -5,7 +5,7 @@ export const PROFILE_KEY = 'dragon-journey-v1';
 const count = value => Number.isFinite(value) ? Math.max(0, Math.min(100000, Math.floor(value))) : 0;
 const nameFor = id => DRAGONS.find(d => d.id === id)?.name || 'Dragon';
 export function newProfile() {
-  return { version: 1, starter: null, name: '', team: [], cards: Object.fromEntries(FAMILIES.map(id => [id, { level: 1, xp: 0, copies: 0, owned: false, rune: id === 'aurion' ? 'ward' : id === 'sylvara' ? 'life' : 'fury' }])), wins: 0, battles: 0, campaign: { cleared: 0, attempts: 0, seconds: 0 }, seenResults: [] };
+  return { version: 1, starter: null, name: '', team: [], cards: Object.fromEntries(FAMILIES.map(id => [id, { level: 1, xp: 0, copies: 0, owned: false, rune: id === 'aurion' ? 'ward' : id === 'sylvara' ? 'life' : 'fury' }])), wins: 0, battles: 0, campaign: { cleared: 0, attempts: 0, seconds: 0 }, daily: { date: '', played: 0, claws: 0, wins: 0, claimed: false }, seenResults: [] };
 }
 export function adoptProfile(id, name) {
   if (!STARTERS.includes(id)) throw Error('Choose a starter');
@@ -26,6 +26,7 @@ export function loadProfile(storage) {
     }
     if (Array.isArray(raw.team)) p.team = [...new Set(raw.team)].filter(id => FAMILIES.includes(id) && p.cards[id].owned).slice(0, 3);
     p.campaign = { cleared: Math.min(10, count(raw.campaign?.cleared)), attempts: count(raw.campaign?.attempts), seconds: count(raw.campaign?.seconds) };
+    if (typeof raw.daily?.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.daily.date)) p.daily = { date: raw.daily.date, played: Math.min(2, count(raw.daily.played)), claws: Math.min(3, count(raw.daily.claws)), wins: Math.min(1, count(raw.daily.wins)), claimed: raw.daily.claimed === true };
     p.seenResults = Array.isArray(raw.seenResults) ? raw.seenResults.filter(id => typeof id === 'string').slice(-50) : [];
     return p;
   } catch { return newProfile(); }

@@ -2,11 +2,12 @@ import { DRAGONS, RUNES, ATTACKS, ABILITIES, stageForLevel, previewDragon, attac
 import { FAMILIES, STARTERS, loadProfile, adoptProfile, awardBattle, saveProfile, upgradeCost, canUpgrade, upgradeDragon } from './profile.js';
 import { ENCOUNTERS, campaignMatch, recordCampaign } from './campaign.js';
 import { feel, setFeel, unlockAudio, transition, feedbackEffect } from './feel.js';
+import { QUESTS, refreshDaily, awardDaily, chestReady, claimChest } from './daily.js';
 const app = document.querySelector('#app');
 const artBase = new URL('./assets/dragons/', import.meta.url);
 const artFamilies = FAMILIES;
 let artFamily = 'vorathion', artStage = 1;
-let tutorialSeen = false, aiMoves = [], pendingEffect = null;
+let tutorialSeen = false, aiMoves = [], pendingEffect = null, battleClaws = 0;
 const artName = id => id[0].toUpperCase() + id.slice(1);
 let mode = 'charge', team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }));
 let match = null, selection = { zone: 'field', index: 0 }, dialog = '', busy = false, generation = 0, started = 0, seed = Date.now(), feedback = '';
@@ -46,15 +47,19 @@ function overlay() {
   const tutorial = `<p lang="ru"><b>1. Один боец впереди.</b> Он атакует, запасные ждут. Claw бесплатна и копит ресурс.</p><p lang="ru"><b>2. Подготовка, затем атака.</b> Нажми запасного: Switch выводит его вперёд за 1 ресурс. Fuse поглощает его и усиливает бойца за 2. Атака завершает ход.</p><p lang="ru"><b>3. Следи за ИИ.</b> Его смена и слияние будут объяснены над бойцами. Победа — 3 выбитых врага. На серых кнопках написано, чего не хватает.</p>${button('Let’s battle', 'begin-tutorial', false, 'class="primary"')}`;
   const evolved = evolution ? `<img class="art-preview evolution-art" src="${artUrl(evolution.id, evolution.stage)}" alt="${artName(evolution.id)} · Stage ${evolution.stage}" loading="lazy" decoding="async"><p>Lv${profile.cards[evolution.id].level} · Stage ${evolution.stage}</p><p>${ABILITIES[evolution.id][evolution.stage - 2]}</p><p lang="ru">Новый вид и умение активны со следующего боя. Слияние не меняет стадию эволюции.</p>` : '';
   const collection = `<label for="art-family">Dragon family</label><select id="art-family">${artFamilies.map(id => `<option value="${id}" ${artFamily === id ? 'selected' : ''}>${artName(id)}</option>`).join('')}</select><div class="stage-tabs">${[1, 2, 3].map(stage => button(`Stage ${stage}`, `art-stage:${stage}`, false, `aria-pressed="${stage === artStage}" class="${stage === artStage ? 'selected' : ''}"`)).join('')}</div><img class="art-preview" src="${artUrl(artFamily, artStage)}" alt="${artName(artFamily)} · Stage ${artStage}" loading="lazy" decoding="async"><p lang="ru">Три стадии одного дракона. Здесь можно рассмотреть арты целиком; в бою стадия меняется на Lv5 и Lv10.</p>`;
-  const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?', tutorial: 'Your first battle', evolution: 'Awakening!' }[dialog];
-  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : dialog === 'tutorial' ? tutorial : dialog === 'evolution' ? evolved : quit}${button('Close', 'close')}</section></div>`;
+  const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?', tutorial: 'Your first battle', evolution: 'Awakening!', chest: 'Daily chest opened!' }[dialog];
+  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : dialog === 'tutorial' ? tutorial : dialog === 'evolution' ? evolved : dialog === 'chest' ? '<p>+50 XP for each owned dragon</p><p>+3 copies for your dragon, +1 for each companion</p><p lang="ru">Награда сохранена. Повышай уровень на карте или в коллекции.</p>' : quit}${button('Close', 'close')}</section></div>`;
+}
+function dailyPanel() {
+  const d = profile.daily;
+  return `<section class="daily-panel"><h2>Daily quests</h2><div>${QUESTS.map(q => `<small>${d[q.id] >= q.goal ? '✓' : '○'} ${q.name} · ${d[q.id]}/${q.goal}</small>`).join('')}</div>${button(d.claimed ? 'Chest claimed · tomorrow' : chestReady(profile) ? 'Open chest · 50 XP + copies' : 'Chest locked · finish 3 quests', 'chest', !chestReady(profile), `class="${chestReady(profile) ? 'primary' : ''}"`)}<small>Resets with your phone’s local date</small></section>`;
 }
 function campaignMap() {
   return `<section class="campaign-map"><h2>${profile.campaign.cleared === 10 ? 'Campaign complete!' : 'Journey to the Sun Citadel'}</h2><p class="tip" lang="ru">10 боёв. Победа открывает следующий; поражение можно повторить. Между боями повышай уровень и меняй руны. Путь сохранён.</p><div class="map-nodes">${ENCOUNTERS.map((e, i) => button(`<b>${i + 1}. ${e.name}</b><small>${i < profile.campaign.cleared ? 'Cleared · replay' : i === profile.campaign.cleared ? e.boss ? 'BOSS · ready' : 'Next battle' : 'Win the previous battle'} · Lv${e.level}</small>`, `encounter:${i}`, i > profile.campaign.cleared, `aria-pressed="${encounter === i}" class="${encounter === i ? 'selected' : ''}"`)).join('')}</div><small>${profile.campaign.cleared}/10 cleared · ${Math.floor(profile.campaign.seconds / 60)}m played</small></section>`;
 }
 function squad() {
   const hero = DRAGONS.find(d => d.id === profile.starter), progress = profile.cards[profile.starter];
-  return `${header()}<section class="squad"><div class="hero-progress">${image({ ...hero, level: progress.level })}<div><b>${esc(profile.name)} · ${hero.name}</b><small>Lv${progress.level} · XP ${progress.xp} · Copies ${progress.copies}</small>${upgradeButton(profile.starter)}<small>${savedOK ? 'Saved on this phone' : 'Session only · storage unavailable'}</small></div></div>${campaignMap()}<h1>Choose your trio</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Выбранный детёныш — твой дракон. После боя вся стартовая тройка получает опыт; победа даёт дубликаты, 3 победы открывают Aurion. Прогресс сохраняется в этом браузере.</p><p class="tip" lang="ru">Первый дракон — боец, два — запасные. Lead меняет первого бойца. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${FAMILIES.map(id => DRAGONS.find(d => d.id === id)).map(d => {
+  return `${header()}<section class="squad"><div class="hero-progress">${image({ ...hero, level: progress.level })}<div><b>${esc(profile.name)} · ${hero.name}</b><small>Lv${progress.level} · XP ${progress.xp} · Copies ${progress.copies}</small>${upgradeButton(profile.starter)}<small>${savedOK ? 'Saved on this phone' : 'Session only · storage unavailable'}</small></div></div>${campaignMap()}${dailyPanel()}<h1>Choose your trio</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Выбранный детёныш — твой дракон. После боя вся стартовая тройка получает опыт; победа даёт дубликаты, 3 победы открывают Aurion. Прогресс сохраняется в этом браузере.</p><p class="tip" lang="ru">Первый дракон — боец, два — запасные. Lead меняет первого бойца. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${FAMILIES.map(id => DRAGONS.find(d => d.id === id)).map(d => {
     const stats = previewDragon(d.id, profile.cards[d.id].rune, profile.cards[d.id]?.level || 1);
     const chosen = team.find(x => x.id === d.id), index = team.findIndex(x => x.id === d.id), rune = RUNES[profile.cards[d.id].rune];
     return `<article class="roster ${chosen ? 'chosen' : ''}">${button(`${image({ ...d, level: profile.cards[d.id]?.level || 1 }, true)}<span><b>${d.name}</b><small>${chosen ? ['FIGHTER', 'RESERVE', 'RESERVE'][index] : profile.cards[d.id].owned ? team.length === 3 ? 'REMOVE ONE TO ADD' : 'ADD TO TRIO' : 'LOCKED · WIN 3 BATTLES'}</small></span>`, `pick:${d.id}`, !profile.cards[d.id].owned || !chosen && team.length === 3, `aria-pressed="${!!chosen}"`)}<label>Rune<select data-rune="${d.id}" ${!profile.cards[d.id].owned ? 'disabled' : ''}>${Object.entries(RUNES).map(([id]) => `<option value="${id}" ${profile.cards[d.id].rune === id ? 'selected' : ''}>${runeEffect(id)}</option>`).join('')}</select></label><small>${stats.maxHp} HP · ${stats.damage} attack · ${stats.guard} block${rune.heal ? ` · heals ${rune.heal}` : ''}</small><small>Lv${stats.level} · XP ${profile.cards[d.id].xp} · Copies ${profile.cards[d.id].copies}</small>${chosen && index > 0 ? button('Lead · set fighter', `lead:${d.id}`) : ''}${upgradeButton(d.id)}</article>`;
@@ -96,7 +101,8 @@ function result() {
   return `<section class="result" role="region" aria-label="Battle result"><h1>${match.winner === 0 ? 'Victory!' : 'Defeat'}</h1><p>You ${match.players[0].kos} · AI ${match.players[1].kos} · ${Math.floor(seconds / 60)}m ${seconds % 60}s</p><p class="reward">XP +${battleReward?.xp || 0} · Copies +${battleReward?.copies || 0}${battleReward?.unlocked ? ` · ${battleReward.unlocked} unlocked` : ''}</p>${upgradeButton(profile.starter)}${button(match.winner === 0 && profile.campaign.cleared < 10 ? 'Next battle' : 'Play again', 'replay', false, 'class="primary"')}${button(`Try ${match.mode === 'charge' ? 'Energy' : 'Charge'}`, 'compare')}${button('Map & upgrades', 'quit')}<p lang="ru">${savedOK ? 'Награда сохранена в этом браузере.' : 'Сохранение недоступно: прогресс останется только до закрытия страницы.'}</p></section>`;
 }
 function render() {
-  if (match && match.winner !== null && battleReward === null) { const awarded = awardBattle(profile, battleId, match.winner === 0); profile = recordCampaign(awarded.profile, battleEncounter, match.winner === 0, (Date.now() - started) / 1000); encounter = Math.min(9, profile.campaign.cleared); restoreTeam(); battleReward = awarded.reward || { xp: 0, copies: 0 }; persist(); }
+  const refreshed = refreshDaily(profile); if (refreshed !== profile) { profile = refreshed; if (profile.starter) persist(); }
+  if (match && match.winner !== null && battleReward === null) { const awarded = awardBattle(profile, battleId, match.winner === 0); profile = recordCampaign(awardDaily(awarded.profile, match.winner === 0, battleClaws), battleEncounter, match.winner === 0, (Date.now() - started) / 1000); encounter = Math.min(9, profile.campaign.cleared); restoreTeam(); battleReward = awarded.reward || { xp: 0, copies: 0 }; persist(); }
   if (match && !match.players[0][selection.zone]?.[selection.index]) selection = { zone: 'field', index: 0 };
   app.classList.toggle('in-battle', !!match); app.innerHTML = !profile.starter ? adoption() : match ? battle() : squad();
   if (pendingEffect) { const effect = pendingEffect; pendingEffect = null; feedbackEffect(effect.type, app.querySelector(effect.selector)); if (effect.result) feedbackEffect(effect.result, app.querySelector('.result')); }
@@ -106,6 +112,7 @@ function play(action) {
   const player = match.players[side], chosenName = (action.type === 'deploy' ? player.hand : player.field)[action.index]?.name;
   const damage = action.type === 'attack' ? attackDamage(match.players[side].field[0], target, action.attack) : 0;
   if (!act(match, action)) return false;
+  if (side === 0 && action.attack === 'strike') battleClaws++;
   pendingEffect = { type: action.attack || action.type, selector: `.fighters .fighter:nth-child(${action.type === 'attack' ? side === 0 ? 2 : 1 : side === 0 ? 1 : 2}) .dragon`, result: match.winner === null ? null : match.winner === 0 ? 'victory' : 'defeat' };
   if (side === 0) aiMoves = [];
   if (side === 1 && action.type === 'switch') aiMoves.push(`ИИ Switch: спасает раненого, выводит ${player.field[0].name} за 1 ресурс.`);
@@ -122,7 +129,7 @@ function play(action) {
   return true;
 }
 function start(sameSeed = false) {
-  battleId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`; battleReward = null;
+  battleId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`; battleReward = null; battleClaws = 0;
   generation++; if (!sameSeed) seed = Date.now(); battleEncounter = sameSeed ? battleEncounter : encounter; match = campaignMatch(profile, battleEncounter, mode, seed); started = Date.now(); selection = { zone: 'field', index: 0 }; busy = false; feedback = ''; aiMoves = []; render(); transition(app); window.scrollTo(0, 0);
 }
 function aiTurn() {
@@ -139,6 +146,7 @@ app.addEventListener('click', event => {
   const control = event.target.closest('[data-command]'); if (!control || control.disabled) return;
   unlockAudio();
   const [command, value, index] = control.dataset.command.split(':');
+  if (command === 'chest' && !match) { const reward = claimChest(profile); if (!reward) return; profile = reward.profile; persist(); restoreTeam(); dialog = 'chest'; feedbackEffect('victory', null); render(); return; }
   if (command === 'upgrade' && (!match || match.winner !== null)) {
     const upgraded = upgradeDragon(profile, value); if (!upgraded) return;
     profile = upgraded.profile; persist(); restoreTeam();
