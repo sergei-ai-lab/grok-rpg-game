@@ -107,5 +107,7 @@ ol { padding-left: 20px; line-height: 1.5; }
 .result h1 { color: var(--gold); margin-top: 0; }
 .result button { margin: 0 4px 8px 0; }
 .result p { font-size: 14px; }
-@media (min-width: 620px) { .catalog { grid-template-columns: repeat(5, minmax(0, 1fr)); } .roster img { height: 140px; } }
+@media (min-width: 620px) { .catalog { grid-template-columns: repeat(4, minmax(0, 1fr)); } .roster img { height: 140px; } }
 @media (prefers-reduced-motion: no-preference) { .selected { transition: opacity .15s; } }
+
+.roster > button[data-command^="upgrade:"], .roster > button[data-command^="lead:"] { padding: 8px; text-align: center; font-size: 12px; }

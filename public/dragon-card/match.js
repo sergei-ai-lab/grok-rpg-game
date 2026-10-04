@@ -34,15 +34,15 @@ function dragon(id, rune, uid, level = 1) {
 }
 export const previewDragon = (id, rune, level = 1) => dragon(id, rune, 'preview', level);
 export const attackResourceGain = (a, type) => type === 'strike' ? a.art === 'cinder' && a.stage >= 2 ? 2 : 1 : a.art === 'cinder' && a.stage >= 3 && type === 'power' ? 1 : 0;
-export function createMatch(mode = 'charge', seed = Date.now(), team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }))) {
-  if (!['charge', 'energy'].includes(mode) || team.length !== 5 || new Set(team.map(d => d.id)).size !== 5) throw new Error('Choose five different dragons and a resource mode');
-  const rng = random(seed), enemies = [...DRAGONS];
+export function createMatch(mode = 'charge', seed = Date.now(), team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] })), options = {}) {
+  if (!['charge', 'energy'].includes(mode) || team.length < 3 || team.length > 5 || new Set(team.map(d => d.id)).size !== team.length) throw new Error('Choose three to five different dragons and a resource mode');
+  const rng = random(seed), enemies = DRAGONS.filter(d => !options.pool || options.pool.includes(d.id));
   for (let i = enemies.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [enemies[i], enemies[j]] = [enemies[j], enemies[i]]; }
   const make = (loadout, side) => {
     const cards = loadout.map((d, i) => ({ ...dragon(d.id, d.rune, `${side}-${i}`, d.level), ...(d.nickname ? { name: String(d.nickname).slice(0, 20) } : {}) }));
     return { field: cards.slice(0, 3), hand: cards.slice(3), charge: 1, kos: 0, attached: false, switched: false, fusionUsed: false };
   };
-  const match = { mode, seed, players: [make(team, 0), make(enemies.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['ward', 'life', 'fury'][i % 3] })), 1)], actor: 0, turn: 1, winner: null, log: [], actions: 0 };
+  const match = { mode, seed, players: [make(team, 0), make(options.enemyTeam || enemies.slice(0, team.length).map((d, i) => ({ id: d.id, rune: ['ward', 'life', 'fury'][i % 3] })), 1)], actor: 0, turn: 1, winner: null, log: [], actions: 0 };
   beginTurn(match);
   return match;
 }
