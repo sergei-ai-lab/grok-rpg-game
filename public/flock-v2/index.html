@@ -24,7 +24,8 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); 
 body { overflow: hidden; }
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; touch-action: manipulation; }
-#app { height: 100dvh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; }
+#app { height: 100dvh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; transition: opacity .18s ease; }
+#app.is-swapping { opacity: 0; }
 .screen { flex: 1 1 auto; height: auto; min-height: 0; display: flex; flex-direction: column; }
 .art-screen {
   position: relative; flex: 1; min-height: 0; margin: 0;
@@ -93,7 +94,10 @@ h1 { font-family: Palatino, "Iowan Old Style", Georgia, serif; font-weight: 560;
 .life { position: absolute; left: 10px; right: 10px; bottom: 8px; height: 8px; border-radius: 99px; background: rgba(0,0,0,.45); overflow: hidden; }
 .life i { display: block; height: 100%; width: 100%; transform-origin: left center; background: #d4564e; }
 .life.wide { right: auto; }
-.card.shield { box-shadow: inset 0 0 0 2px var(--gold); }
+.card.shell { box-shadow: inset 0 0 0 2px #d08958; }
+img.tint-glacielle { filter: hue-rotate(168deg) saturate(1.3); }
+img.tint-stormveil { filter: hue-rotate(205deg) brightness(1.12); }
+img.tint-nyxshade { filter: hue-rotate(255deg) saturate(.7) brightness(.78); }
 .card.provisional { box-shadow: inset 0 0 0 2px rgba(228,193,122,.85); }
 .card.lunge { animation: lunge .22s ease; }
 .bench { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
@@ -110,8 +114,12 @@ h1 { font-family: Palatino, "Iowan Old Style", Georgia, serif; font-weight: 560;
   position: absolute; left: 50%; top: 42%; font-family: Palatino, Georgia, serif;
   font-size: 32px; font-weight: 700; text-shadow: 0 2px 8px #000; animation: float .7s ease forwards; pointer-events: none;
 }
-.pop.heal { color: #9ddeb5; }
-.pop.hit { color: #fff; }
+.spark { position: absolute; left: 50%; top: 42%; width: 7px; height: 7px; border-radius: 50%; background: #ffe7b0; pointer-events: none; animation: spark .65s ease-out forwards; }
+.spark.evo { background: #fff6d8; width: 8px; height: 8px; }
+@keyframes spark { to { transform: translate(var(--dx), var(--dy)) scale(.4); opacity: 0; } }
+.card.struck { animation: struck .2s linear; }
+@keyframes struck { 0% { filter: brightness(1.85); } 100% { filter: none; } }
+.pop.crit { color: #ffe08a; font-size: 40px; }
 body.shake { animation: shake .28s linear; }
 @keyframes float { to { transform: translate(-50%, -46px); opacity: 0; } }
 @keyframes lunge { 50% { transform: translateY(-8px) scale(1.03); } }
@@ -138,7 +146,8 @@ body.shake { animation: shake .28s linear; }
 .back { position: absolute; z-index: 3; top: calc(8px + var(--safe-t)); left: 10px; border: 0; background: rgba(14,12,11,.55); color: var(--ink); border-radius: 999px; min-height: 36px; padding: 6px 12px; }
 .sub { color: var(--muted); font-size: 13px; margin: 4px 0 8px; }
 @media (prefers-reduced-motion: reduce) {
-  .pop, .card.lunge, body.shake, .flash { animation: none; }
+  .pop, .card.lunge, body.shake, .flash, .spark, .card.struck { animation: none; }
+  #app { transition: none; }
 }
 </style>
 </head>
@@ -158,19 +167,31 @@ const HINTS = {
 };
 const RUNES = {
   fury: { name: "Striker", line: "Harder hits, thinner life." },
-  ward: { name: "Tank", line: "Thicker life. Skill raises a shield." },
-  life: { name: "Healer", line: "Skill mends you and a resting ally." }
+  ward: { name: "Tank", line: "Thicker life, softer hits." },
+  life: { name: "Healer", line: "A steadier life between the other two." }
 };
+const STYLE_LINE = {
+  burst: "Skill is one heavy blow.",
+  bulwark: "Skill hits, then raises a shield.",
+  mend: "Skill mends you, then bites.",
+  burn: "Skill leaves a burn that ticks.",
+  shell: "Skill hardens your hide.",
+  flurry: "Skill strikes twice.",
+  frost: "Skill freezes their next action.",
+  arc: "Skill jumps to the next enemy.",
+  leech: "Skill gives you part of the damage."
+};
+const STYLE_WORD = { burst: "Heavy", bulwark: "Shield", mend: "Mend", burn: "Burn", shell: "Hide", flurry: "Twice", frost: "Freeze", arc: "Arc", leech: "Leech" };
 const SPECIES = [
-  { id: "kaelith", name: "Kaelith", element: "Ember", rune: "fury", starter: true, skills: ["Spark", "Lava Rend", "Inferno"], art: [1, 1, 1], blurb: "Coal-hearted and already restless." },
-  { id: "verdraxis", name: "Verdraxis", element: "Moss", rune: "ward", starter: true, skills: ["Root", "Stonehide", "Worldroot"], art: [1, 1, 1], blurb: "A young bulk of root and stone." },
-  { id: "aurelune", name: "Aurelune", element: "Bloom", rune: "life", starter: true, skills: ["Petal", "Bloom", "Solace"], art: [1, 1, 1], blurb: "Gold petals along a quiet spine." },
-  { id: "ashmaw", name: "Ashmaw", element: "Smoke", rune: "fury", skills: ["Cinder", "Ashcloud", "Blacksun"], art: [1, 0, 0], blurb: "Smoke before the fire." },
-  { id: "pyrestone", name: "Pyrestone", element: "Magma", rune: "ward", skills: ["Slam", "Magma", "Caldera"], art: [1, 0, 0], blurb: "A leaping body of cooling stone." },
-  { id: "scorchlane", name: "Scorchlane", element: "Flame", rune: "fury", skills: ["Singe", "Breath", "Wildfire"], art: [1, 0, 0], blurb: "Walks, then the air burns." },
-  { id: "glacielle", name: "Glacielle", element: "Frost", rune: "ward", locked: true, ghost: "aurelune", skills: ["Rime", "Glacier", "Whiteout"], art: [0, 0, 0], blurb: "Not hatched." },
-  { id: "stormveil", name: "Stormveil", element: "Storm", rune: "fury", locked: true, ghost: "kaelith", skills: ["Arc", "Crown", "Tempest"], art: [0, 0, 0], blurb: "Not hatched." },
-  { id: "nyxshade", name: "Nyxshade", element: "Void", rune: "life", locked: true, ghost: "verdraxis", skills: ["Hush", "Eclipse", "Maw"], art: [0, 0, 0], blurb: "Not hatched." }
+  { id: "kaelith", name: "Kaelith", element: "Ember", rune: "fury", style: "burst", starter: true, skills: ["Spark", "Lava Rend", "Inferno"], art: [1, 1, 1], blurb: "Coal-hearted and already restless." },
+  { id: "verdraxis", name: "Verdraxis", element: "Moss", rune: "ward", style: "bulwark", starter: true, skills: ["Root", "Stonehide", "Worldroot"], art: [1, 1, 1], blurb: "A young bulk of root and stone." },
+  { id: "aurelune", name: "Aurelune", element: "Bloom", rune: "life", style: "mend", starter: true, skills: ["Petal", "Bloom", "Solace"], art: [1, 1, 1], blurb: "Gold petals along a quiet spine." },
+  { id: "ashmaw", name: "Ashmaw", element: "Smoke", rune: "fury", style: "burn", skills: ["Cinder", "Ashcloud", "Blacksun"], art: [1, 0, 0], blurb: "Smoke before the fire." },
+  { id: "pyrestone", name: "Pyrestone", element: "Magma", rune: "ward", style: "shell", skills: ["Slam", "Magma", "Caldera"], art: [1, 0, 0], blurb: "A leaping body of cooling stone." },
+  { id: "scorchlane", name: "Scorchlane", element: "Flame", rune: "fury", style: "flurry", skills: ["Singe", "Breath", "Wildfire"], art: [1, 0, 0], blurb: "Walks, then the air burns." },
+  { id: "glacielle", name: "Glacielle", element: "Frost", rune: "ward", style: "frost", ghost: "aurelune", skills: ["Rime", "Glacier", "Whiteout"], art: [0, 0, 0], blurb: "Not hatched. Frost will stand in until its own portrait." },
+  { id: "stormveil", name: "Stormveil", element: "Storm", rune: "fury", style: "arc", ghost: "kaelith", skills: ["Arc", "Crown", "Tempest"], art: [0, 0, 0], blurb: "Not hatched. A storm-tint stands in." },
+  { id: "nyxshade", name: "Nyxshade", element: "Void", rune: "life", style: "leech", ghost: "verdraxis", skills: ["Hush", "Eclipse", "Maw"], art: [0, 0, 0], blurb: "Not hatched. A night-tint stands in." }
 ];
 const BY = Object.fromEntries(SPECIES.map((s) => [s.id, s]));
 const WAVES = [
@@ -185,7 +206,7 @@ const WAVES = [
   ["scorchlane", "scorchlane"],
   ["scorchlane"]
 ];
-const UNLOCK_AT = { 1: "ashmaw", 3: "pyrestone", 6: "scorchlane" };
+const UNLOCK_AT = { 1: "ashmaw", 2: "pyrestone", 3: "scorchlane", 4: "glacielle", 5: "stormveil", 6: "nyxshade" };
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const app = document.querySelector("#app");
 let state = load();
@@ -233,8 +254,8 @@ function skillName(id, level) { return spec(id).skills[stageFor(level) - 1]; }
 function artOf(id, level) {
   const stage = stageFor(level);
   const item = spec(id);
-  if (item.locked) return { src: "img/" + item.ghost + "-3.webp", silhouette: true, provisional: true, stage };
-  return { src: "img/" + id + "-" + stage + ".webp", provisional: !item.art[stage - 1], stage };
+  if (item.ghost && !item.art[0]) return { src: "img/" + item.ghost + "-" + stage + ".webp", provisional: true, tint: item.id, stage };
+  return { src: "img/" + id + "-" + stage + ".webp", provisional: !item.art[stage - 1], tint: "", stage };
 }
 function titleOf(id) {
   if (id === state.partnerId && state.partnerName) return state.partnerName;
@@ -258,12 +279,18 @@ function grantXp(level, xp, amount) {
   if (lv >= 10) { lv = 10; cur = 0; }
   return { level: lv, xp: cur, evolutions };
 }
-function roll(amount) { return Math.max(1, Math.round(amount * (0.9 + Math.random() * 0.22))); }
+function roll(amount) {
+  const swing = 0.9 + Math.random() * 0.22;
+  return { dealt: Math.max(1, Math.round(amount * swing)), crit: swing >= 1.08 };
+}
 function hit(target, amount) {
   let dealt = amount;
   if (target.shield) {
     dealt = Math.max(1, Math.round(amount * 0.42));
     target.shield = false;
+  } else if (target.shell) {
+    dealt = Math.max(1, Math.round(amount * 0.7));
+    target.shell = false;
   }
   target.hp = Math.max(0, target.hp - dealt);
   return dealt;
@@ -273,50 +300,108 @@ function heal(target, amount) {
   target.hp = Math.min(target.max, target.hp + amount);
   return target.hp - before;
 }
-function actOn(actor, target, allies, kind) {
+function actOn(actor, target, allies, foes, kind) {
   if (kind === "skill" && actor.cd > 0) kind = "attack";
   const events = [];
+  const strikeAt = (victim, amount, splash) => {
+    if (!victim || victim.hp <= 0) return 0;
+    const swung = roll(amount);
+    const dealt = hit(victim, swung.dealt);
+    events.push({ type: "hit", uid: victim.uid, amount: dealt, crit: swung.crit, splash: !!splash });
+    return dealt;
+  };
   if (kind === "skill") {
     actor.cd = 2;
-    const power = strike(actor.rune, actor.level);
-    if (actor.rune === "fury") events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.round(power * 2.15))) });
-    else if (actor.rune === "ward") {
-      events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.max(4, Math.round(power * 0.8)))) });
+    const amp = 1 + (stageFor(actor.level) - 1) * 0.12;
+    const power = strike(actor.rune, actor.level) * amp;
+    const style = spec(actor.id).style;
+    if (style === "burst") strikeAt(target, Math.round(power * 2.05));
+    else if (style === "bulwark") {
+      strikeAt(target, Math.max(4, Math.round(power * 0.75)));
       actor.shield = true;
       events.push({ type: "shield", uid: actor.uid });
-    } else {
-      events.push({ type: "heal", uid: actor.uid, amount: heal(actor, Math.round(actor.max * 0.34)) });
+    } else if (style === "mend") {
+      events.push({ type: "heal", uid: actor.uid, amount: heal(actor, Math.round(actor.max * 0.28)) });
       const other = allies.filter((a) => a !== actor && a.hp > 0 && a.hp < a.max).sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
       if (other) {
-        const extra = heal(other, Math.round(actor.max * 0.16));
+        const extra = heal(other, Math.round(actor.max * 0.14));
         if (extra) events.push({ type: "heal", uid: other.uid, amount: extra });
       }
-      events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.max(3, Math.round(power * 0.45)))) });
+      strikeAt(target, Math.max(3, Math.round(power * 0.4)));
+    } else if (style === "burn") {
+      strikeAt(target, Math.round(power * 0.7));
+      target.burn = Math.max(2, Math.round(power * 0.26));
+      target.burnLeft = 2;
+      events.push({ type: "note", text: "Горит." });
+    } else if (style === "shell") {
+      strikeAt(target, Math.round(power * 0.85));
+      actor.shell = true;
+      events.push({ type: "shield", uid: actor.uid });
+    } else if (style === "flurry") {
+      strikeAt(target, Math.round(power * 0.62));
+      strikeAt(target, Math.round(power * 0.62));
+    } else if (style === "frost") {
+      strikeAt(target, Math.round(power * 0.75));
+      target.frozen = 1;
+      events.push({ type: "note", text: "Замер." });
+    } else if (style === "arc") {
+      strikeAt(target, Math.round(power * 0.95));
+      const next = (foes || []).find((f) => f !== target && f.hp > 0);
+      if (next) strikeAt(next, Math.round(power * 0.45), true);
+    } else {
+      const before = target.hp;
+      const dealt = strikeAt(target, Math.round(power * 1.15));
+      const sipped = heal(actor, Math.round((before - target.hp) * 0.5));
+      if (sipped) events.push({ type: "heal", uid: actor.uid, amount: sipped });
+      void dealt;
     }
     return { kind, events };
   }
-  events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(strike(actor.rune, actor.level))) });
+  strikeAt(target, strike(actor.rune, actor.level));
   if (actor.cd > 0) actor.cd -= 1;
   return { kind: "attack", events };
 }
 function wait(ms) { return new Promise((resolve) => setTimeout(resolve, reduced ? 16 : ms)); }
 function cue(kind) {
+  if (state.sound === false) return;
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if (!Ctx) return;
     audioCtx = audioCtx || new Ctx();
     if (audioCtx.state === "suspended") audioCtx.resume();
     const now = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = kind === "heal" ? "sine" : "triangle";
-    osc.frequency.setValueAtTime(kind === "heal" ? 520 : kind === "skill" ? 90 : 140, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.06, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
-    osc.start(now); osc.stop(now + 0.2);
-  } catch { /* optional */ }
+    const tone = (freq, dur, type, peak, delay) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now + delay);
+      gain.gain.setValueAtTime(0.0001, now + delay);
+      gain.gain.exponentialRampToValueAtTime(peak, now + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + dur);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now + delay); osc.stop(now + delay + dur + 0.02);
+    };
+    const noise = (dur, peak, hp) => {
+      const count = Math.floor(audioCtx.sampleRate * dur);
+      const buffer = audioCtx.createBuffer(1, count, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < count; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / count);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = "highpass";
+      filter.frequency.value = hp;
+      const gain = audioCtx.createGain();
+      gain.gain.value = peak;
+      src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+      src.start(now);
+    };
+    if (kind === "crit") { noise(0.12, 0.08, 900); tone(240, 0.16, "sawtooth", 0.05, 0); tone(480, 0.2, "triangle", 0.04, 0.04); }
+    else if (kind === "win") { [392, 494, 587].forEach((freq, i) => tone(freq, 0.22, "triangle", 0.05, i * 0.12)); }
+    else if (kind === "evolve") { [330, 392, 494, 659, 784].forEach((freq, i) => tone(freq, 0.28, "sine", 0.05, i * 0.11)); }
+    else if (kind === "heal") tone(560, 0.18, "sine", 0.04, 0);
+    else { noise(0.07, 0.05, 500); tone(110, 0.12, "triangle", 0.05, 0); }
+  } catch { /* sound is optional */ }
 }
 function buzz(pattern) { try { navigator.vibrate?.(pattern); } catch { /* iOS often ignores */ } }
 function hint(id) { return state.hints[id] ? "" : `<p class="hint" data-hint="${id}">${HINTS[id]}</p>`; }
@@ -326,18 +411,23 @@ function dismiss(id) {
   save();
   document.querySelector(`[data-hint="${id}"]`)?.remove();
 }
-function img(src, alt) {
-  return '<img src="' + src + '" alt="' + esc(alt || "") + '">';
+function img(src, alt, cls) {
+  return '<img src="' + src + '" alt="' + esc(alt || "") + '"' + (cls ? ' class="' + cls + '"' : "") + ">";
 }
-function show(html) { app.innerHTML = html; }
+function show(html, fade) {
+  if (fade === false || reduced) { app.innerHTML = html; return; }
+  app.classList.add("is-swapping");
+  app.innerHTML = html;
+  requestAnimationFrame(() => app.classList.remove("is-swapping"));
+}
 function squadIds() {
   const ids = (state.squad || []).filter((id) => state.owned[id] && !spec(id).locked);
   if (state.partnerId && !ids.includes(state.partnerId)) ids.unshift(state.partnerId);
   return ids.slice(0, 3);
 }
 function makeFighter(id, level, rune, boss) {
-  const max = Math.round(maxHp(rune, level) * (boss ? 1.65 : 1));
-  return { uid: id + "-" + Math.random().toString(36).slice(2, 7), id, level, rune, hp: max, max, cd: 0, shield: false, boss: !!boss };
+  const max = Math.round(maxHp(rune, level) * (boss ? 1.52 : 1));
+  return { uid: id + "-" + Math.random().toString(36).slice(2, 7), id, level, rune, hp: max, max, cd: 0, shield: false, shell: false, burn: 0, burnLeft: 0, frozen: 0, boss: !!boss };
 }
 function frontOf(list) { return list.find((f) => f.hp > 0) || null; }
 function doSwitch(list) {
@@ -352,10 +442,7 @@ function chooseFoe(actor, list) {
   const others = list.filter((f) => f !== actor && f.hp > actor.hp);
   if (actor.hp / actor.max < 0.34 && others.length) return "switch";
   if (actor.cd > 0) return "attack";
-  if (actor.rune === "life" && actor.hp / actor.max < 0.75) return "skill";
-  if (actor.rune === "ward" && !actor.shield) return "skill";
-  if (actor.rune === "fury") return "skill";
-  return "attack";
+  return "skill";
 }
 
 function boot() {
@@ -442,7 +529,7 @@ function openDen() {
       <div class="art-screen ${art.provisional ? "provisional" : ""}" style="background-image:url('${art.src}')">
         <div class="sheet">
           <div class="row"><h1>${esc(state.partnerName)}</h1><span class="lv">LV ${owned.level}</span></div>
-          <p class="blurb">${esc(RUNES[owned.rune].line)} · ${esc(skillName(id, owned.level))}</p>
+          <p class="blurb">${esc(RUNES[owned.rune].line)} ${esc(STYLE_LINE[spec(id).style])}</p>
           <div class="xp" aria-label="Experience"><i style="transform:scaleX(${pct})"></i></div>
           <div class="runes">${Object.entries(RUNES).map(([rid, rune]) => `<button type="button" data-rune="${rid}" class="${owned.rune === rid ? "on" : ""}">${esc(rune.name)}</button>`).join("")}</div>
           <div class="squad-row" style="margin-top:8px">${mates.map((sid) => `<span class="lv">${esc(titleOf(sid))}</span>`).join("")}</div>
@@ -450,6 +537,7 @@ function openDen() {
           <div class="links">
             <button type="button" data-go="flock">Flock</button>
             <button type="button" data-go="map">Path</button>
+            <button type="button" data-go="settings">Settings</button>
           </div>
         </div>
       </div>
@@ -465,6 +553,7 @@ function openDen() {
   app.querySelector(".go").onclick = () => { dismiss("den"); startBattle(); };
   app.querySelector('[data-go="flock"]').onclick = () => openFlock();
   app.querySelector('[data-go="map"]').onclick = () => openMap();
+  app.querySelector('[data-go="settings"]').onclick = () => openSettings();
 }
 function openMap() {
   const nodes = Array.from({ length: 10 }, (_, i) => {
@@ -495,7 +584,7 @@ function openFlock() {
       return `<button class="tile silhouette" type="button" disabled>${img(ghost.src, "")}<b>${esc(item.name)}</b></button>`;
     }
     const art = artOf(item.id, owned.level);
-    return `<button class="tile ${selected ? "on" : ""} ${art.provisional ? "provisional" : ""}" type="button" data-id="${item.id}">${img(art.src, "")}<b>${esc(titleOf(item.id))} · ${owned.level}${owned.copies > 1 ? " ×" + owned.copies : ""}</b></button>`;
+    return `<button class="tile ${selected ? "on" : ""} ${art.provisional ? "provisional" : ""}" type="button" data-id="${item.id}">${img(art.src, "", art.tint ? "tint-" + art.tint : "")}<b>${esc(titleOf(item.id))} · ${owned.level}${owned.copies > 1 ? " ×" + owned.copies : ""}</b></button>`;
   }).join("");
   show(`
     ${hint("flock")}
@@ -543,9 +632,10 @@ function renderBattle() {
     if (!f) return `<div class="card"></div>`;
     const art = artOf(f.id, f.level);
     const name = f.boss ? "Blacksun" : titleOf(f.id);
-    return `<div class="card ${f.shield ? "shield" : ""} ${art.provisional ? "provisional" : ""}" data-card="${f.uid}">
-      ${img(art.src, name)}
-      <span class="tag">${esc(name)}</span>
+    const mark = (f.burnLeft ? " · burn" : "") + (f.frozen ? " · frozen" : "");
+    return `<div class="card ${f.shield ? "shield" : ""} ${f.shell && !f.shield ? "shell" : ""} ${art.provisional ? "provisional" : ""}" data-card="${f.uid}">
+      ${img(art.src, name, art.tint ? "tint-" + art.tint : "")}
+      <span class="tag">${esc(name + mark)}</span>
       ${side === "you" ? `<div class="bench">${bench.map((b) => `<span>${img(artOf(b.id, b.level).src, titleOf(b.id))}</span>`).join("")}</div>` : ""}
       <div class="life" style="width:${trackWidth(f.max)}%"><i data-hp="${f.uid}" style="transform:scaleX(${f.hp / f.max})"></i></div>
     </div>`;
@@ -563,11 +653,10 @@ function renderBattle() {
       ${card(you, "you")}
       <div class="dock">
         <button type="button" data-act="attack">Attack</button>
-        <button type="button" data-act="skill" ${cooling ? "disabled" : ""}>${esc(skill)}<small>${cooling ? "Cooling" : RUNES[you?.rune || "fury"].name}</small></button>
+        <button type="button" data-act="skill" ${cooling ? "disabled" : ""}>${esc(skill)}<small>${cooling ? "Cooling" : esc(STYLE_WORD[spec(you.id).style])}</small></button>
         <button type="button" data-act="switch" ${bench.length ? "" : "disabled"}>Switch</button>
       </div>
-    </section>`);
-  app.querySelectorAll("[data-act]").forEach((btn) => { btn.onclick = () => onAct(btn.dataset.act); });
+    </section>`, false);
 }
 function setStatus(text) {
   battle.note = text;
@@ -580,7 +669,22 @@ function sync() {
     const bar = document.querySelector(`[data-hp="${f.uid}"]`);
     if (bar) bar.style.transform = `scaleX(${Math.max(0, f.hp / f.max)})`;
     const card = document.querySelector(`[data-card="${f.uid}"]`);
-    if (card) card.classList.toggle("shield", !!f.shield);
+    if (card) {
+      card.classList.toggle("shield", !!f.shield);
+      card.classList.toggle("shell", !!f.shell && !f.shield);
+    }
+  }
+}
+function burst(uid, kind) {
+  const card = document.querySelector(`[data-card="${uid}"]`) || document.getElementById("evo-art");
+  if (!card) return;
+  for (let i = 0; i < (kind === "evo" ? 16 : 10); i += 1) {
+    const bit = document.createElement("i");
+    bit.className = "spark " + (kind || "");
+    bit.style.setProperty("--dx", Math.round(Math.random() * 120 - 60) + "px");
+    bit.style.setProperty("--dy", Math.round(Math.random() * -90 - 8) + "px");
+    card.appendChild(bit);
+    setTimeout(() => bit.remove(), 700);
   }
 }
 function pop(uid, text, kind) {
@@ -595,10 +699,21 @@ function pop(uid, text, kind) {
 async function play(sideUid, result) {
   const card = document.querySelector(`[data-card="${sideUid}"]`);
   card?.classList.add("lunge");
-  cue(result.kind === "skill" ? "skill" : "hit");
-  buzz(result.kind === "skill" ? [16, 24, 16] : 18);
+  const crit = result.events.some((event) => event.crit);
+  cue(crit ? "crit" : result.kind === "skill" ? "skill" : "hit");
+  buzz(crit ? [18, 20, 28] : result.kind === "skill" ? [16, 24, 16] : 18);
   for (const event of result.events) {
-    if (event.type === "hit") pop(event.uid, "−" + event.amount, "hit");
+    if (event.type === "hit") {
+      const visible = document.querySelector(`[data-card="${event.uid}"]`);
+      const host = visible ? event.uid : frontOf(battle.foe)?.uid;
+      if (!host) continue;
+      pop(host, "−" + event.amount, event.crit ? "crit" : "hit");
+      const victim = document.querySelector(`[data-card="${host}"]`);
+      victim?.classList.add("struck");
+      setTimeout(() => victim?.classList.remove("struck"), 220);
+      if (event.crit) burst(host, "crit");
+    }
+    if (event.type === "note") setStatus(event.text);
     if (event.type === "heal" && event.amount) pop(event.uid, "+" + event.amount, "heal");
   }
   document.body.classList.add("shake");
@@ -606,6 +721,16 @@ async function play(sideUid, result) {
   await wait(280);
   document.body.classList.remove("shake");
   card?.classList.remove("lunge");
+}
+function suffer(list) {
+  const events = [];
+  for (const f of list) {
+    if (f.hp > 0 && f.burnLeft > 0) {
+      events.push({ type: "hit", uid: f.uid, amount: hit(f, f.burn), crit: false });
+      f.burnLeft -= 1;
+    }
+  }
+  return events;
 }
 async function onAct(kind) {
   if (lock || !battle || battle.over) return;
@@ -617,13 +742,27 @@ async function onAct(kind) {
   lock = true;
   dismiss("battle");
   try {
-    if (kind === "switch") {
+    const burned = suffer(battle.you);
+    if (burned.length) {
+      setStatus("Горит.");
+      for (const event of burned) pop(event.uid, "−" + event.amount, "hit");
+      sync();
+      await wait(260);
+      if (!frontOf(battle.you)) return finish(false);
+    }
+    const actor = frontOf(battle.you);
+    if (actor.frozen) {
+      actor.frozen = 0;
+      setStatus("Ты замер и пропускаешь ход.");
+      renderBattle();
+      await wait(520);
+    } else if (kind === "switch") {
       doSwitch(battle.you);
       setStatus("Ты меняешь бойца.");
       renderBattle();
       await wait(240);
     } else {
-      const result = actOn(you, foe, battle.you, kind);
+      const result = actOn(actor, frontOf(battle.foe), battle.you, battle.foe, kind);
       await play(you.uid, result);
     }
     if (!frontOf(battle.foe)) return finish(true);
@@ -643,9 +782,23 @@ async function foeTurn() {
   renderBattle();
   await wait(720);
   if (!battle || battle.over) return;
+  const burned = suffer(battle.foe);
+  if (burned.length) {
+    setStatus("Ход ИИ. Горит.");
+    for (const event of burned) pop(event.uid, "−" + event.amount, "hit");
+    sync();
+    await wait(260);
+  }
   const actor = frontOf(battle.foe);
   const you = frontOf(battle.you);
   if (!actor || !you) return;
+  if (actor.frozen) {
+    actor.frozen = 0;
+    setStatus("Ход ИИ. " + (actor.boss ? "Blacksun" : spec(actor.id).name) + " замер и пропускает ход.");
+    renderBattle();
+    await wait(520);
+    return;
+  }
   const kind = chooseFoe(actor, battle.foe);
   const verb = kind === "skill" ? "применяет умение" : kind === "switch" ? "меняет бойца" : "бьёт";
   setStatus("Ход ИИ. " + (actor.boss ? "Blacksun" : spec(actor.id).name) + " " + verb + ".");
@@ -655,7 +808,7 @@ async function foeTurn() {
     await wait(360);
     return;
   }
-  const result = actOn(actor, you, battle.foe, kind);
+  const result = actOn(actor, you, battle.foe, battle.you, kind);
   await play(actor.uid, result);
   buzz([10, 30, 20]);
 }
@@ -666,6 +819,7 @@ function finish(won) {
     setTimeout(() => openDen(), reduced ? 200 : 900);
     return;
   }
+  cue("win");
   const index = battle.index;
   const first = state.wins === 0;
   if (state.wins < 10) state.wins += 1;
@@ -722,13 +876,32 @@ function openEvolve(evo, fromStage) {
         </div>
       </div>
     </section>`);
-  cue("skill");
+  cue("evolve");
   buzz([20, 40, 20, 40, 30]);
+  burst(null, "evo");
   setTimeout(() => {
     const node = document.getElementById("evo-art");
     if (node) node.style.backgroundImage = `url('${to.src}')`;
   }, reduced ? 20 : 420);
   app.querySelector(".go").onclick = () => { dismiss("evolve"); openDen(); };
+}
+function openSettings() {
+  const on = state.sound !== false;
+  show(`
+    <section class="grid-screen">
+      <p class="kicker">Settings</p>
+      <h1>Camp</h1>
+      <p class="sub">Звук можно выключить. Вибрация на iPhone часто молчит сама.</p>
+      <button class="go" type="button" data-sound>${on ? "Sound on" : "Sound off"}</button>
+      <button class="mini" type="button" data-back style="margin-top:10px">Den</button>
+    </section>`);
+  app.querySelector("[data-sound]").onclick = () => {
+    state.sound = state.sound === false;
+    save();
+    if (state.sound !== false) cue("hit");
+    openSettings();
+  };
+  app.querySelector("[data-back]").onclick = () => openDen();
 }
 boot();
 </script>
