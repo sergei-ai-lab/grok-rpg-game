@@ -1,8 +1,8 @@
-import { DRAGONS, RUNES, ATTACKS, ABILITIES, stageForLevel, previewDragon, attackResourceGain, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js';
-import { FAMILIES, STARTERS, loadProfile, adoptProfile, awardBattle, saveProfile, upgradeCost, canUpgrade, upgradeDragon } from './profile.js';
-import { ENCOUNTERS, campaignMatch, recordCampaign } from './campaign.js';
-import { feel, setFeel, unlockAudio, transition, feedbackEffect } from './feel.js';
-import { QUESTS, refreshDaily, awardDaily, chestReady, claimChest } from './daily.js';
+import { DRAGONS, RUNES, ATTACKS, ABILITIES, stageForLevel, previewDragon, attackResourceGain, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js?v=9a4396cd8f3a';
+import { FAMILIES, STARTERS, loadProfile, adoptProfile, awardBattle, saveProfile, upgradeCost, canUpgrade, upgradeDragon } from './profile.js?v=9a4396cd8f3a';
+import { ENCOUNTERS, campaignMatch, recordCampaign } from './campaign.js?v=9a4396cd8f3a';
+import { feel, setFeel, unlockAudio, transition, feedbackEffect } from './feel.js?v=9a4396cd8f3a';
+import { QUESTS, refreshDaily, awardDaily, chestReady, claimChest } from './daily.js?v=9a4396cd8f3a';
 const app = document.querySelector('#app');
 const artBase = new URL('./assets/dragons/', import.meta.url);
 const artFamilies = FAMILIES;

@@ -1,4 +1,4 @@
-import { FAMILIES } from './profile.js';
+import { FAMILIES } from './profile.js?v=9a4396cd8f3a';
 export const QUESTS = [
   { id: 'played', name: 'Play 2 battles', goal: 2 },
   { id: 'claws', name: 'Use Claw 3 times', goal: 3 },
