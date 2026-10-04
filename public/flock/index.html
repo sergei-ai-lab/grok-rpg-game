@@ -336,7 +336,7 @@ function squadIds() {
   return ids.slice(0, 3);
 }
 function makeFighter(id, level, rune, boss) {
-  const max = Math.round(maxHp(rune, level) * (boss ? 1.65 : 1));
+  const max = Math.round(maxHp(rune, level) * (boss ? 1.18 : 1));
   return { uid: id + "-" + Math.random().toString(36).slice(2, 7), id, level, rune, hp: max, max, cd: 0, shield: false, boss: !!boss };
 }
 function frontOf(list) { return list.find((f) => f.hp > 0) || null; }
