@@ -181,12 +181,17 @@ function summarize(mul) {
     return t ? Math.round(w / t * 1000) / 10 : 0;
   };
   const mins = runs.map((r) => r.seconds / 60).sort((a, b) => a - b);
+  const at = (q) => Math.round(mins[Math.min(runs.length - 1, Math.floor(runs.length * q))] * 10) / 10;
   const pct = (n) => Math.round(n / runs.length * 1000) / 10;
+  const mean = Math.round(mins.reduce((s, n) => s + n, 0) / mins.length * 10) / 10;
   return {
-    mul, rates: Array.from({ length: 10 }, (_, i) => rate(i)),
+    runs: runs.length,
+    mul,
+    rates: Array.from({ length: 10 }, (_, i) => rate(i)),
     cleared: pct(runs.filter((r) => r.wins === 10).length),
-    evo: pct(runs.filter((r) => r.firstEvoFight != null && r.firstEvoFight < 5).length),
-    p50: Math.round(mins[Math.floor(runs.length / 2)] * 10) / 10,
+    evoBefore5: pct(runs.filter((r) => r.firstEvoFight != null && r.firstEvoFight < 5).length),
+    minutes: { p10: at(0.1), p50: at(0.5), p90: at(0.9), mean },
   };
 }
-console.log(JSON.stringify(summarize(1.52), null, 2));
+const before = summarize(1.52);
+console.log(JSON.stringify({ label: "before-and-after-unchanged", ...before }, null, 2));
