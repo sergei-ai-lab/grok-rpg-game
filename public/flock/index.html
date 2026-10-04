@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0e0c0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="Name a hatchling and grow it through a ten-fight campaign.">
+<title>Flock</title>
+<style>
+:root {
+  --bg: #0e0c0b;
+  --ink: #f4efe6;
+  --muted: #b7ab9a;
+  --gold: #e4c17a;
+  --line: rgba(244, 239, 230, 0.16);
+  --safe-t: env(safe-area-inset-top);
+  --safe-b: env(safe-area-inset-bottom);
+  color-scheme: dark;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); }
+body { overflow: hidden; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+#app { height: 100dvh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; }
+.screen { flex: 1 1 auto; height: auto; min-height: 0; display: flex; flex-direction: column; }
+.art-screen {
+  position: relative; flex: 1; min-height: 0; margin: 0;
+  background: #1a1410 center 20% / cover no-repeat;
+}
+.art-screen::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(14,12,11,.15) 20%, rgba(14,12,11,.2) 48%, rgba(14,12,11,.92) 100%);
+}
+.veil { position: relative; z-index: 1; margin-top: auto; padding: 16px 16px calc(14px + var(--safe-b)); }
+.kicker { margin: 0 0 4px; letter-spacing: .14em; text-transform: uppercase; font-size: 11px; color: var(--gold); }
+h1 { font-family: Palatino, "Iowan Old Style", Georgia, serif; font-weight: 560; font-size: 34px; line-height: 1; margin: 0 0 6px; }
+.blurb { margin: 0 0 14px; color: var(--muted); font-size: 14px; line-height: 1.35; }
+.hint {
+  position: relative; z-index: 2; margin: calc(8px + var(--safe-t)) 12px 0;
+  padding: 8px 10px; border-radius: 10px; background: rgba(14,12,11,.72);
+  color: #f3e6c8; font-size: 13px; line-height: 1.35;
+}
+.go, .dock button, .mini {
+  border: 0; border-radius: 14px; background: var(--gold); color: #1a140c; font-weight: 680;
+  min-height: 48px; padding: 12px 16px;
+}
+.go { width: 100%; font-size: 17px; }
+.nav {
+  position: absolute; z-index: 2; top: 42%; width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid var(--line); background: rgba(14,12,11,.45); font-size: 26px; line-height: 1;
+}
+.nav.prev { left: 10px; }
+.nav.next { right: 10px; }
+.dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; }
+.dots i, .pips i { width: 7px; height: 7px; border-radius: 50%; background: rgba(244,239,230,.28); display: block; }
+.dots i.on, .pips i.on { background: var(--gold); }
+.name-wrap { position: absolute; z-index: 2; left: 16px; right: 16px; top: 16%; }
+.name-wrap input {
+  width: 100%; margin: 8px 0 12px; padding: 14px 12px; border-radius: 12px;
+  border: 1px solid var(--line); background: rgba(14,12,11,.72); font-size: 22px;
+}
+.sheet {
+  position: relative; z-index: 1; margin-top: auto;
+  padding: 14px 14px calc(12px + var(--safe-b));
+  background: linear-gradient(180deg, transparent, rgba(14,12,11,.94) 28%);
+}
+.row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.lv { color: var(--gold); font-size: 13px; letter-spacing: .08em; }
+.xp { height: 6px; border-radius: 99px; background: rgba(244,239,230,.16); overflow: hidden; margin: 8px 0 10px; }
+.xp i { display: block; height: 100%; width: 100%; background: var(--gold); transform-origin: left center; transform: scaleX(0); }
+.runes, .squad-row, .links { display: flex; gap: 8px; }
+.runes button, .links button {
+  flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid var(--line);
+  background: rgba(14,12,11,.35); color: var(--ink); font-size: 13px;
+}
+.runes button.on { border-color: var(--gold); color: var(--gold); }
+.links { margin-top: 8px; }
+.links button { background: transparent; }
+.battle { flex: 1 1 auto; min-height: 0; height: auto; display: grid; grid-template-rows: auto minmax(0,1.05fr) minmax(0,.95fr) auto; padding: calc(6px + var(--safe-t)) 10px calc(8px + var(--safe-b)); gap: 6px; }
+.top { display: flex; justify-content: space-between; gap: 8px; align-items: center; min-height: 28px; }
+.top b { font-size: 13px; letter-spacing: .06em; }
+.top span, .status { color: var(--muted); font-size: 12px; }
+.status { min-height: 16px; margin: 0; }
+.card { position: relative; min-height: 0; border-radius: 16px; overflow: hidden; background: #221c16; }
+.card img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }
+.card .tag {
+  position: absolute; left: 10px; top: 8px; font-size: 13px; font-weight: 680;
+  text-shadow: 0 1px 6px #000;
+}
+.life { position: absolute; left: 10px; right: 10px; bottom: 8px; height: 8px; border-radius: 99px; background: rgba(0,0,0,.45); overflow: hidden; }
+.life i { display: block; height: 100%; width: 100%; transform-origin: left center; background: #d4564e; }
+.life.wide { right: auto; }
+.card.shield { box-shadow: inset 0 0 0 2px var(--gold); }
+.card.provisional { box-shadow: inset 0 0 0 2px rgba(228,193,122,.85); }
+.card.lunge { animation: lunge .22s ease; }
+.bench { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
+.bench span {
+  width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(244,239,230,.7);
+  overflow: hidden; background: #000; display: block;
+}
+.bench img { width: 100%; height: 100%; object-fit: cover; }
+.dock { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.dock button { font-size: 15px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.dock button small { display: block; font-weight: 560; font-size: 10px; opacity: .75; }
+.dock button:disabled { opacity: .4; }
+.pop {
+  position: absolute; left: 50%; top: 42%; font-family: Palatino, Georgia, serif;
+  font-size: 32px; font-weight: 700; text-shadow: 0 2px 8px #000; animation: float .7s ease forwards; pointer-events: none;
+}
+.pop.heal { color: #9ddeb5; }
+.pop.hit { color: #fff; }
+body.shake { animation: shake .28s linear; }
+@keyframes float { to { transform: translate(-50%, -46px); opacity: 0; } }
+@keyframes lunge { 50% { transform: translateY(-8px) scale(1.03); } }
+@keyframes shake { 25% { transform: translateX(-5px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-2px); } }
+.flash { position: absolute; inset: 0; background: #fff6e4; animation: flash .7s ease forwards; pointer-events: none; }
+@keyframes flash { 0% { opacity: .95; } 100% { opacity: 0; } }
+.reward, .evo, .grid-screen { flex: 1 1 auto; height: auto; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: calc(12px + var(--safe-t)) 14px calc(12px + var(--safe-b)); }
+.reward .xp { height: 10px; }
+.grid { flex: 1 1 auto; height: 0; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.tile {
+  position: relative; border: 0; padding: 0; border-radius: 12px; overflow: hidden; background: #1b1612;
+  height: 100%; min-height: 0;
+}
+.tile img { width: 100%; height: 100%; object-fit: cover; }
+.tile.silhouette img { filter: brightness(0) contrast(1.15); opacity: .85; }
+.tile.on { box-shadow: inset 0 0 0 2px var(--gold); }
+.tile b { position: absolute; left: 6px; right: 6px; bottom: 6px; font-size: 11px; text-align: left; text-shadow: 0 1px 4px #000; }
+.map { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 12px; }
+.node {
+  border-radius: 12px; border: 1px solid var(--line); background: transparent; min-height: 46px; text-align: left; padding: 8px 10px; font-size: 13px;
+}
+.node.done { border-color: var(--gold); color: var(--gold); }
+.node.now { background: var(--gold); color: #1a140c; border-color: var(--gold); }
+.back { position: absolute; z-index: 3; top: calc(8px + var(--safe-t)); left: 10px; border: 0; background: rgba(14,12,11,.55); color: var(--ink); border-radius: 999px; min-height: 36px; padding: 6px 12px; }
+.sub { color: var(--muted); font-size: 13px; margin: 4px 0 8px; }
+@media (prefers-reduced-motion: reduce) {
+  .pop, .card.lunge, body.shake, .flash { animation: none; }
+}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const KEY = "flock.v3";
+const HINTS = {
+  pick: "Выбери своего дракона. Он будет расти.",
+  name: "Дай ему имя. Оно останется с ним.",
+  den: "Руна меняет роль: ударник, танк или лекарь.",
+  battle: "Три кнопки: удар, умение или смена.",
+  reward: "Опыт и иногда дубликат. На 5 и 10 уровне — эволюция.",
+  evolve: "Он изменился: другой вид и новое умение.",
+  flock: "Открытых можно взять в тройку. Тёмные ещё не вылупились.",
+  map: "Десять боёв. Десятый — босс. Проигрыш не сбрасывает путь."
+};
+const RUNES = {
+  fury: { name: "Striker", line: "Harder hits, thinner life." },
+  ward: { name: "Tank", line: "Thicker life. Skill raises a shield." },
+  life: { name: "Healer", line: "Skill mends you and a resting ally." }
+};
+const SPECIES = [
+  { id: "kaelith", name: "Kaelith", element: "Ember", rune: "fury", starter: true, skills: ["Spark", "Lava Rend", "Inferno"], art: [1, 1, 1], blurb: "Coal-hearted and already restless." },
+  { id: "verdraxis", name: "Verdraxis", element: "Moss", rune: "ward", starter: true, skills: ["Root", "Stonehide", "Worldroot"], art: [1, 1, 1], blurb: "A young bulk of root and stone." },
+  { id: "aurelune", name: "Aurelune", element: "Bloom", rune: "life", starter: true, skills: ["Petal", "Bloom", "Solace"], art: [1, 1, 1], blurb: "Gold petals along a quiet spine." },
+  { id: "ashmaw", name: "Ashmaw", element: "Smoke", rune: "fury", skills: ["Cinder", "Ashcloud", "Blacksun"], art: [1, 0, 0], blurb: "Smoke before the fire." },
+  { id: "pyrestone", name: "Pyrestone", element: "Magma", rune: "ward", skills: ["Slam", "Magma", "Caldera"], art: [1, 0, 0], blurb: "A leaping body of cooling stone." },
+  { id: "scorchlane", name: "Scorchlane", element: "Flame", rune: "fury", skills: ["Singe", "Breath", "Wildfire"], art: [1, 0, 0], blurb: "Walks, then the air burns." },
+  { id: "glacielle", name: "Glacielle", element: "Frost", rune: "ward", locked: true, ghost: "aurelune", skills: ["Rime", "Glacier", "Whiteout"], art: [0, 0, 0], blurb: "Not hatched." },
+  { id: "stormveil", name: "Stormveil", element: "Storm", rune: "fury", locked: true, ghost: "kaelith", skills: ["Arc", "Crown", "Tempest"], art: [0, 0, 0], blurb: "Not hatched." },
+  { id: "nyxshade", name: "Nyxshade", element: "Void", rune: "life", locked: true, ghost: "verdraxis", skills: ["Hush", "Eclipse", "Maw"], art: [0, 0, 0], blurb: "Not hatched." }
+];
+const BY = Object.fromEntries(SPECIES.map((s) => [s.id, s]));
+const WAVES = [
+  ["ashmaw"],
+  ["ashmaw", "ashmaw"],
+  ["ashmaw", "pyrestone"],
+  ["pyrestone", "pyrestone"],
+  ["pyrestone", "scorchlane"],
+  ["scorchlane", "ashmaw"],
+  ["scorchlane", "pyrestone", "ashmaw"],
+  ["pyrestone", "scorchlane"],
+  ["scorchlane", "scorchlane"],
+  ["scorchlane"]
+];
+const UNLOCK_AT = { 1: "ashmaw", 3: "pyrestone", 6: "scorchlane" };
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const app = document.querySelector("#app");
+let state = load();
+let battle = null;
+let lock = false;
+let audioCtx = null;
+
+function load() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (raw && raw.v === 3 && raw.partnerId && raw.owned?.[raw.partnerId]) return raw;
+  } catch { /* fresh */ }
+  return { v: 3, partnerId: null, partnerName: "", hints: {}, wins: 0, squad: [], owned: {} };
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+function spec(id) { return BY[id]; }
+function esc(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&" + "amp;")
+    .replaceAll("<", "&" + "lt;")
+    .replaceAll(">", "&" + "gt;")
+    .replaceAll('"', "&" + "quot;")
+    .replaceAll("'", "&" + "#39;");
+}
+function cleanName(raw) {
+  return String(raw || "").replace(/[^\p{L}\p{N} '\-]/gu, "").replace(/\s+/g, " ").trim().slice(0, 16);
+}
+function stageFor(level) { return level >= 10 ? 3 : level >= 5 ? 2 : 1; }
+function xpNeed(level) { return level >= 10 ? 0 : 30 + level * 10; }
+function maxHp(rune, level) {
+  const stage = stageFor(level);
+  const base = { fury: 74, ward: 116, life: 92 }[rune];
+  const growth = { fury: 6, ward: 10, life: 7 }[rune];
+  const bloom = { fury: 8, ward: 14, life: 10 }[rune];
+  return base + (level - 1) * growth + (stage - 1) * bloom;
+}
+function strike(rune, level) {
+  const stage = stageFor(level);
+  const base = { fury: 18, ward: 11, life: 13 }[rune];
+  const growth = { fury: 2, ward: 1, life: 1 }[rune];
+  const bloom = { fury: 6, ward: 3, life: 4 }[rune];
+  return base + (level - 1) * growth + (stage - 1) * bloom;
+}
+function skillName(id, level) { return spec(id).skills[stageFor(level) - 1]; }
+function artOf(id, level) {
+  const stage = stageFor(level);
+  const item = spec(id);
+  if (item.locked) return { src: "img/" + item.ghost + "-3.webp", silhouette: true, provisional: true, stage };
+  return { src: "img/" + id + "-" + stage + ".webp", provisional: !item.art[stage - 1], stage };
+}
+function titleOf(id) {
+  if (id === state.partnerId && state.partnerName) return state.partnerName;
+  return spec(id).name;
+}
+function ownedRune(id) { return state.owned[id]?.rune || spec(id).rune; }
+function ownedLevel(id) { return state.owned[id]?.level || 1; }
+function grantXp(level, xp, amount) {
+  let lv = level, cur = xp, left = amount;
+  const evolutions = [];
+  while (left > 0 && lv < 10) {
+    const need = xpNeed(lv);
+    if (cur + left < need) { cur += left; left = 0; break; }
+    left -= need - cur;
+    const before = stageFor(lv);
+    lv += 1;
+    cur = 0;
+    const after = stageFor(lv);
+    if (after !== before) evolutions.push({ level: lv, stage: after });
+  }
+  if (lv >= 10) { lv = 10; cur = 0; }
+  return { level: lv, xp: cur, evolutions };
+}
+function roll(amount) { return Math.max(1, Math.round(amount * (0.9 + Math.random() * 0.22))); }
+function hit(target, amount) {
+  let dealt = amount;
+  if (target.shield) {
+    dealt = Math.max(1, Math.round(amount * 0.42));
+    target.shield = false;
+  }
+  target.hp = Math.max(0, target.hp - dealt);
+  return dealt;
+}
+function heal(target, amount) {
+  const before = target.hp;
+  target.hp = Math.min(target.max, target.hp + amount);
+  return target.hp - before;
+}
+function actOn(actor, target, allies, kind) {
+  if (kind === "skill" && actor.cd > 0) kind = "attack";
+  const events = [];
+  if (kind === "skill") {
+    actor.cd = 2;
+    const power = strike(actor.rune, actor.level);
+    if (actor.rune === "fury") events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.round(power * 2.15))) });
+    else if (actor.rune === "ward") {
+      events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.max(4, Math.round(power * 0.8)))) });
+      actor.shield = true;
+      events.push({ type: "shield", uid: actor.uid });
+    } else {
+      events.push({ type: "heal", uid: actor.uid, amount: heal(actor, Math.round(actor.max * 0.34)) });
+      const other = allies.filter((a) => a !== actor && a.hp > 0 && a.hp < a.max).sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
+      if (other) {
+        const extra = heal(other, Math.round(actor.max * 0.16));
+        if (extra) events.push({ type: "heal", uid: other.uid, amount: extra });
+      }
+      events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(Math.max(3, Math.round(power * 0.45)))) });
+    }
+    return { kind, events };
+  }
+  events.push({ type: "hit", uid: target.uid, amount: hit(target, roll(strike(actor.rune, actor.level))) });
+  if (actor.cd > 0) actor.cd -= 1;
+  return { kind: "attack", events };
+}
+function wait(ms) { return new Promise((resolve) => setTimeout(resolve, reduced ? 16 : ms)); }
+function cue(kind) {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    audioCtx = audioCtx || new Ctx();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = kind === "heal" ? "sine" : "triangle";
+    osc.frequency.setValueAtTime(kind === "heal" ? 520 : kind === "skill" ? 90 : 140, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.06, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+    osc.start(now); osc.stop(now + 0.2);
+  } catch { /* optional */ }
+}
+function buzz(pattern) { try { navigator.vibrate?.(pattern); } catch { /* iOS often ignores */ } }
+function hint(id) { return state.hints[id] ? "" : `<p class="hint" data-hint="${id}">${HINTS[id]}</p>`; }
+function dismiss(id) {
+  if (state.hints[id]) return;
+  state.hints[id] = true;
+  save();
+  document.querySelector(`[data-hint="${id}"]`)?.remove();
+}
+function show(html) { app.innerHTML = html; }
+function squadIds() {
+  const ids = (state.squad || []).filter((id) => state.owned[id] && !spec(id).locked);
+  if (state.partnerId && !ids.includes(state.partnerId)) ids.unshift(state.partnerId);
+  return ids.slice(0, 3);
+}
+function makeFighter(id, level, rune, boss) {
+  const max = Math.round(maxHp(rune, level) * (boss ? 1.65 : 1));
+  return { uid: id + "-" + Math.random().toString(36).slice(2, 7), id, level, rune, hp: max, max, cd: 0, shield: false, boss: !!boss };
+}
+function frontOf(list) { return list.find((f) => f.hp > 0) || null; }
+function doSwitch(list) {
+  const front = frontOf(list);
+  const others = list.filter((f) => f !== front && f.hp > 0);
+  if (!front || !others.length) return false;
+  list.splice(list.indexOf(front), 1);
+  list.push(front);
+  return true;
+}
+function chooseFoe(actor, list) {
+  const others = list.filter((f) => f !== actor && f.hp > actor.hp);
+  if (actor.hp / actor.max < 0.34 && others.length) return "switch";
+  if (actor.cd > 0) return "attack";
+  if (actor.rune === "life" && actor.hp / actor.max < 0.75) return "skill";
+  if (actor.rune === "ward" && !actor.shield) return "skill";
+  if (actor.rune === "fury") return "skill";
+  return "attack";
+}
+
+function boot() {
+  if (!state.partnerId) openPick(0);
+  else openDen();
+}
+function openPick(index) {
+  const starters = SPECIES.filter((s) => s.starter);
+  const item = starters[index];
+  const art = artOf(item.id, 1);
+  show(`
+    ${hint("pick")}
+    <section class="screen">
+      <div class="art-screen" style="background-image:url('${art.src}')">
+        <button class="nav prev" type="button" aria-label="Previous">‹</button>
+        <button class="nav next" type="button" aria-label="Next">›</button>
+        <div class="veil">
+          <p class="kicker">${esc(item.element)}</p>
+          <h1>${esc(item.name)}</h1>
+          <p class="blurb">${esc(item.blurb)}</p>
+          <div class="dots">${starters.map((_, i) => `<i class="${i === index ? "on" : ""}"></i>`).join("")}</div>
+          <button class="go" type="button">Choose ${esc(item.name)}</button>
+        </div>
+      </div>
+    </section>`);
+  const go = (delta) => openPick((index + delta + starters.length) % starters.length);
+  app.querySelector(".prev").onclick = () => go(-1);
+  app.querySelector(".next").onclick = () => go(1);
+  let x = 0;
+  const card = app.querySelector(".art-screen");
+  card.addEventListener("pointerdown", (e) => { x = e.clientX; });
+  card.addEventListener("pointerup", (e) => {
+    const dx = e.clientX - x;
+    if (dx > 40) go(-1);
+    else if (dx < -40) go(1);
+  });
+  app.querySelector(".go").onclick = () => { dismiss("pick"); openName(item.id); };
+}
+function openName(id) {
+  const item = spec(id);
+  const art = artOf(id, 1);
+  show(`
+    ${hint("name")}
+    <section class="screen">
+      <div class="art-screen" style="background-image:url('${art.src}')">
+        <div class="name-wrap">
+          <p class="kicker">Name your dragon</p>
+          <input maxlength="16" enterkeyhint="done" aria-label="Dragon name" value="${esc(item.name)}">
+          <button class="go" type="button">This is mine</button>
+        </div>
+      </div>
+    </section>`);
+  const input = app.querySelector("input");
+  input.focus();
+  input.select();
+  const commit = () => {
+    dismiss("name");
+    const name = cleanName(input.value) || item.name;
+    state.partnerId = id;
+    state.partnerName = name;
+    state.wins = 0;
+    state.owned = {};
+    state.squad = [];
+    for (const starter of SPECIES.filter((s) => s.starter)) {
+      state.owned[starter.id] = { level: 1, xp: 0, rune: starter.rune, copies: 1 };
+      state.squad.push(starter.id);
+    }
+    save();
+    openDen();
+  };
+  app.querySelector(".go").onclick = commit;
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") commit(); });
+}
+function openDen() {
+  const id = state.partnerId;
+  const owned = state.owned[id];
+  const art = artOf(id, owned.level);
+  const need = xpNeed(owned.level);
+  const pct = owned.level >= 10 ? 1 : owned.xp / need;
+  const mates = squadIds().filter((sid) => sid !== id);
+  show(`
+    ${hint("den")}
+    <section class="screen">
+      <div class="art-screen ${art.provisional ? "provisional" : ""}" style="background-image:url('${art.src}')">
+        <div class="sheet">
+          <div class="row"><h1>${esc(state.partnerName)}</h1><span class="lv">LV ${owned.level}</span></div>
+          <p class="blurb">${esc(RUNES[owned.rune].line)} · ${esc(skillName(id, owned.level))}</p>
+          <div class="xp" aria-label="Experience"><i style="transform:scaleX(${pct})"></i></div>
+          <div class="runes">${Object.entries(RUNES).map(([rid, rune]) => `<button type="button" data-rune="${rid}" class="${owned.rune === rid ? "on" : ""}">${esc(rune.name)}</button>`).join("")}</div>
+          <div class="squad-row" style="margin-top:8px">${mates.map((sid) => `<span class="lv">${esc(titleOf(sid))}</span>`).join("")}</div>
+          <button class="go" type="button" style="margin-top:10px">${state.wins >= 10 ? "Face the boss again" : "Fight " + (state.wins + 1) + (state.wins === 9 ? " · Boss" : "")}</button>
+          <div class="links">
+            <button type="button" data-go="flock">Flock</button>
+            <button type="button" data-go="map">Path</button>
+          </div>
+        </div>
+      </div>
+    </section>`);
+  app.querySelectorAll("[data-rune]").forEach((btn) => {
+    btn.onclick = () => {
+      dismiss("den");
+      owned.rune = btn.dataset.rune;
+      save();
+      openDen();
+    };
+  });
+  app.querySelector(".go").onclick = () => { dismiss("den"); startBattle(); };
+  app.querySelector('[data-go="flock"]').onclick = () => openFlock();
+  app.querySelector('[data-go="map"]').onclick = () => openMap();
+}
+function openMap() {
+  const nodes = Array.from({ length: 10 }, (_, i) => {
+    const cls = i < state.wins ? "done" : i === state.wins ? "now" : "";
+    const label = i === 9 ? "10 · Boss" : String(i + 1);
+    return `<button class="node ${cls}" type="button" data-i="${i}">${label}</button>`;
+  }).join("");
+  show(`
+    ${hint("map")}
+    <section class="grid-screen">
+      <p class="kicker">Campaign</p>
+      <h1>The path</h1>
+      <p class="sub">${state.wins >= 10 ? "The boss has fallen. You can face it again." : "Next: fight " + (state.wins + 1) + " of 10."}</p>
+      <div class="map">${nodes}</div>
+      <button class="go" type="button">${state.wins >= 10 ? "Boss again" : "Enter fight"}</button>
+    </section>`);
+  app.querySelector(".go").onclick = () => { dismiss("map"); startBattle(); };
+  app.querySelectorAll(".node").forEach((btn) => {
+    btn.onclick = () => { dismiss("map"); if (Number(btn.dataset.i) === Math.min(state.wins, 9)) startBattle(); };
+  });
+}
+function openFlock() {
+  const tiles = SPECIES.map((item) => {
+    const owned = state.owned[item.id];
+    const selected = squadIds().includes(item.id);
+    if (!owned) {
+      const ghost = artOf(item.id, 1);
+      return `<button class="tile silhouette" type="button" disabled><img src="${ghost.src}" alt=""><b>${esc(item.name)}</b></button>`;
+    }
+    const art = artOf(item.id, owned.level);
+    return `<button class="tile ${selected ? "on" : ""} ${art.provisional ? "provisional" : ""}" type="button" data-id="${item.id}"><img src="${art.src}" alt=""><b>${esc(titleOf(item.id))} · ${owned.level}${owned.copies > 1 ? " ×" + owned.copies : ""}</b></button>`;
+  }).join("");
+  show(`
+    ${hint("flock")}
+    <section class="grid-screen">
+      <div class="row"><h1>Flock</h1><button class="mini" type="button" data-back>Den</button></div>
+      <p class="sub">Your named dragon always leads. Tap two others.</p>
+      <div class="grid">${tiles}</div>
+    </section>`);
+  app.querySelector("[data-back]").onclick = () => openDen();
+  app.querySelectorAll("[data-id]").forEach((btn) => {
+    btn.onclick = () => {
+      dismiss("flock");
+      const id = btn.dataset.id;
+      if (id === state.partnerId) return;
+      const ids = squadIds().filter((sid) => sid !== state.partnerId);
+      const has = ids.includes(id);
+      const next = has ? ids.filter((sid) => sid !== id) : ids.concat(id).slice(-2);
+      state.squad = [state.partnerId, ...next];
+      save();
+      openFlock();
+    };
+  });
+}
+function trackWidth(max) { return Math.max(48, Math.min(100, Math.round(max / 180 * 100))); }
+function startBattle() {
+  const index = Math.min(state.wins, 9);
+  const boss = index === 9;
+  const level = boss ? 10 : 1 + Math.floor(index * 0.75);
+  let n = 0;
+  battle = {
+    over: false,
+    index,
+    you: squadIds().map((id) => makeFighter(id, ownedLevel(id), ownedRune(id), false)),
+    foe: WAVES[index].map((id) => makeFighter(id, level, spec(id).rune, boss && n++ === 0))
+  };
+  lock = false;
+  renderBattle();
+}
+function renderBattle() {
+  if (!battle) return;
+  const you = frontOf(battle.you);
+  const foe = frontOf(battle.foe);
+  const bench = battle.you.filter((f) => f !== you && f.hp > 0);
+  const card = (f, side) => {
+    if (!f) return `<div class="card"></div>`;
+    const art = artOf(f.id, f.level);
+    const name = f.boss ? "Blacksun" : titleOf(f.id);
+    return `<div class="card ${f.shield ? "shield" : ""} ${art.provisional ? "provisional" : ""}" data-card="${f.uid}">
+      <img src="${art.src}" alt="${esc(name)}">
+      <span class="tag">${esc(name)}</span>
+      ${side === "you" ? `<div class="bench">${bench.map((b) => `<span><img src="${artOf(b.id, b.level).src}" alt="${esc(titleOf(b.id))}"></span>`).join("")}</div>` : ""}
+      <div class="life" style="width:${trackWidth(f.max)}%"><i data-hp="${f.uid}" style="transform:scaleX(${f.hp / f.max})"></i></div>
+    </div>`;
+  };
+  const skill = you ? skillName(you.id, you.level) : "Skill";
+  const cooling = you && you.cd > 0;
+  show(`
+    <section class="battle">
+      <div>
+        ${hint("battle")}
+        <div class="top"><b>Fight ${battle.index + 1}${battle.index === 9 ? " · Boss" : ""} / 10</b><span>${esc(RUNES[you?.rune || "fury"].name)}</span></div>
+        <p class="status" data-status>${battle.note || "Your turn."}</p>
+      </div>
+      ${card(foe, "foe")}
+      ${card(you, "you")}
+      <div class="dock">
+        <button type="button" data-act="attack">Attack</button>
+        <button type="button" data-act="skill" ${cooling ? "disabled" : ""}>${esc(skill)}<small>${cooling ? "Cooling" : RUNES[you?.rune || "fury"].name}</small></button>
+        <button type="button" data-act="switch" ${bench.length ? "" : "disabled"}>Switch</button>
+      </div>
+    </section>`);
+  app.querySelectorAll("[data-act]").forEach((btn) => { btn.onclick = () => onAct(btn.dataset.act); });
+}
+function setStatus(text) {
+  battle.note = text;
+  const el = document.querySelector("[data-status]");
+  if (el) el.textContent = text;
+}
+function sync() {
+  if (!battle) return;
+  for (const f of battle.you.concat(battle.foe)) {
+    const bar = document.querySelector(`[data-hp="${f.uid}"]`);
+    if (bar) bar.style.transform = `scaleX(${Math.max(0, f.hp / f.max)})`;
+    const card = document.querySelector(`[data-card="${f.uid}"]`);
+    if (card) card.classList.toggle("shield", !!f.shield);
+  }
+}
+function pop(uid, text, kind) {
+  const card = document.querySelector(`[data-card="${uid}"]`);
+  if (!card) return;
+  const node = document.createElement("span");
+  node.className = "pop " + kind;
+  node.textContent = text;
+  card.appendChild(node);
+  setTimeout(() => node.remove(), 700);
+}
+async function play(sideUid, result) {
+  const card = document.querySelector(`[data-card="${sideUid}"]`);
+  card?.classList.add("lunge");
+  cue(result.kind === "skill" ? "skill" : "hit");
+  buzz(result.kind === "skill" ? [16, 24, 16] : 18);
+  for (const event of result.events) {
+    if (event.type === "hit") pop(event.uid, "−" + event.amount, "hit");
+    if (event.type === "heal" && event.amount) pop(event.uid, "+" + event.amount, "heal");
+  }
+  document.body.classList.add("shake");
+  sync();
+  await wait(280);
+  document.body.classList.remove("shake");
+  card?.classList.remove("lunge");
+}
+async function onAct(kind) {
+  if (lock || !battle || battle.over) return;
+  const you = frontOf(battle.you);
+  const foe = frontOf(battle.foe);
+  if (!you || !foe) return;
+  if (kind === "switch" && !battle.you.some((f) => f !== you && f.hp > 0)) return;
+  if (kind === "skill" && you.cd > 0) return;
+  lock = true;
+  dismiss("battle");
+  try {
+    if (kind === "switch") {
+      doSwitch(battle.you);
+      setStatus("Ты меняешь бойца.");
+      renderBattle();
+      await wait(240);
+    } else {
+      const result = actOn(you, foe, battle.you, kind);
+      await play(you.uid, result);
+    }
+    if (!frontOf(battle.foe)) return finish(true);
+    await foeTurn();
+    if (!frontOf(battle.you)) return finish(false);
+    if (!battle.over) {
+      setStatus("Your turn.");
+      renderBattle();
+    }
+  } finally {
+    lock = false;
+  }
+}
+async function foeTurn() {
+  if (!battle || battle.over) return;
+  setStatus("Ход ИИ…");
+  renderBattle();
+  await wait(720);
+  if (!battle || battle.over) return;
+  const actor = frontOf(battle.foe);
+  const you = frontOf(battle.you);
+  if (!actor || !you) return;
+  const kind = chooseFoe(actor, battle.foe);
+  const verb = kind === "skill" ? "применяет умение" : kind === "switch" ? "меняет бойца" : "бьёт";
+  setStatus("Ход ИИ. " + (actor.boss ? "Blacksun" : spec(actor.id).name) + " " + verb + ".");
+  if (kind === "switch") {
+    doSwitch(battle.foe);
+    renderBattle();
+    await wait(360);
+    return;
+  }
+  const result = actOn(actor, you, battle.foe, kind);
+  await play(actor.uid, result);
+  buzz([10, 30, 20]);
+}
+function finish(won) {
+  battle.over = true;
+  if (!won) {
+    setStatus("Поражение. Тот же бой можно начать снова.");
+    setTimeout(() => openDen(), reduced ? 200 : 900);
+    return;
+  }
+  const index = battle.index;
+  const first = state.wins === 0;
+  if (state.wins < 10) state.wins += 1;
+  const unlockId = UNLOCK_AT[state.wins];
+  if (unlockId && !state.owned[unlockId]) state.owned[unlockId] = { level: 1, xp: 0, rune: spec(unlockId).rune, copies: 1 };
+  const amount = 48 + index * 4;
+  const dup = first || Math.random() < 0.42;
+  const target = state.partnerId;
+  const before = state.owned[target].level;
+  const beforeStage = stageFor(before);
+  const gained = grantXp(state.owned[target].level, state.owned[target].xp, amount + (dup ? 36 : 0));
+  state.owned[target].level = gained.level;
+  state.owned[target].xp = gained.xp;
+  if (dup) state.owned[target].copies += 1;
+  save();
+  openReward({ amount, dup, before, beforeStage, evolutions: gained.evolutions, unlockId });
+}
+function openReward(info) {
+  const id = state.partnerId;
+  const owned = state.owned[id];
+  const pct = owned.level >= 10 ? 1 : owned.xp / xpNeed(owned.level);
+  show(`
+    ${hint("reward")}
+    <section class="reward">
+      <p class="kicker">Victory</p>
+      <h1>${esc(state.partnerName)}</h1>
+      <p class="blurb">+${info.amount} XP${info.dup ? " · Duplicate of " + esc(spec(id).name) : ""}${info.unlockId ? " · " + esc(spec(info.unlockId).name) + " joins the flock" : ""}</p>
+      <div class="row"><span class="lv">LV ${info.before}</span><span class="lv">LV ${owned.level}</span></div>
+      <div class="xp"><i data-xp></i></div>
+      <button class="go" type="button">Continue</button>
+    </section>`);
+  const bar = app.querySelector("[data-xp]");
+  requestAnimationFrame(() => { bar.style.transform = `scaleX(${pct})`; });
+  app.querySelector(".go").onclick = () => {
+    dismiss("reward");
+    if (info.evolutions.length) openEvolve(info.evolutions[0], info.beforeStage);
+    else openDen();
+  };
+}
+function openEvolve(evo, fromStage) {
+  const id = state.partnerId;
+  const from = "img/" + id + "-" + fromStage + ".webp";
+  const to = artOf(id, evo.level);
+  show(`
+    ${hint("evolve")}
+    <section class="screen">
+      <div class="art-screen" id="evo-art" style="background-image:url('${from}')">
+        <div class="flash"></div>
+        <div class="veil">
+          <p class="kicker">Evolution</p>
+          <h1>${esc(state.partnerName)}</h1>
+          <p class="blurb">New skill · ${esc(skillName(id, evo.level))}</p>
+          <button class="go" type="button">This is mine</button>
+        </div>
+      </div>
+    </section>`);
+  cue("skill");
+  buzz([20, 40, 20, 40, 30]);
+  setTimeout(() => {
+    const node = document.getElementById("evo-art");
+    if (node) node.style.backgroundImage = `url('${to.src}')`;
+  }, reduced ? 20 : 420);
+  app.querySelector(".go").onclick = () => { dismiss("evolve"); openDen(); };
+}
+boot();
+</script>
+</body>
+</html>
