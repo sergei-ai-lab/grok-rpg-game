@@ -134,6 +134,18 @@ body.shake { animation: shake .28s linear; }
 @keyframes flash { 0% { opacity: .95; } 100% { opacity: 0; } }
 .screen, .grid-screen, .reward { animation: rise .34s ease; }
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+button.daily-chip { display: block; width: calc(100% - 24px); text-align: left; border: 0; }
+.goal { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 16px; }
+.goal.done { color: var(--gold); }
+.chest-stage { align-items: stretch; }
+.chest { width: 180px; height: 150px; position: relative; margin: 18px auto; perspective: 400px; }
+.chest .box, .chest .lid { position: absolute; left: 22px; right: 22px; border-radius: 12px; box-shadow: inset 0 0 0 3px var(--gold); }
+.chest .box { bottom: 10px; height: 78px; background: linear-gradient(180deg, #8d5a32, #3d2414); }
+.chest .lid { bottom: 74px; height: 40px; background: linear-gradient(180deg, #d09a58, #6a3c1e); transform-origin: center top; transition: transform .55s ease; }
+.chest.open .lid { transform: translateY(-6px) rotateX(-78deg); }
+.chest .glow { position: absolute; left: 40px; right: 40px; bottom: 70px; height: 8px; border-radius: 50%; background: #fff6d0; opacity: 0; filter: blur(2px); }
+.chest.open .glow { height: 86px; opacity: .95; transition: height .35s ease .2s, opacity .35s ease .2s; }
+button.danger { margin-top: 10px; background: transparent; color: #e7b2a8; border: 1px solid rgba(228, 120, 100, .5); }
 .reward, .evo, .grid-screen { flex: 1 1 auto; height: auto; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: calc(12px + var(--safe-t)) 14px calc(12px + var(--safe-b)); }
 .reward .xp { height: 10px; }
 .grid { flex: 1 1 auto; height: 0; min-height: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -171,7 +183,8 @@ const HINTS = {
   reward: "Опыт и иногда дубликат. На 5 и 10 уровне — эволюция.",
   evolve: "Он изменился: другой вид и новое умение.",
   flock: "Открытых можно взять в тройку. Тёмные ещё не вылупились.",
-  map: "Десять боёв. Десятый — босс. Проигрыш не сбрасывает путь."
+  map: "Десять боёв. Десятый — босс. Проигрыш не сбрасывает путь.",
+  daily: "Три цели на сегодня. Сундук открывается, когда все три готовы."
 };
 const RUNES = {
   fury: { name: "Striker", line: "Harder hits, thinner life." },
@@ -230,6 +243,32 @@ function load() {
   return { v: 3, partnerId: null, partnerName: "", hints: {}, wins: 0, squad: [], owned: {} };
 }
 function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+const DAILY_GOALS = [
+  { key: "wins", need: 2, label: "Win 2 fights" },
+  { key: "skills", need: 3, label: "Use a skill 3 times" },
+  { key: "switches", need: 1, label: "Switch a fighter" }
+];
+function todayKey() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+}
+function daily() {
+  const day = todayKey();
+  if (!state.daily || state.daily.day !== day) {
+    state.daily = { day, wins: 0, skills: 0, switches: 0, claimed: false };
+  }
+  return state.daily;
+}
+function dailyReady(d) {
+  return DAILY_GOALS.every((goal) => (d[goal.key] || 0) >= goal.need);
+}
+function bumpDaily(key) {
+  const row = daily();
+  if (row.claimed) return;
+  row[key] = (row[key] || 0) + 1;
+  save();
+}
 function spec(id) { return BY[id]; }
 function esc(value) {
   return String(value ?? "")
@@ -542,8 +581,16 @@ function openDen() {
   const need = xpNeed(owned.level);
   const pct = owned.level >= 10 ? 1 : owned.xp / need;
   const mates = squadIds().filter((sid) => sid !== id);
+  const today = daily();
+  const ready = dailyReady(today) && !today.claimed;
+  const chipText = today.claimed
+    ? "Today · chest opened"
+    : ready
+      ? "Chest ready"
+      : "Today · " + DAILY_GOALS.map((goal) => Math.min(today[goal.key] || 0, goal.need) + "/" + goal.need).join(" · ");
   show(`
     ${hint("den")}
+    <button class="hint daily-chip" type="button" data-daily>${esc(chipText)}</button>
     <section class="screen">
       <div class="art-screen ${art.provisional ? "provisional" : ""}" style="background-image:url('${art.src}')">
         <div class="sheet">
@@ -573,6 +620,7 @@ function openDen() {
   app.querySelector('[data-go="flock"]').onclick = () => openFlock();
   app.querySelector('[data-go="map"]').onclick = () => openMap();
   app.querySelector('[data-go="settings"]').onclick = () => openSettings();
+  app.querySelector("[data-daily]").onclick = () => { dismiss("den"); ready ? openChest() : openDaily(); };
 }
 function openMap() {
   const nodes = Array.from({ length: 10 }, (_, i) => {
@@ -696,8 +744,8 @@ function sync() {
     }
   }
 }
-function burst(uid, kind) {
-  const card = document.querySelector(`[data-card="${uid}"]`) || document.getElementById("evo-art");
+function burst(uid, kind, host) {
+  const card = host || document.querySelector(`[data-card="${uid}"]`) || document.getElementById("evo-art");
   if (!card) return;
   for (let i = 0; i < (kind === "evo" ? 16 : 10); i += 1) {
     const bit = document.createElement("i");
@@ -784,12 +832,13 @@ async function onAct(kind) {
       renderBattle();
       await wait(520);
     } else if (kind === "switch") {
-      doSwitch(battle.you);
+      if (doSwitch(battle.you)) bumpDaily("switches");
       setStatus("Ты меняешь бойца.");
       renderBattle();
       await wait(240);
     } else {
       const result = actOn(actor, frontOf(battle.foe), battle.you, battle.foe, kind);
+      if (kind === "skill") bumpDaily("skills");
       await play(you.uid, result);
     }
     if (!frontOf(battle.foe)) return finish(true);
@@ -847,6 +896,7 @@ function finish(won) {
     return;
   }
   cue("win");
+  bumpDaily("wins");
   const index = battle.index;
   const first = state.wins === 0;
   if (state.wins < 10) state.wins += 1;
@@ -911,6 +961,69 @@ function openEvolve(evo, fromStage) {
     if (node) node.style.backgroundImage = `url('${to.src}')`;
   }, reduced ? 20 : 420);
   app.querySelector(".go").onclick = () => { dismiss("evolve"); openDen(); };
+}
+function openDaily() {
+  const row = daily();
+  const ready = dailyReady(row) && !row.claimed;
+  const goals = DAILY_GOALS.map((goal) => {
+    const have = Math.min(row[goal.key] || 0, goal.need);
+    return `<div class="goal ${have >= goal.need ? "done" : ""}"><span>${esc(goal.label)}</span><b>${have}/${goal.need}</b></div>`;
+  }).join("");
+  show(`
+    ${hint("daily")}
+    <section class="grid-screen">
+      <p class="kicker">Today</p>
+      <h1>${row.claimed ? "Chest opened" : "Three marks"}</h1>
+      <p class="sub">${row.claimed ? "A new chest tomorrow." : "All three open the chest once."}</p>
+      ${goals}
+      ${ready ? '<button class="go" type="button" data-open style="margin-top:16px">Open the chest</button>' : ""}
+      <button class="mini" type="button" data-back style="margin-top:10px">Den</button>
+    </section>`);
+  app.querySelector("[data-open]")?.addEventListener("click", () => { dismiss("daily"); openChest(); });
+  app.querySelector("[data-back]").onclick = () => openDen();
+}
+function openChest() {
+  const row = daily();
+  if (!dailyReady(row) || row.claimed || !state.partnerId) { openDaily(); return; }
+  show(`
+    <section class="grid-screen chest-stage">
+      <p class="kicker">Daily chest</p>
+      <div class="chest" id="chest"><div class="glow"></div><div class="lid"></div><div class="box"></div></div>
+      <h1 data-chest-title>…</h1>
+      <p class="blurb" data-chest-line>The lid is still shut.</p>
+      <button class="go" type="button" disabled>Continue</button>
+    </section>`, false);
+  cue("win");
+  const chest = document.getElementById("chest");
+  setTimeout(() => {
+    if (!chest) return;
+    chest.classList.add("open");
+    burst(null, "evo", chest);
+    const owned = state.owned[state.partnerId];
+    const beforeStage = stageFor(owned.level);
+    let evolutions = [];
+    let line = "Already fully grown. The ember fades.";
+    if (owned.level < 10) {
+      const gained = grantXp(owned.level, owned.xp, 36);
+      owned.level = gained.level;
+      owned.xp = gained.xp;
+      evolutions = gained.evolutions;
+      line = "+36 XP";
+    }
+    row.claimed = true;
+    save();
+    const title = app.querySelector("[data-chest-title]");
+    const blurb = app.querySelector("[data-chest-line]");
+    if (title) title.textContent = state.partnerName;
+    if (blurb) blurb.textContent = line;
+    const btn = app.querySelector(".go");
+    if (!btn) return;
+    btn.disabled = false;
+    btn.onclick = () => {
+      if (evolutions.length) openEvolve(evolutions[0], beforeStage);
+      else openDen();
+    };
+  }, reduced ? 20 : 480);
 }
 function openSettings() {
   const on = state.sound !== false;
