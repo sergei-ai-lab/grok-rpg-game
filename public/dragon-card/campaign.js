@@ -8,12 +8,17 @@ export const ENCOUNTERS = [
 export function campaignTeam(profile) {
   return profile.team.map(id => ({ id, rune: profile.cards[id].rune, level: profile.cards[id].level, ...(id === profile.starter ? { nickname: profile.name } : {}) }));
 }
-export function campaignMatch(profile, index, mode, seed) {
+export const DIFFICULTY = [
+  [.72, .7], [.8, .75], [.85, .8], [.95, .85], [1, .9], [1.05, .95], [1.1, 1], [1, .9], [1.1, 1], [1, .85],
+];
+export function campaignMatch(profile, index, mode, seed, difficulty = DIFFICULTY) {
   const encounter = ENCOUNTERS[index]; if (!encounter) throw Error('Unknown encounter');
+  let state = seed >>> 0; const random = () => { state = (Math.imul(state, 1664525) + 1013904223) >>> 0; return state / 4294967296; };
   const pool = ['vorathion', 'sylvara', 'cinder', 'aurion'].filter(id => id !== encounter.family);
-  const allies = [pool[(seed >>> 0) % 3], pool[((seed >>> 0) + 1) % 3]];
-  const enemyTeam = [encounter.family, ...allies].map((id, i) => ({ id, rune: id === 'aurion' ? 'ward' : ['fury', 'life', 'ward'][((seed + i) >>> 0) % 3] || 'fury', level: Math.max(1, encounter.level - (i ? 1 : 0)) }));
-  return createMatch(mode, seed, campaignTeam(profile), { enemyTeam, enemyHP: index < 3 ? .72 : 1, enemyAttack: index < 3 ? .7 : 1 });
+  const first = Math.floor(random() * 3), second = (first + 1 + Math.floor(random() * 2)) % 3;
+  const enemyTeam = [encounter.family, pool[first], pool[second]].map((id, i) => ({ id, rune: id === 'aurion' ? 'ward' : ['fury', 'life', 'ward'][Math.floor(random() * 3)], level: Math.max(1, encounter.level - (i ? 1 : 0)) }));
+  const [hp, attack] = difficulty[index], variation = .84 + random() * .32;
+  return createMatch(mode, seed, campaignTeam(profile), { enemyTeam, enemyHP: hp * variation, enemyAttack: attack * variation });
 }
 export function recordCampaign(profile, index, won, seconds) {
   const p = structuredClone(profile);
