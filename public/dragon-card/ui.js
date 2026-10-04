@@ -1,0 +1,123 @@
+import { DRAGONS, RUNES, ATTACKS, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js';
+const app = document.querySelector('#app');
+let mode = 'charge', team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }));
+let match = null, selection = { zone: 'field', index: 0 }, dialog = '', busy = false, generation = 0, started = 0, seed = Date.now(), feedback = '';
+try { const saved = localStorage.getItem('dragon-prototype-mode'); if (['charge', 'energy'].includes(saved)) mode = saved; } catch { /* Preference storage is optional. */ }
+const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+const button = (label, command, disabled = false, extra = '') => `<button data-command="${command}" ${disabled ? 'disabled' : ''} ${extra}>${label}</button>`;
+const pips = n => `<span class="pips" aria-label="${n} of 4">${[0, 1, 2, 3].map(i => `<i class="${i < n ? 'filled' : ''}"></i>`).join('')}</span>`;
+const image = (d, compact = false) => `<img src="./art/${d.art}-temp.webp" alt="${esc(d.name)} placeholder portrait" ${compact ? 'loading="lazy"' : ''}>`;
+function header() {
+  return `<header><strong>DRAGON <span>CARD GAME</span></strong><nav>${button('Rules', 'rules')}${button('Settings', 'settings')}${match ? button('Exit', 'back') : ''}</nav></header>`;
+}
+const runeEffect = rune => ({ fury: 'Fury · +8 attack', ward: 'Ward · +30 HP, +5 block', life: 'Life · heal 8 after attack' })[rune];
+function overlay() {
+  if (!dialog) return '';
+  const rules = `<p lang="ru">Победа: выбей 3 драконов соперника. Атакует только боец впереди; атака завершает ход.</p>
+    <p lang="ru">Claw бесплатна и даёт +1 ресурс. Breath тратит 2, Ultimate — 3. Каждый ход получаешь ещё +1.</p>
+    <p lang="ru">Charge — общая шкала команды. Energy — нажми своего дракона, затем Attach: энергия остаётся на нём, в том числе на скамье.</p>
+    <p lang="ru">Switch: выбери дракона на скамье. Смена стоит 1 ресурс и доступна раз за ход.</p>
+    <p lang="ru">Fuse: выбери дракона на скамье. Он исчезнет, а передний получит +35 HP и +12 урона. Цена 2 ресурса; в Energy складываются ресурсы обеих карт. Раз за бой, руна переднего сохраняется.</p>
+    <p lang="ru">Руны выбираются до боя: Fury повышает урон; Ward добавляет HP и защиту; Life лечит после каждой атаки. Карту из руки можно вывести на свободную скамью через Deploy.</p>`;
+  const settings = `<label for="mode">Resource mode</label><select id="mode"><option value="charge" ${mode === 'charge' ? 'selected' : ''}>Charge · shared team bar</option><option value="energy" ${mode === 'energy' ? 'selected' : ''}>Energy · attached to a dragon</option></select><p lang="ru">Charge автоматически растёт на 1 в начале хода. В Energy ты сам выбираешь, кому дать +1. Максимум 4, сильные атаки тратят ресурс.</p>${match ? '<p>Changes apply to the next battle.</p>' : ''}`;
+  const quit = `<p>End this battle and return to your squad?</p>${button('End battle', 'quit', false, 'class="primary"')}`;
+  return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${dialog === 'rules' ? 'Rules' : dialog === 'settings' ? 'Settings' : 'End battle'}"><h2>${dialog === 'rules' ? 'Rules' : dialog === 'settings' ? 'Settings' : 'End battle?'}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : quit}${button('Close', 'close')}</section></div>`;
+}
+function squad() {
+  return `${header()}<section class="squad"><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p><p class="tip" lang="ru">Можно сразу начать с готовой командой. Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
+    const chosen = team.find(x => x.id === d.id), index = team.findIndex(x => x.id === d.id), rune = RUNES[chosen?.rune || 'fury'];
+    return `<article class="roster ${chosen ? 'chosen' : ''}">${button(`${image(d, true)}<span><b>${d.name}</b><small>${chosen ? ['FIGHTER', 'RESERVE', 'RESERVE', 'REINFORCEMENT', 'REINFORCEMENT'][index] : 'ADD TO SQUAD'}</small></span>`, `pick:${d.id}`, !chosen && team.length === 5, `aria-pressed="${!!chosen}"`)}<label>Rune<select data-rune="${d.id}" ${!chosen ? 'disabled' : ''}>${Object.entries(RUNES).map(([id]) => `<option value="${id}" ${chosen?.rune === id ? 'selected' : ''}>${runeEffect(id)}</option>`).join('')}</select></label><small>${d.hp + rune.hp} HP · ${d.damage + rune.damage} attack · ${d.guard + rune.guard} block${rune.heal ? ` · heals ${rune.heal}` : ''}</small></article>`;
+  }).join('')}</div></section><footer class="setup-dock"><span>${team.length}/5 dragons · ${mode === 'charge' ? 'Charge' : 'Energy'}</span>${button('Start battle · ~3–5 min', 'start', team.length !== 5, 'class="primary"')}</footer>${overlay()}`;
+}
+function card(d, side, zone, index, small = false) {
+  const selected = side === 0 && selection.zone === zone && selection.index === index;
+  const label = `${d.name}, ${d.hp} of ${d.maxHp} HP, ${RUNES[d.rune].role}${match.mode === 'energy' ? `, ${d.energy} Energy` : ''}`;
+  const content = `${image(d, small)}<span class="card-info"><b>${esc(d.name)}</b><span class="hp">${d.hp}<small> / ${d.maxHp} HP</small></span><progress value="${d.hp}" max="${d.maxHp}" aria-label="Health"></progress><small>${d.fused ? 'Fused · ' : ''}${small ? RUNES[d.rune].name : runeEffect(d.rune)}</small>${match.mode === 'energy' ? `<span class="energy-label">Energy ${d.energy}/4 ${pips(d.energy)}</span>` : ''}</span>`;
+  return side === 1 ? `<article class="dragon ${small ? 'mini' : ''}" aria-label="${esc(label)}">${content}</article>` : button(content, `select:${zone}:${index}`, busy || match.actor !== 0 || match.winner !== null, `class="dragon ${small ? 'mini' : ''} ${selected ? 'selected' : ''}" aria-pressed="${selected}" aria-label="${esc(label)}"`);
+}
+function can(type, index, attack) { return !busy && match.actor === 0 && legalActions(match).some(a => a.type === type && a.index === index && a.attack === attack); }
+function dock() {
+  const p = match.players[0], a = p.field[0], target = match.players[1].field[0], { zone, index } = selection;
+  const chosen = zone === 'field' ? p.field[index] : p.hand[index], reserve = zone === 'field' && index > 0;
+  const amount = resource(match, 0), pool = match.mode === 'charge' ? 'Charge' : 'Energy', waiting = busy || match.actor !== 0;
+  const switchReason = waiting ? 'Wait for AI' : p.switched ? 'Used this turn' : !reserve ? 'Pick a reserve' : amount < 1 ? `Need 1 ${pool}` : esc(chosen.name);
+  const fusionEnergy = match.mode === 'charge' ? amount : a.energy + (reserve ? chosen.energy : 0);
+  const fuseReason = waiting ? 'Wait for AI' : p.fusionUsed ? 'Used this battle' : !reserve ? 'Pick a reserve' : fusionEnergy < 2 ? (match.mode === 'charge' ? 'Need 2 Charge' : 'Need 2 combined') : '+35 HP · +12 attack';
+  const tip = waiting ? 'Сейчас ход ИИ. Затем снова выбираешь подготовку и одну атаку.' : zone === 'hand' ? 'Deploy бесплатно добавит подкрепление в запас. Атаковать оно сможет после Switch.' : reserve ? `${esc(chosen.name)}: Switch — вывести вперёд; Fuse — поглотить (+35 HP, +12 урона) для ${esc(a.name)}.` : match.mode === 'energy' ? 'Attach: +1 энергии выбранной карте, раз за ход. Claw тоже даёт +1 бойцу. Атака завершает ход.' : 'Подготовка по желанию: нажми запасного для Switch или Fuse. Затем одна атака; Claw даёт +1 Charge.';
+  const attachReason = waiting ? 'Wait for AI' : zone !== 'field' ? 'Pick your dragon' : p.attached ? 'Used this turn' : chosen.energy === 4 ? 'Already full · 4/4' : esc(chosen.name);
+  return `<footer class="action-dock"><div class="resource-row"><b>${pool} ${amount}/4 ${pips(amount)}</b><small>${match.mode === 'charge' ? 'Shared by your team' : 'On your fighter'}</small></div>
+    <p class="tip" lang="ru">${tip}</p><div class="preparation">${match.mode === 'energy' ? button(`<b>Attach +1</b><small>${attachReason}</small>`, 'attach', zone !== 'field' || !can('attach', index)) : ''}${zone === 'hand' ? button(`<b>Deploy</b><small>${p.field.length === 4 ? 'Bench is full' : waiting ? 'Wait for AI' : 'Free · add to bench'}</small>`, 'deploy', !can('deploy', index)) : `${button(`<b>Switch · 1</b><small>${switchReason}</small>`, 'switch', !reserve || !can('switch', index))}${button(`<b>Fuse · 2</b><small>${fuseReason}</small>`, 'fuse', !reserve || !can('fuse', index))}`}</div>
+    <div class="front-label">ATTACK WITH ${esc(a.name)}</div><div class="attacks">${Object.entries(ATTACKS).map(([id, spec]) => button(`<b>${spec.name}</b><small>${attackDamage(a, target, id)} damage</small><small>${waiting ? 'Wait for AI' : amount < spec.cost ? `Need ${spec.cost} · have ${amount}` : spec.cost ? `Spend ${spec.cost} ${pool}` : `Free · +1 ${pool}`}</small>`, `attack:${id}`, !can('attack', undefined, id), `class="${id === 'burst' ? 'ultimate' : ''}"`)).join('')}</div></footer>`;
+}
+function battle() {
+  const [you, foe] = match.players, over = match.winner !== null;
+  return `${header()}<div class="match-bar"><b>Knockouts · You ${you.kos}/3 · AI ${foe.kos}/3</b><span>${match.mode === 'charge' ? 'Charge' : 'Energy'} · Turn ${match.turn}</span></div>
+    <p class="turn-status" role="status">${over ? match.winner === 0 ? 'Victory!' : 'Defeat' : busy || match.actor === 1 ? 'AI is choosing…' : 'Your turn'}</p><p class="battle-guide" lang="ru" aria-live="polite">${esc(feedback || 'Победа — выбить 3 врагов. Атакует только боец; запасные ждут смены или слияния.')}</p>
+    <section class="arena"><div class="fighters"><div class="fighter"><div class="front-label">YOUR FIGHTER · ATTACKS</div>${you.field[0] ? card(you.field[0], 0, 'field', 0) : ''}</div><div class="fighter"><div class="front-label">ENEMY FIGHTER · TARGET</div>${foe.field[0] ? card(foe.field[0], 1, 'field', 0) : ''}</div></div>
+    <div class="front-label">YOUR RESERVES · TAP TO CHOOSE</div><div class="bench your-bench">${you.field.slice(1).map((d, i) => card(d, 0, 'field', i + 1, true)).join('') || '<p>No reserves left.</p>'}</div></section>${over ? result() : dock()}
+    <section class="extras"><div class="hand"><span>REINFORCEMENTS · ${you.hand.length}</span>${you.hand.map((d, i) => button(`${esc(d.name)}<small>${RUNES[d.rune].name} · ${d.hp} HP</small>`, `select:hand:${i}`, busy || match.actor !== 0 || over, `class="${selection.zone === 'hand' && selection.index === i ? 'selected' : ''}"`)).join('')}</div><p class="tip" lang="ru">Нажми подкрепление, затем Deploy: оно займёт свободное место в запасе. Максимум 3 запасных.</p><details><summary>Enemy reserves · ${Math.max(0, foe.field.length - 1)} / Battle log</summary><div class="enemy-bench bench">${foe.field.slice(1).map((d, i) => card(d, 1, 'field', i + 1, true)).join('')}</div><ol>${match.log.map(line => `<li>${esc(line)}</li>`).join('')}</ol></details></section>${overlay()}`;
+}
+function result() {
+  const seconds = Math.round((Date.now() - started) / 1000);
+  return `<section class="result" role="region" aria-label="Battle result"><h1>${match.winner === 0 ? 'Victory!' : 'Defeat'}</h1><p>You ${match.players[0].kos} · AI ${match.players[1].kos} · ${Math.floor(seconds / 60)}m ${seconds % 60}s</p>${button('Play again', 'replay', false, 'class="primary"')}${button(`Try ${match.mode === 'charge' ? 'Energy' : 'Charge'}`, 'compare')}${button('Edit squad', 'quit')}<p lang="ru">После боя: хочется ещё? Слияние и руны повлияли на решения? Какой ресурс удобнее?</p></section>`;
+}
+function render() {
+  if (match && !match.players[0][selection.zone]?.[selection.index]) selection = { zone: 'field', index: 0 };
+  app.classList.toggle('in-battle', !!match); app.innerHTML = match ? battle() : squad();
+}
+function play(action) {
+  const side = match.actor, target = match.players[1 - side].field[0], oldName = target?.name;
+  const player = match.players[side], chosenName = (action.type === 'deploy' ? player.hand : player.field)[action.index]?.name;
+  const damage = action.type === 'attack' ? attackDamage(match.players[side].field[0], target, action.attack) : 0;
+  if (!act(match, action)) return false;
+  if (action.type === 'attack') {
+    feedback = `${side === 0 ? 'Ты' : 'ИИ'}: ${ATTACKS[action.attack].name} → ${damage} урона ${oldName}.`;
+    if (target.hp === 0) feedback = `${oldName} выбит.${match.players[1 - side].field[0] ? ` ${side === 1 ? 'Твой' : 'Вражеский'} новый боец: ${match.players[1 - side].field[0].name}.` : ''}`;
+  } else feedback = `${side === 0 ? 'Ты' : 'ИИ'}: ${({
+    attach: `${chosenName} получает +1 Energy.`,
+    deploy: `${chosenName} добавлен в запас.`,
+    switch: `${player.field[0].name} теперь боец. Смена потратила 1 ресурс.`,
+    fuse: `${chosenName} поглощён. Боец получил +35 HP, +12 урона и +2 защиты.`,
+  })[action.type]}`;
+  return true;
+}
+function start(sameSeed = false) {
+  generation++; if (!sameSeed) seed = Date.now(); match = createMatch(mode, seed, team); started = Date.now(); selection = { zone: 'field', index: 0 }; busy = false; feedback = ''; render(); window.scrollTo(0, 0);
+}
+function aiTurn() {
+  busy = true; render(); const token = generation;
+  const step = () => {
+    if (token !== generation || !match || match.winner !== null) return;
+    if (match.actor !== 1) { busy = false; selection = { zone: 'field', index: 0 }; render(); return; }
+    play(chooseAI(match)); render();
+    if (match.winner !== null) { busy = false; render(); } else setTimeout(step, 420);
+  };
+  setTimeout(step, 850);
+}
+app.addEventListener('click', event => {
+  const control = event.target.closest('[data-command]'); if (!control || control.disabled) return;
+  const [command, value, index] = control.dataset.command.split(':');
+  if (['rules', 'settings', 'back'].includes(command)) { dialog = command === 'back' ? 'back' : command; render(); app.querySelector('[role="dialog"] button')?.focus(); return; }
+  if (command === 'close') { dialog = ''; render(); return; }
+  if (command === 'pick') { const found = team.findIndex(d => d.id === value); if (found >= 0) team.splice(found, 1); else if (team.length < 5) team.push({ id: value, rune: 'fury' }); render(); return; }
+  if (command === 'quit') { generation++; busy = false; match = null; dialog = ''; render(); window.scrollTo(0, 0); return; }
+  if (command === 'start' || command === 'replay') { start(); return; }
+  if (command === 'compare') { mode = match.mode === 'charge' ? 'energy' : 'charge'; saveMode(); start(true); return; }
+  if (!match || busy || match.actor !== 0 || match.winner !== null || dialog) return;
+  if (command === 'select') { selection = { zone: value, index: Number(index) }; render(); return; }
+  if (command === 'fuse') { dialog = 'fusion'; confirmFusion(); return; }
+  const action = command === 'attack' ? { type: 'attack', attack: value } : { type: command, index: selection.index };
+  if (play(action)) { if (command === 'switch' || command === 'deploy') selection = { zone: 'field', index: 0 }; render(); if (match.actor === 1 && match.winner === null) aiTurn(); }
+});
+function confirmFusion() {
+  dialog = ''; const index = selection.index, b = match.players[0].field[index];
+  if (!b || index === 0 || !can('fuse', index)) return;
+  if (window.confirm(`Fuse with ${b.name}? This card is consumed.\nВыбранная карта исчезнет. Передний дракон: +35 HP, +12 урона.`)) { play({ type: 'fuse', index }); selection = { zone: 'field', index: 0 }; render(); }
+}
+function saveMode() { try { localStorage.setItem('dragon-prototype-mode', mode); } catch { /* Optional preference. */ } }
+app.addEventListener('change', event => {
+  if (event.target.id === 'mode') { mode = event.target.value; saveMode(); }
+  if (event.target.dataset.rune) { const card = team.find(d => d.id === event.target.dataset.rune); if (card) card.rune = event.target.value; render(); }
+});
+app.addEventListener('keydown', event => { if (event.key === 'Escape' && dialog) { dialog = ''; render(); } });
+render();
