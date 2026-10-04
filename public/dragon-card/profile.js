@@ -5,7 +5,7 @@ export const PROFILE_KEY = 'dragon-journey-v1';
 const count = value => Number.isFinite(value) ? Math.max(0, Math.min(100000, Math.floor(value))) : 0;
 const nameFor = id => DRAGONS.find(d => d.id === id)?.name || 'Dragon';
 export function newProfile() {
-  return { version: 1, starter: null, name: '', team: [], cards: Object.fromEntries(FAMILIES.map(id => [id, { level: 1, xp: 0, copies: 0, owned: false, rune: id === 'aurion' ? 'ward' : id === 'sylvara' ? 'life' : 'fury' }])), wins: 0, battles: 0, seenResults: [] };
+  return { version: 1, starter: null, name: '', team: [], cards: Object.fromEntries(FAMILIES.map(id => [id, { level: 1, xp: 0, copies: 0, owned: false, rune: id === 'aurion' ? 'ward' : id === 'sylvara' ? 'life' : 'fury' }])), wins: 0, battles: 0, campaign: { cleared: 0, attempts: 0, seconds: 0 }, seenResults: [] };
 }
 export function adoptProfile(id, name) {
   if (!STARTERS.includes(id)) throw Error('Choose a starter');
@@ -25,6 +25,7 @@ export function loadProfile(storage) {
       p.cards[id] = { ...p.cards[id], level: Math.max(1, Math.min(10, count(c.level))), xp: count(c.xp), copies: count(c.copies), owned: STARTERS.includes(id) || c.owned === true, rune: ['fury', 'ward', 'life'].includes(c.rune) ? c.rune : p.cards[id].rune };
     }
     if (Array.isArray(raw.team)) p.team = [...new Set(raw.team)].filter(id => FAMILIES.includes(id) && p.cards[id].owned).slice(0, 3);
+    p.campaign = { cleared: Math.min(10, count(raw.campaign?.cleared)), attempts: count(raw.campaign?.attempts), seconds: count(raw.campaign?.seconds) };
     p.seenResults = Array.isArray(raw.seenResults) ? raw.seenResults.filter(id => typeof id === 'string').slice(-50) : [];
     return p;
   } catch { return newProfile(); }

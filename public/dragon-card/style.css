@@ -111,3 +111,9 @@ ol { padding-left: 20px; line-height: 1.5; }
 @media (prefers-reduced-motion: no-preference) { .selected { transition: opacity .15s; } }
 
 .roster > button[data-command^="upgrade:"], .roster > button[data-command^="lead:"] { padding: 8px; text-align: center; font-size: 12px; }
+
+.campaign-map { margin: 16px 0; padding: 12px; border-radius: 12px; background: var(--panel); }
+.campaign-map h2 { font-size: 20px; margin-bottom: 4px; }
+.map-nodes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 10px 0; }
+.map-nodes button { font-size: 13px; min-height: 66px; }
+.map-nodes button small { font-size: 11px; }

@@ -40,6 +40,7 @@ export function createMatch(mode = 'charge', seed = Date.now(), team = DRAGONS.s
   for (let i = enemies.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [enemies[i], enemies[j]] = [enemies[j], enemies[i]]; }
   const make = (loadout, side) => {
     const cards = loadout.map((d, i) => ({ ...dragon(d.id, d.rune, `${side}-${i}`, d.level), ...(d.nickname ? { name: String(d.nickname).slice(0, 20) } : {}) }));
+    if (side === 1) for (const c of cards) { c.hp = c.maxHp = Math.max(1, Math.round(c.hp * (options.enemyHP || 1))); c.damage = Math.max(1, Math.round(c.damage * (options.enemyAttack || 1))); }
     return { field: cards.slice(0, 3), hand: cards.slice(3), charge: 1, kos: 0, attached: false, switched: false, fusionUsed: false };
   };
   const match = { mode, seed, players: [make(team, 0), make(options.enemyTeam || enemies.slice(0, team.length).map((d, i) => ({ id: d.id, rune: ['ward', 'life', 'fury'][i % 3] })), 1)], actor: 0, turn: 1, winner: null, log: [], actions: 0 };
