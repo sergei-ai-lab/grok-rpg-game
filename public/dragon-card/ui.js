@@ -1,12 +1,21 @@
 import { DRAGONS, RUNES, ATTACKS, createMatch, act, legalActions, chooseAI, resource, attackDamage } from './match.js';
+import { FAMILIES, STARTERS, loadProfile, adoptProfile, awardBattle, saveProfile } from './profile.js';
 const app = document.querySelector('#app');
 const artBase = new URL('./assets/dragons/', import.meta.url);
-const artFamilies = ['magma', 'gold', 'bloom', 'flame'];
-let artFamily = 'magma', artStage = 1;
+const artFamilies = FAMILIES;
+let artFamily = 'vorathion', artStage = 1;
 let tutorialSeen = false, aiMoves = [];
 const artName = id => id[0].toUpperCase() + id.slice(1);
 let mode = 'charge', team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['fury', 'ward', 'life'][i % 3] }));
 let match = null, selection = { zone: 'field', index: 0 }, dialog = '', busy = false, generation = 0, started = 0, seed = Date.now(), feedback = '';
+const storage = { getItem: key => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) };
+let profile = loadProfile(storage), selectedCub = STARTERS[0], heroName = '', savedOK = true, battleId = '', battleReward = null;
+function persist() { savedOK = saveProfile(profile, storage); }
+function restoreTeam() {
+  team = DRAGONS.slice(0, 5).map((d, i) => ({ id: d.id, rune: profile.cards[d.id]?.rune || ['fury', 'ward', 'life'][i % 3], ...(d.id === profile.starter ? { nickname: profile.name } : {}) }));
+  const first = team.findIndex(d => d.id === profile.starter); if (first > 0) [team[0], team[first]] = [team[first], team[0]];
+}
+if (profile.starter) restoreTeam();
 try { const saved = localStorage.getItem('dragon-prototype-mode'); if (['charge', 'energy'].includes(saved)) mode = saved; } catch { /* Preference storage is optional. */ }
 try { tutorialSeen = localStorage.getItem('dragon-tutorial-seen') === '1'; } catch { /* Optional storage. */ }
 const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -29,15 +38,19 @@ function overlay() {
   const settings = `<label for="mode">Resource mode</label><select id="mode"><option value="charge" ${mode === 'charge' ? 'selected' : ''}>Charge · shared team bar</option><option value="energy" ${mode === 'energy' ? 'selected' : ''}>Energy · attached to a dragon</option></select><p lang="ru">Charge автоматически растёт на 1 в начале хода. В Energy ты сам выбираешь, кому дать +1. Максимум 4, сильные атаки тратят ресурс.</p>${match ? '<p>Changes apply to the next battle.</p>' : ''}`;
   const quit = `<p>End this battle and return to your squad?</p>${button('End battle', 'quit', false, 'class="primary"')}`;
   const tutorial = `<p lang="ru"><b>1. Один боец впереди.</b> Он атакует, запасные ждут. Claw бесплатна и копит ресурс.</p><p lang="ru"><b>2. Подготовка, затем атака.</b> Нажми запасного: Switch выводит его вперёд за 1 ресурс. Fuse поглощает его и усиливает бойца за 2. Атака завершает ход.</p><p lang="ru"><b>3. Следи за ИИ.</b> Его смена и слияние будут объяснены над бойцами. Победа — 3 выбитых врага. На серых кнопках написано, чего не хватает.</p>${button('Let’s battle', 'begin-tutorial', false, 'class="primary"')}`;
-  const collection = `<label for="art-family">Dragon family · temporary names</label><select id="art-family">${artFamilies.map(id => `<option value="${id}" ${artFamily === id ? 'selected' : ''}>${artName(id)}</option>`).join('')}</select><div class="stage-tabs">${[1, 2, 3].map(stage => button(`Stage ${stage}`, `art-stage:${stage}`, false, `aria-pressed="${stage === artStage}" class="${stage === artStage ? 'selected' : ''}"`)).join('')}</div><img class="art-preview" src="${artUrl(artFamily, artStage)}" alt="${artName(artFamily)} · Stage ${artStage}"><p lang="ru">Три стадии одного дракона. Здесь можно рассмотреть арты целиком; в бою используется первая стадия.</p>`;
+  const collection = `<label for="art-family">Dragon family</label><select id="art-family">${artFamilies.map(id => `<option value="${id}" ${artFamily === id ? 'selected' : ''}>${artName(id)}</option>`).join('')}</select><div class="stage-tabs">${[1, 2, 3].map(stage => button(`Stage ${stage}`, `art-stage:${stage}`, false, `aria-pressed="${stage === artStage}" class="${stage === artStage ? 'selected' : ''}"`)).join('')}</div><img class="art-preview" src="${artUrl(artFamily, artStage)}" alt="${artName(artFamily)} · Stage ${artStage}" loading="lazy" decoding="async"><p lang="ru">Три стадии одного дракона. Здесь можно рассмотреть арты целиком; в бою используется первая стадия.</p>`;
   const title = { rules: 'Rules', settings: 'Settings', collection: 'Collection', back: 'End battle?', tutorial: 'Your first battle' }[dialog];
   return `<div class="scrim"><section role="dialog" aria-modal="true" aria-label="${title}"><h2>${title}</h2>${dialog === 'rules' ? rules : dialog === 'settings' ? settings : dialog === 'collection' ? collection : dialog === 'tutorial' ? tutorial : quit}${button('Close', 'close')}</section></div>`;
 }
 function squad() {
-  return `${header()}<section class="squad"><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Четыре семейства артов временно распределены между десятью тестовыми картами. Стартовый состав сохранён до уточнения имён.</p><p class="tip" lang="ru">Можно сразу начать с готовой командой. Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
+  const hero = DRAGONS.find(d => d.id === profile.starter), progress = profile.cards[profile.starter];
+  return `${header()}<section class="squad"><div class="hero-progress">${image(hero)}<div><b>${esc(profile.name)} · ${hero.name}</b><small>Lv${progress.level} · XP ${progress.xp} · Copies ${progress.copies}</small><small>${savedOK ? 'Saved on this phone' : 'Session only · storage unavailable'}</small></div></div><h1>Choose your five</h1><p class="sub">One fighter attacks. Reserves can replace it or fuse with it.</p>${button('View art collection · 12 stages', 'collection')}<p class="tip" lang="ru">Выбранный детёныш — твой дракон. После боя вся стартовая тройка получает опыт; победа даёт дубликаты, 3 победы открывают Aurion. Прогресс сохраняется в этом браузере.</p><p class="tip" lang="ru">Первый дракон — боец, два — запасные, два — подкрепления. Fury: +8 урона, −10 HP. Ward: +30 HP, +5 защиты, −6 урона. Life: лечение на 8 после атаки, +10 HP, −4 урона.</p><div class="catalog">${DRAGONS.map(d => {
     const chosen = team.find(x => x.id === d.id), index = team.findIndex(x => x.id === d.id), rune = RUNES[chosen?.rune || 'fury'];
     return `<article class="roster ${chosen ? 'chosen' : ''}">${button(`${image(d, true)}<span><b>${d.name}</b><small>${chosen ? ['FIGHTER', 'RESERVE', 'RESERVE', 'REINFORCEMENT', 'REINFORCEMENT'][index] : 'ADD TO SQUAD'}</small></span>`, `pick:${d.id}`, !chosen && team.length === 5, `aria-pressed="${!!chosen}"`)}<label>Rune<select data-rune="${d.id}" ${!chosen ? 'disabled' : ''}>${Object.entries(RUNES).map(([id]) => `<option value="${id}" ${chosen?.rune === id ? 'selected' : ''}>${runeEffect(id)}</option>`).join('')}</select></label><small>${d.hp + rune.hp} HP · ${d.damage + rune.damage} attack · ${d.guard + rune.guard} block${rune.heal ? ` · heals ${rune.heal}` : ''}</small></article>`;
   }).join('')}</div></section><footer class="setup-dock"><span>${team.length}/5 dragons · ${mode === 'charge' ? 'Charge' : 'Energy'}</span>${button('Start battle · ~3–5 min', 'start', team.length !== 5, 'class="primary"')}</footer>${overlay()}`;
+}
+function adoption() {
+  return `${header()}<section class="squad"><h1>Choose your hatchling</h1><p class="tip" lang="ru">Выбери своего детёныша и дай ему имя. Два других стартовых дракона помогут в команде. Aurion откроется после 3 побед.</p><div class="catalog starter-grid">${STARTERS.map(id => { const d = DRAGONS.find(x => x.id === id); return `<article class="roster ${selectedCub === id ? 'chosen' : ''}">${button(`${image(d)}<span><b>${d.name}</b><small>${id === 'sylvara' ? 'Healing' : id === 'cinder' ? 'Energy' : 'Attack'}</small></span>`, `cub:${id}`, false, `aria-pressed="${selectedCub === id}"`)}</article>`; }).join('')}</div><label class="name-label" for="hero-name">Dragon name<input id="hero-name" maxlength="20" value="${esc(heroName)}" placeholder="${artName(selectedCub)}" autocomplete="off"></label></section><footer class="setup-dock">${button('Adopt & continue', 'adopt', false, 'class="primary"')}</footer>${overlay()}`;
 }
 function card(d, side, zone, index, small = false) {
   const selected = side === 0 && selection.zone === zone && selection.index === index;
@@ -69,11 +82,12 @@ function battle() {
 }
 function result() {
   const seconds = Math.round((Date.now() - started) / 1000);
-  return `<section class="result" role="region" aria-label="Battle result"><h1>${match.winner === 0 ? 'Victory!' : 'Defeat'}</h1><p>You ${match.players[0].kos} · AI ${match.players[1].kos} · ${Math.floor(seconds / 60)}m ${seconds % 60}s</p>${button('Play again', 'replay', false, 'class="primary"')}${button(`Try ${match.mode === 'charge' ? 'Energy' : 'Charge'}`, 'compare')}${button('Edit squad', 'quit')}<p lang="ru">После боя: хочется ещё? Слияние и руны повлияли на решения? Какой ресурс удобнее?</p></section>`;
+  return `<section class="result" role="region" aria-label="Battle result"><h1>${match.winner === 0 ? 'Victory!' : 'Defeat'}</h1><p>You ${match.players[0].kos} · AI ${match.players[1].kos} · ${Math.floor(seconds / 60)}m ${seconds % 60}s</p><p class="reward">XP +${battleReward?.xp || 0} · Copies +${battleReward?.copies || 0}${battleReward?.unlocked ? ` · ${battleReward.unlocked} unlocked` : ''}</p>${button('Play again', 'replay', false, 'class="primary"')}${button(`Try ${match.mode === 'charge' ? 'Energy' : 'Charge'}`, 'compare')}${button('Edit squad', 'quit')}<p lang="ru">${savedOK ? 'Награда сохранена в этом браузере.' : 'Сохранение недоступно: прогресс останется только до закрытия страницы.'}</p></section>`;
 }
 function render() {
+  if (match && match.winner !== null && battleReward === null) { const awarded = awardBattle(profile, battleId, match.winner === 0); profile = awarded.profile; battleReward = awarded.reward || { xp: 0, copies: 0 }; persist(); }
   if (match && !match.players[0][selection.zone]?.[selection.index]) selection = { zone: 'field', index: 0 };
-  app.classList.toggle('in-battle', !!match); app.innerHTML = match ? battle() : squad();
+  app.classList.toggle('in-battle', !!match); app.innerHTML = !profile.starter ? adoption() : match ? battle() : squad();
 }
 function play(action) {
   const side = match.actor, target = match.players[1 - side].field[0], oldName = target?.name;
@@ -95,6 +109,7 @@ function play(action) {
   return true;
 }
 function start(sameSeed = false) {
+  battleId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`; battleReward = null;
   generation++; if (!sameSeed) seed = Date.now(); match = createMatch(mode, seed, team); started = Date.now(); selection = { zone: 'field', index: 0 }; busy = false; feedback = ''; aiMoves = []; render(); window.scrollTo(0, 0);
 }
 function aiTurn() {
@@ -110,6 +125,8 @@ function aiTurn() {
 app.addEventListener('click', event => {
   const control = event.target.closest('[data-command]'); if (!control || control.disabled) return;
   const [command, value, index] = control.dataset.command.split(':');
+  if (command === 'cub' && STARTERS.includes(value)) { heroName = app.querySelector('#hero-name')?.value || ''; selectedCub = value; render(); return; }
+  if (command === 'adopt') { profile = adoptProfile(selectedCub, app.querySelector('#hero-name')?.value); persist(); restoreTeam(); render(); window.scrollTo(0, 0); return; }
   if (['rules', 'settings', 'back', 'collection'].includes(command)) { dialog = command; render(); app.querySelector('[role="dialog"] button')?.focus(); return; }
   if (command === 'art-stage' && dialog === 'collection' && ['1', '2', '3'].includes(value)) { artStage = Number(value); render(); app.querySelector(`[data-command="art-stage:${value}"]`)?.focus(); return; }
   if (command === 'close') { dialog = ''; render(); return; }

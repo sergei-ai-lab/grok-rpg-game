@@ -20,6 +20,11 @@ h2 { font-size: 23px; margin: 0 0 14px; }
 p { line-height: 1.45; }
 .squad { padding: 8px 14px 120px; }
 .sub { color: var(--muted); margin: 0 0 12px; }
+.hero-progress { display: flex; align-items: center; gap: 12px; padding: 8px; background: var(--panel); border-radius: 10px; }
+.hero-progress img { width: 80px; height: 80px; object-fit: contain; background: #050505; }
+.name-label { display: block; margin-top: 16px; }
+.name-label input { display: block; width: 100%; margin-top: 6px; padding: 12px; min-height: 44px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--text); font: inherit; }
+.starter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .tip { font-size: 13px; line-height: 1.4; color: #bccadb; margin: 6px 0 10px; }
 .catalog { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .roster { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); padding-bottom: 9px; min-width: 0; }

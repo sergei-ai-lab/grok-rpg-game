@@ -1,14 +1,14 @@
 export const DRAGONS = [
-  { id: 'vorathion', name: 'Vorathion', hp: 150, damage: 25, guard: 0, art: 'magma', skill: 'Tyrant Flame' },
-  { id: 'aurion', name: 'Aurion', hp: 185, damage: 18, guard: 4, art: 'gold', skill: 'Golden Aegis' },
-  { id: 'tempest', name: 'Tempest', hp: 140, damage: 27, guard: 0, art: 'bloom', skill: 'Thunder Crown' },
-  { id: 'nyx', name: 'Nyx', hp: 160, damage: 22, guard: 2, art: 'magma', skill: 'Eclipse Maw' },
-  { id: 'cinder', name: 'Cinder', hp: 145, damage: 26, guard: 0, art: 'flame', skill: 'Cinder Storm' },
-  { id: 'glacier', name: 'Glacier', hp: 175, damage: 19, guard: 4, art: 'gold', skill: 'Glacier Fall' },
-  { id: 'volt', name: 'Volt', hp: 145, damage: 25, guard: 1, art: 'bloom', skill: 'Arc Flash' },
-  { id: 'umbra', name: 'Umbra', hp: 155, damage: 23, guard: 2, art: 'magma', skill: 'Shadow Breath' },
-  { id: 'obsidian', name: 'Obsidian', hp: 180, damage: 20, guard: 3, art: 'gold', skill: 'Obsidian Crush' },
-  { id: 'solaris', name: 'Solaris', hp: 155, damage: 24, guard: 1, art: 'flame', skill: 'Solar Flare' },
+  { id: 'vorathion', name: 'Vorathion', hp: 150, damage: 25, guard: 0, art: 'vorathion', skill: 'Tyrant Flame' },
+  { id: 'aurion', name: 'Aurion', hp: 185, damage: 18, guard: 4, art: 'aurion', skill: 'Golden Aegis' },
+  { id: 'sylvara', name: 'Sylvara', hp: 140, damage: 27, guard: 0, art: 'sylvara', skill: 'Bloomguard' },
+  { id: 'nyx', name: 'Nyx', hp: 160, damage: 22, guard: 2, art: 'vorathion', skill: 'Eclipse Maw' },
+  { id: 'cinder', name: 'Cinder', hp: 145, damage: 26, guard: 0, art: 'cinder', skill: 'Cinder Storm' },
+  { id: 'glacier', name: 'Glacier', hp: 175, damage: 19, guard: 4, art: 'aurion', skill: 'Glacier Fall' },
+  { id: 'volt', name: 'Volt', hp: 145, damage: 25, guard: 1, art: 'sylvara', skill: 'Arc Flash' },
+  { id: 'umbra', name: 'Umbra', hp: 155, damage: 23, guard: 2, art: 'vorathion', skill: 'Shadow Breath' },
+  { id: 'obsidian', name: 'Obsidian', hp: 180, damage: 20, guard: 3, art: 'aurion', skill: 'Obsidian Crush' },
+  { id: 'solaris', name: 'Solaris', hp: 155, damage: 24, guard: 1, art: 'cinder', skill: 'Solar Flare' },
 ];
 export const RUNES = {
   fury: { name: 'Fury', role: 'Striker', hp: -10, damage: 8, guard: 0, heal: 0 },
@@ -29,7 +29,7 @@ export function createMatch(mode = 'charge', seed = Date.now(), team = DRAGONS.s
   const rng = random(seed), enemies = [...DRAGONS];
   for (let i = enemies.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [enemies[i], enemies[j]] = [enemies[j], enemies[i]]; }
   const make = (loadout, side) => {
-    const cards = loadout.map((d, i) => dragon(d.id, d.rune, `${side}-${i}`));
+    const cards = loadout.map((d, i) => ({ ...dragon(d.id, d.rune, `${side}-${i}`), ...(d.nickname ? { name: String(d.nickname).slice(0, 20) } : {}) }));
     return { field: cards.slice(0, 3), hand: cards.slice(3), charge: 1, kos: 0, attached: false, switched: false, fusionUsed: false };
   };
   const match = { mode, seed, players: [make(team, 0), make(enemies.slice(0, 5).map((d, i) => ({ id: d.id, rune: ['ward', 'life', 'fury'][i % 3] })), 1)], actor: 0, turn: 1, winner: null, log: [], actions: 0 };
