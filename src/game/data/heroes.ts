@@ -78,7 +78,7 @@ export const HEROES: HeroDef[] = [
     id: 'aurion',
     name: 'Aurion',
     sprite: '圣龙',
-    desc: 'Light. Gold scales. Mends the flight every turn.',
+    desc: 'Light. Gold scales. Mends itself every turn.',
     base: { hp: 130, atk: 14, def: 9, spd: 8 },
     grow: { hp: 16, atk: 2.2, def: 1.5, spd: 0.35 },
     skill: { name: 'Aureate Mantle', desc: 'Regenerate 3% HP each turn. Crit +8%.', crit: 0.08, regen: 0.03 },

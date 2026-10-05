@@ -1,4 +1,4 @@
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { createGlobalState, useStorage } from '@vueuse/core'
 import type {
   AutoHandleCfg, BagItem, BattleUnit, DungeonDef, FloatText, LogLine, Pet, Profile,
@@ -16,7 +16,7 @@ import {
   BAG_CAP, genPet, genShopStock, rollDrop, shopSlotPrice, stackIntoBag, todayStr,
 } from '@/game/engine/loot'
 import { castHeroSkill, createHeroUnits, stepRound } from '@/game/engine/battle'
-import { genBoonOffer, genDungeonWave, genTowerWave } from '@/game/engine/run'
+import { genBoonOffer, genDungeonWave, genTowerWave, TOWER_MAX_FLOOR } from '@/game/engine/run'
 import { chance, uid } from '@/game/engine/rng'
 
 function txName(id: string, en: string) {
@@ -50,7 +50,7 @@ export interface RewardInfo {
 
 export type RunStatus =
   | 'idle' | 'fighting' | 'waveClear' | 'boon'
-  | 'runOver' | 'dungeonClear' | 'dungeonLost'
+  | 'runOver' | 'towerClear' | 'dungeonClear' | 'dungeonLost'
 
 export interface RunState {
   started: boolean
@@ -68,6 +68,11 @@ export interface RunState {
   goldGained: number
 }
 
+interface RunSnapshot {
+  profileCreatedAt: number
+  run: RunState
+}
+
 function emptyBonds() {
   const bonds: Profile['bonds'] = {}
   for (const dragon of CANON_DRAGONS)
@@ -81,6 +86,7 @@ function defaultProfile(heroId: string): Profile {
   const starter = genPet(1, 'rare', heroId)
   starter.species = heroId
   starter.deployed = false
+  const initialShop = genShopStock(1)
   return {
     heroId,
     level: 1,
@@ -101,7 +107,7 @@ function defaultProfile(heroId: string): Profile {
     runDungeonDefId: '',
     runDungeonWave: 0,
     bagCap: 30,
-    shop: { stock: genShopStock(1), sold: [false, false, false, false, false, false], refreshCount: 0 },
+    shop: { stock: initialShop, sold: initialShop.map(() => false), refreshCount: 0 },
     daily: { date: todayStr(), progress: {}, claimed: {}, refreshCount: 0 },
     achievements: { progress: {}, claimed: {} },
     stats: {},
@@ -129,6 +135,7 @@ export const useGlobalState = createGlobalState(() => {
     null,
     undefined,
     {
+      flush: 'sync',
       serializer: {
         read: (v: string) => {
           if (!v)
@@ -169,8 +176,27 @@ export const useGlobalState = createGlobalState(() => {
     const anyPf = pf as any
     if (!pf.slotEnhance)
       pf.slotEnhance = { weapon: 0, armor: 0, accessory: 0 }
-    if (!pf.daily.refreshCount)
-      pf.daily.refreshCount = 0
+    if (!Array.isArray(pf.pets))
+      pf.pets = []
+    if (!pf.daily)
+      pf.daily = { date: todayStr(), progress: {}, claimed: {}, refreshCount: 0 }
+    pf.daily.progress ??= {}
+    pf.daily.claimed ??= {}
+    pf.daily.refreshCount ??= 0
+    if (!pf.achievements)
+      pf.achievements = { progress: {}, claimed: {} }
+    pf.achievements.progress ??= {}
+    pf.achievements.claimed ??= {}
+    pf.dungeonCount ??= {}
+    pf.stats ??= {}
+    pf.createdAt ??= Date.now()
+    if (!pf.shop) {
+      const stock = genShopStock(pf.level ?? 1)
+      pf.shop = { stock, sold: stock.map(() => false), refreshCount: 0 }
+    }
+    pf.shop.stock ??= []
+    pf.shop.sold = pf.shop.stock.map((_, i) => !!pf.shop.sold?.[i])
+    pf.shop.refreshCount ??= 0
     if (pf.autoRecycleCfg === undefined) {
       // 兼容旧的 autoRecycle 布尔字段
       const oldRecycle = anyPf.autoRecycle === true
@@ -200,6 +226,7 @@ export const useGlobalState = createGlobalState(() => {
       pf.lastBoonFloor = 0
     if (pf.runFloor === undefined)
       pf.runFloor = 1
+    pf.runFloor = Math.min(TOWER_MAX_FLOOR, Math.max(1, pf.runFloor))
     if (pf.runMode === undefined)
       pf.runMode = 'tower'
     if (pf.runDungeonDefId === undefined)
@@ -218,49 +245,33 @@ export const useGlobalState = createGlobalState(() => {
     }, 2200)
   }
 
-  // ---------------- 全局确认弹框（10s 自动确认） ----------------
+  // ---------------- Explicit global confirmation ----------------
+  const interactionPaused = ref(false)
   const confirmDialog = reactive<ConfirmState>({
     open: false,
     title: '',
     message: '',
     countdown: -1,
   })
-  let confirmTimer: ReturnType<typeof setInterval> | null = null
 
   function confirm(message: string, title = 'Confirm'): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-      // 若已有弹框，先关闭
       resolveConfirm(false)
       confirmDialog.title = title
       confirmDialog.message = message
-      confirmDialog.countdown = 5
+      confirmDialog.countdown = -1
       confirmDialog.resolve = resolve
       confirmDialog.open = true
-      // 每秒递减，到 0 自动确认
-      if (confirmTimer)
-        clearInterval(confirmTimer)
-      confirmTimer = setInterval(() => {
-        confirmDialog.countdown -= 1
-        if (confirmDialog.countdown <= 0) {
-          if (confirmTimer) {
-            clearInterval(confirmTimer)
-            confirmTimer = null
-          }
-          resolveConfirm(true)
-        }
-      }, 1000)
+      interactionPaused.value = true
     })
   }
 
   function resolveConfirm(value: boolean) {
-    if (confirmTimer) {
-      clearInterval(confirmTimer)
-      confirmTimer = null
-    }
     const resolve = confirmDialog.resolve
     confirmDialog.open = false
     confirmDialog.resolve = undefined
     confirmDialog.countdown = -1
+    interactionPaused.value = false
     resolve?.(value)
   }
 
@@ -280,6 +291,48 @@ export const useGlobalState = createGlobalState(() => {
     goldGained: 0,
   })
 
+  const runSnapshot = useStorage<RunSnapshot | null>(
+    'dragonverse-run',
+    null,
+    undefined,
+    {
+      flush: 'sync',
+      serializer: {
+        read: (v: string) => {
+          if (!v)
+            return null
+          try {
+            return JSON.parse(v) as RunSnapshot
+          }
+          catch {
+            return null
+          }
+        },
+        write: (v: RunSnapshot | null) => (v ? JSON.stringify(v) : ''),
+      },
+    },
+  )
+
+  function clearRunSnapshot() {
+    runSnapshot.value = null
+  }
+
+  function persistRunSnapshot() {
+    if (!profile.value || !run.started) {
+      clearRunSnapshot()
+      return
+    }
+    runSnapshot.value = {
+      profileCreatedAt: profile.value.createdAt,
+      run: JSON.parse(JSON.stringify(run)) as RunState,
+    }
+  }
+
+  if (!profile.value || (runSnapshot.value && runSnapshot.value.profileCreatedAt !== profile.value.createdAt))
+    clearRunSnapshot()
+
+  watch(run, persistRunSnapshot, { deep: true, flush: 'sync' })
+
   const activePanel = ref<'' | 'bag' | 'shop' | 'pet' | 'dungeon' | 'quest'>('')
 
   const hasSave = computed(() => !!profile.value && !!profile.value.heroId)
@@ -287,14 +340,17 @@ export const useGlobalState = createGlobalState(() => {
 
   // ---------------- 存档 ----------------
   function createSave(heroId: string) {
+    clearRunSnapshot()
     profile.value = defaultProfile(heroId)
     startRun()
   }
   function deleteSave() {
+    clearRunSnapshot()
     profile.value = null
     run.started = false
     run.status = 'idle'
     run.units = []
+    interactionPaused.value = false
   }
   function setLang(next: 'en-US' | 'ru') {
     lang.value = next
@@ -322,18 +378,8 @@ export const useGlobalState = createGlobalState(() => {
   // ---------------- 刷新日常任务 ----------------
   const DAILY_REFRESH_COST = 100
   function refreshDaily(): boolean {
-    const pf = p()
-    if (pf.gold < DAILY_REFRESH_COST) {
-      toast(tr(`Not enough gold (need ${DAILY_REFRESH_COST})`, `Не хватает золота (нужно ${DAILY_REFRESH_COST})`), 'error')
-      return false
-    }
-    pf.gold -= DAILY_REFRESH_COST
-    pf.daily.refreshCount += 1
-    // 重置所有日常任务进度与领取状态
-    pf.daily.progress = {}
-    pf.daily.claimed = {}
-    toast(tr('Daily quests refreshed', 'Ежедневные квесты обновлены'), 'success')
-    return true
+    toast(tr('Paid daily refresh is disabled', 'Платное обновление ежедневных заданий отключено'), 'info')
+    return false
   }
 
   // ---------------- 任务事件 ----------------
@@ -358,6 +404,8 @@ export const useGlobalState = createGlobalState(() => {
 
   function questProgress(qid: string): { current: number, claimable: boolean, claimed: boolean } {
     const def = QUESTS.find(q => q.id === qid)!
+    if (def.daily)
+      ensureDaily()
     const pf = p()
     const store = def.daily ? pf.daily : pf.achievements
     const current = store.progress[def.event] ?? 0
@@ -414,20 +462,8 @@ export const useGlobalState = createGlobalState(() => {
 
   /** 花金币购买体力 */
   function buyStamina(): boolean {
-    const pf = p()
-    if (pf.stamina >= STAMINA_MAX) {
-      toast(tr('Stamina is full', 'Выносливость полна'), 'error')
-      return false
-    }
-    if (pf.gold < STAMINA_BUY_COST) {
-      toast(tr(`Not enough gold (need ${STAMINA_BUY_COST})`, `Не хватает золота (нужно ${STAMINA_BUY_COST})`), 'error')
-      return false
-    }
-    pf.gold -= STAMINA_BUY_COST
-    pf.stamina = Math.min(STAMINA_MAX, pf.stamina + STAMINA_BUY_AMOUNT)
-    pf.staminaAt = Date.now()
-    toast(tr(`+${STAMINA_BUY_AMOUNT} stamina`, `+${STAMINA_BUY_AMOUNT} выносливости`), 'success')
-    return true
+    toast(tr('Stamina refill is disabled', 'Покупка выносливости отключена'), 'info')
+    return false
   }
 
   // ---------------- 经验 / 物品 ----------------
@@ -501,8 +537,17 @@ export const useGlobalState = createGlobalState(() => {
   }
 
   function addPet(pet: Pet) {
-    p().pets.push(pet)
-    track('petGain', p().pets.length, 'max')
+    const pf = p()
+    const species = pet.species || speciesFromName(pet.name)
+    if (species) {
+      pet.species = species
+      const bond = pf.bonds[species] ?? { rank: 0, copies: 0 }
+      if (bond.rank < 1)
+        bond.rank = 1
+      pf.bonds[species] = bond
+    }
+    pf.pets.push(pet)
+    track('petGain', pf.pets.length, 'max')
   }
 
   // ---------------- 背包：整理 / 出售 / 回收 / 使用 ----------------
@@ -673,11 +718,13 @@ export const useGlobalState = createGlobalState(() => {
       return m === 'w' ? 'weapon' : m === 'a' ? 'armor' : 'accessory'
     })()
     const old = pf.equipped[slot]
-    // 新装备继承槽位强化等级
+    // Equipped gear receives the permanent slot bonus; bag items never carry it away.
     item.enhance = pf.slotEnhance[slot]
     pf.equipped[slot] = item
-    if (old)
+    if (old) {
+      old.enhance = 0
       pf.bag.push(old)
+    }
     if ((item.rarity ?? 'common') !== 'common' && (item.rarity ?? 'common') !== 'rare')
       track('equipEpic', 1, 'max')
     toast(tr('Equipped', 'Надето'), 'success')
@@ -692,6 +739,7 @@ export const useGlobalState = createGlobalState(() => {
       toast(i18n.global.t('bag.bagFull'), 'error')
       return
     }
+    item.enhance = 0
     pf.bag.push(item)
     pf.equipped[slot] = undefined
   }
@@ -775,32 +823,10 @@ export const useGlobalState = createGlobalState(() => {
     toast(i18n.global.t('shop.refreshed'), 'success')
   }
 
-  /** 一键刷新商店直到出现金色(legendary)或红色宠物，自动消耗金币 */
+  /** Rare-hunt spending is hidden until the acquisition system is rebuilt in Stage 3. */
   function refreshShopToGoldOrRed(): { ok: boolean, spent: number, tries: number } {
-    const pf = p()
-    let spent = 0
-    let tries = 0
-    const maxTries = 200
-    while (tries < maxTries) {
-      if (pf.gold < SHOP_REFRESH_COST) {
-        toast(tr('Not enough gold. Refresh stopped.', 'Не хватает золота. Обновление остановлено.'), 'error')
-        return { ok: false, spent, tries }
-      }
-      pf.gold -= SHOP_REFRESH_COST
-      spent += SHOP_REFRESH_COST
-      pf.shop.refreshCount += 1
-      pf.shop.stock = genShopStock(pf.level)
-      pf.shop.sold = pf.shop.stock.map(() => false)
-      tries += 1
-      // 检查宠物槽位是否为金色或红色
-      const petSlot = pf.shop.stock.find(s => s.kind === 'pet')
-      if (petSlot && (petSlot.rarity === 'legendary' || petSlot.rarity === 'red')) {
-        toast(tr(`After ${tries} refreshes: a ${petSlot.rarity === 'red' ? 'mythic' : 'legendary'} dragon`, `После ${tries} обновлений: ${petSlot.rarity === 'red' ? 'мифический' : 'легендарный'} дракон`), 'success')
-        return { ok: true, spent, tries }
-      }
-    }
-    toast(tr(`${tries} refreshes, no legendary dragon yet`, `${tries} обновлений, легендарного дракона нет`), 'info')
-    return { ok: false, spent, tries }
+    toast(tr('Rare hunt is disabled', 'Поиск редких временно отключён'), 'info')
+    return { ok: false, spent: 0, tries: 0 }
   }
 
   function buyShop(index: number) {
@@ -814,16 +840,7 @@ export const useGlobalState = createGlobalState(() => {
       return
     }
     if (slot.kind === 'pet') {
-      const pet = genPet(slot.level, slot.rarity)
-      const species = pet.species
-      if (!species) {
-        toast(tr('That summon failed', 'Призыв не удался'), 'error')
-        return
-      }
-      pf.gold -= price
-      pf.shop.sold[index] = true
-      const kind = grantCopy(species)
-      toast(kind === 'unlock' ? tr(`${pet.name} joined the flight`, `${pet.name} вступил в полёт`) : tr(`${pet.name} copy +1`, `${pet.name}: копия +1`), 'success')
+      toast(tr('Market dragon offers are disabled until their rules are rebuilt', 'Рыночные призывы драконов временно отключены'), 'info')
       return
     }
     if (slot.kind === 'equip') {
@@ -918,10 +935,14 @@ export const useGlobalState = createGlobalState(() => {
   }
 
   function setLead(heroId: string) {
-    const bond = p().bonds[heroId]
+    const pf = p()
+    const bond = pf.bonds[heroId]
     if (!bond || bond.rank < 1)
       return false
-    p().heroId = heroId
+    if (pf.heroId === heroId)
+      return true
+    clearRunSnapshot()
+    pf.heroId = heroId
     return true
   }
 
@@ -995,26 +1016,9 @@ export const useGlobalState = createGlobalState(() => {
     const soulTable = [8, 25, 70, 200]
     return { gold: goldTable[idx] ?? 99999, soul: soulTable[idx] ?? 999 }
   }
-  function upgradePetRarity(petUid: string): boolean {
-    const pf = p()
-    const pet = pf.pets.find(x => x.uid === petUid)
-    if (!pet)
-      return false
-    const next = RARITY_META[pet.rarity].next
-    if (!next) {
-      toast(tr('Dragon is at max rarity', 'Редкость дракона уже максимальная'), 'error')
-      return false
-    }
-    const cost = petUpgradeCost(pet)!
-    if (pf.gold < cost.gold || pf.soul < cost.soul) {
-      toast(i18n.global.t('bag.materialLack'), 'error')
-      return false
-    }
-    pf.gold -= cost.gold
-    pf.soul -= cost.soul
-    pet.rarity = next
-    toast(tr(`Rose to ${i18n.global.t(`rarity.${next}`)}`, `Поднят до: ${i18n.global.t(`rarity.${next}`)}`), 'success')
-    return true
+  function upgradePetRarity(_petUid: string): boolean {
+    toast(tr('Dragon rarity upgrade is disabled until it has a real combat effect', 'Повышение редкости дракона отключено до переработки эффекта'), 'info')
+    return false
   }
 
   // ---------------- 副本 ----------------
@@ -1044,46 +1048,10 @@ export const useGlobalState = createGlobalState(() => {
     activePanel.value = ''
     loadDungeonWave()
   }
-  // 副本扫荡：已通关的副本可消耗双倍体力立即结算奖励
-  function sweepDungeon(id: string) {
-    syncStamina()
-    const pf = p()
-    const def = dungeonDef(id)
-    if (!pf.dungeonCount[id]) {
-      toast(tr('Clear this realm once first', 'Сначала пройди это царство'), 'error')
-      return
-    }
-    const cost = def.cost * 2
-    if (pf.stamina < cost) {
-      toast(tr(`Not enough stamina (need ${cost})`, `Не хватает выносливости (нужно ${cost})`), 'error')
-      return
-    }
-    pf.stamina -= cost
-    pf.staminaAt = Date.now()
-    // 直接发放奖励
-    pf.gold += def.rewards.gold
-    run.goldGained += def.rewards.gold
-    gainExp(def.rewards.exp)
-    for (const item of def.rewards.items) {
-      if (item.defId === 'stone')
-        pf.stone += item.count
-      else
-        addItem({ uid: uid('it'), kind: 'consumable', defId: item.defId, count: item.count })
-    }
-    if (def.rewards.egg) {
-      const pet = genPet(def.level, undefined)
-      addPet(pet)
-    }
-    pf.dungeonCount[id] += 1
-    track('dungeonClear', 1)
-    run.lastReward = {
-      gold: def.rewards.gold,
-      exp: def.rewards.exp,
-      drops: [],
-      stone: def.rewards.items.find(i => i.defId === 'stone')?.count ?? 0,
-      egg: def.rewards.egg,
-    }
-    toast(tr(`Swept ${def.name}`, `Зачищено: ${txName(def.id, def.name)}`), 'success')
+  // Sweep is hidden until the reward/stamina economy is rebuilt.
+  function sweepDungeon(_id: string): boolean {
+    toast(tr('Realm sweep is disabled', 'Зачистка царств отключена'), 'info')
+    return false
   }
   function loadDungeonWave() {
     const def = dungeonDef(run.dungeonDefId)
@@ -1096,12 +1064,15 @@ export const useGlobalState = createGlobalState(() => {
     pf.runDungeonDefId = run.dungeonDefId
     pf.runDungeonWave = run.dungeonWave
   }
-  function nextDungeonWave() {
+  function nextDungeonWave(): boolean {
+    if (run.mode !== 'dungeon' || run.status !== 'waveClear')
+      return false
     const def = dungeonDef(run.dungeonDefId)
-    if (run.dungeonWave < def.waves - 1) {
-      run.dungeonWave += 1
-      loadDungeonWave()
-    }
+    if (run.dungeonWave >= def.waves - 1)
+      return false
+    run.dungeonWave += 1
+    loadDungeonWave()
+    return true
   }
   function abandonDungeon() {
     exitToTower()
@@ -1150,12 +1121,24 @@ export const useGlobalState = createGlobalState(() => {
     pushLog(tr('The hunt begins. Tower floor 1.', 'Охота началась. Этаж башни 1.'), 'sys')
   }
 
-  /** 刷新页面后从存档恢复当前层数 */
+  /** Resume the exact persisted encounter/choice state when available. */
   function continueRun() {
     const pf = p()
+    const saved = runSnapshot.value
+    if (
+      saved
+      && saved.profileCreatedAt === pf.createdAt
+      && (saved.run.mode !== 'tower' || saved.run.floor <= TOWER_MAX_FLOOR)
+    ) {
+      Object.assign(run, JSON.parse(JSON.stringify(saved.run)) as RunState)
+      return
+    }
+    if (saved)
+      clearRunSnapshot()
+
     run.started = true
     run.mode = pf.runMode
-    run.floor = pf.runFloor
+    run.floor = Math.min(TOWER_MAX_FLOOR, Math.max(1, pf.runFloor))
     run.dungeonDefId = pf.runDungeonDefId
     run.dungeonWave = pf.runDungeonWave
     run.goldGained = 0
@@ -1168,19 +1151,30 @@ export const useGlobalState = createGlobalState(() => {
     pushLog(run.mode === 'dungeon' ? tr(`Resume ${dungeonDef(run.dungeonDefId).name}`, `Снова: ${txName(dungeonDef(run.dungeonDefId).id, dungeonDef(run.dungeonDefId).name)}`) : tr(`The hunt continues. Floor ${run.floor}.`, `Охота продолжается. Этаж ${run.floor}.`), 'sys')
   }
 
-  function nextTowerFloor() {
+  function nextTowerFloor(): boolean {
+    if (run.mode !== 'tower' || (run.status !== 'waveClear' && run.status !== 'boon'))
+      return false
+    if (run.floor >= TOWER_MAX_FLOOR) {
+      run.status = 'towerClear'
+      run.boonOffer = []
+      pushLog(tr('Tower floor 40 cleared.', 'Башня пройдена до 40 этажа.'), 'reward')
+      return false
+    }
     run.floor += 1
     loadTowerWave()
     pushLog(tr(`Floor ${run.floor}`, `Этаж ${run.floor}`), 'sys')
+    return true
   }
 
-  function chooseBoon(boonId: string) {
+  function chooseBoon(boonId: string): boolean {
+    if (run.status !== 'boon' || !run.boonOffer.includes(boonId))
+      return false
     const pf = p()
     pf.boons.push(boonId)
-    // 记录已领取祝福的最高层数，重开后不再重复领取
     pf.lastBoonFloor = Math.max(pf.lastBoonFloor, run.floor)
     run.boonOffer = []
     nextTowerFloor()
+    return true
   }
 
   function settleTowerVictory(): RewardInfo {
@@ -1260,7 +1254,7 @@ export const useGlobalState = createGlobalState(() => {
       gold: def.rewards.gold,
       exp: def.rewards.exp,
       drops: [],
-      stone: def.rewards.items.find(i => i.defId === 'stone')?.count ?? 0,
+      stone: def.rewards.items.filter(i => i.defId === 'stone').reduce((sum, i) => sum + i.count, 0),
       egg: def.rewards.egg,
     }
   }
@@ -1344,7 +1338,7 @@ export const useGlobalState = createGlobalState(() => {
   fixPetSprites()
 
   return {
-    profile, lang, toasts, toast, run, activePanel, hasSave,
+    profile, lang, toasts, toast, run, activePanel, hasSave, interactionPaused,
     confirmDialog, confirm, resolveConfirm,
     createSave, deleteSave, toggleLang, setLang, toggleAutoRecycle, toggleAutoSell, updateAutoCfg, refreshDaily, DAILY_REFRESH_COST,
     questProgress, claimableCount, claimQuest,
@@ -1357,6 +1351,6 @@ export const useGlobalState = createGlobalState(() => {
     dungeonDef, enterDungeon, sweepDungeon, nextDungeonWave, abandonDungeon, exitToTower,
     startRun, continueRun, nextTowerFloor, chooseBoon, battleTick,
     castSkill, heroActiveSkill, heroSkillCd,
-    track, STAMINA_MAX,
+    track, STAMINA_MAX, TOWER_MAX_FLOOR,
   }
 })

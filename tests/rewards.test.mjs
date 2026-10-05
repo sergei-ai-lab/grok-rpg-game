@@ -8,10 +8,11 @@ test('tower victory awards gold/XP/lead copy and every third floor an extra spec
   withRandom(0.99, () => forceVictory(state))
   assert.deepEqual([p.gold, p.exp, p.bonds.vorathion.copies], [216, 16, 1])
   assert.equal(state.run.lastReward.copyOf, 'vorathion')
-  state.nextTowerFloor()
-  state.nextTowerFloor()
+  assert.equal(state.nextTowerFloor(), true)
   withRandom(0.99, () => forceVictory(state))
-  assert.deepEqual([p.gold, p.exp, p.bonds.vorathion.copies], [240, 40, 2])
+  assert.equal(state.nextTowerFloor(), true)
+  withRandom(0.99, () => forceVictory(state))
+  assert.deepEqual([p.gold, p.exp, p.bonds.vorathion.copies], [260, 60, 3])
   assert.equal(state.run.lastReward.extraCopy, 'umbraxis')
   assert.equal(p.bonds.umbraxis.rank, 1)
   assert.equal(p.pets.length, 2)
@@ -20,10 +21,9 @@ test('tower victory awards gold/XP/lead copy and every third floor an extra spec
 test('first boss pays triple gold, 2.5x XP, guaranteed gear and one boon offer', async () => {
   const { state } = await fresh()
   const p = state.profile.value
-  state.run.floor = 5
-  state.continueRun() // Restore from save rather than trust a transient floor.
-  p.runFloor = 5
-  state.continueRun()
+  state.run.floor = 4
+  state.run.status = 'waveClear'
+  assert.equal(state.nextTowerFloor(), true)
   withRandom(0.5, () => forceVictory(state))
   assert.equal(p.gold, 296)
   assert.equal(p.level, 2)
@@ -38,8 +38,9 @@ test('first boss pays triple gold, 2.5x XP, guaranteed gear and one boon offer',
   assert.deepEqual([p.lastBoonFloor, state.run.floor], [5, 6])
   state.startRun()
   assert.equal(p.boons[0], boon)
-  p.runFloor = 5
-  state.continueRun()
+  state.run.floor = 4
+  state.run.status = 'waveClear'
+  assert.equal(state.nextTowerFloor(), true)
   withRandom(0.99, () => forceVictory(state))
   assert.equal(state.run.status, 'waveClear')
   assert.equal(p.boons.length, 1)
@@ -79,13 +80,12 @@ test('realm gates level/stamina, final victory pays all stones, sweep requires p
   assert.deepEqual([p.gold - before.gold, p.exp - before.exp, p.stone - before.stone], [120, 90, 3])
   assert.equal(p.dungeonCount.forest, 1)
   assert.equal(p.bonds.vorathion.copies, 0)
-  state.sweepDungeon('forest')
-  assert.equal(p.stamina, 970)
-  assert.equal(p.dungeonCount.forest, 2)
-  assert.equal(p.gold, before.gold + 240)
+  const afterClear = [p.stamina, p.dungeonCount.forest, p.gold, p.stone]
+  assert.equal(state.sweepDungeon('forest'), false)
+  assert.deepEqual([p.stamina, p.dungeonCount.forest, p.gold, p.stone], afterClear)
 })
 
-test('quest rewards are single-claim until paid daily refresh; achievements remain claimed', async () => {
+test('quest rewards are single-claim and paid daily refresh cannot reset them', async () => {
   const { state } = await fresh()
   const p = state.profile.value
   state.track('battle', 5)
@@ -97,15 +97,13 @@ test('quest rewards are single-claim until paid daily refresh; achievements rema
   state.track('floor', 10, 'max')
   state.claimQuest('ach_floor10')
   assert.equal(p.soul, 5)
-  assert.equal(state.refreshDaily(), true)
-  assert.equal(p.gold, 720)
-  assert.equal(state.questProgress('daily_battle').current, 0)
+  const beforeRefresh = [p.gold, p.daily.progress.battle, p.daily.claimed.daily_battle]
+  assert.equal(state.refreshDaily(), false)
+  assert.deepEqual([p.gold, p.daily.progress.battle, p.daily.claimed.daily_battle], beforeRefresh)
   assert.equal(state.questProgress('ach_floor10').claimed, true)
-  state.track('battle', 5)
-  assert.equal(state.questProgress('daily_battle').claimable, true)
 })
 
-test('stamina regenerates one point per 30 seconds, caps at 1000; purchase costs 50 for 100', async () => {
+test('stamina regenerates one point per 30 seconds and paid refill is disabled', async () => {
   const { state } = await fresh()
   const p = state.profile.value
   const now = Date.now
@@ -120,8 +118,9 @@ test('stamina regenerates one point per 30 seconds, caps at 1000; purchase costs
     assert.equal(p.stamina, 1000)
     assert.equal(state.buyStamina(), false)
     p.stamina = 850
-    assert.equal(state.buyStamina(), true)
-    assert.deepEqual([p.stamina, p.gold], [950, 150])
+    const gold = p.gold
+    assert.equal(state.buyStamina(), false)
+    assert.deepEqual([p.stamina, p.gold], [850, gold])
   }
   finally { Date.now = now }
 })
