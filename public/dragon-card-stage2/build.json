@@ -1,0 +1,10 @@
+{
+  "version": "5c6e62ac7cc8",
+  "stage": "A",
+  "source_repository": "sergei-ai-lab/dragon-card-game",
+  "branch": "work/stage2",
+  "source_commit": "eaa830ac6d2e0cc939a6318a05f6a01fd599b856",
+  "base_branch": "work/stage1-playable",
+  "base_commit": "f3c172a7a1da22cb9ca281ba63db8eccf73059a4",
+  "default_battle_view": "arena"
+}
