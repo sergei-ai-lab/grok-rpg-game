@@ -513,10 +513,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Rimefang, ice family, charcoal-blue scales, two long backward horns with frosted tips, silver eyes, paired white cheek ridges, icy saber-like teeth. Elemental accents: icy cyan and pale blue glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/rimefang-2.webp"
+            "status": "ready",
+            "path": "img/rimefang-3.webp",
+            "source": "imagegen",
+            "reference": "img/rimefang-2.webp",
+            "sha256": "163d96a57cf991157012c24abaca9c525db156885d0d625df9afe7183c67c050",
+            "width": 720,
+            "height": 1080,
+            "bytes": 195932,
+            "quality": 83,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; silver eyes, swept frost-tipped horns, pale cheek ridges and paired ice fangs match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -592,10 +599,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Hoarfell, ice family, heavy black scales, short branching frost horns, pale cyan eyes, six large ice plates down the spine and wide frosted wings. Elemental accents: icy cyan and pale blue glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/hoarfell-2.webp"
+            "status": "ready",
+            "path": "img/hoarfell-3.webp",
+            "source": "imagegen",
+            "reference": "img/hoarfell-2.webp",
+            "sha256": "ebea22a00d244daea2c5facfe300164f6d7fe5216258772c01ba04508998f019",
+            "width": 720,
+            "height": 1080,
+            "bytes": 199680,
+            "quality": 81,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; cyan eyes, branching ice horns, heavy black scales and frosted wings match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -843,10 +857,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Arcwing, storm family, sleek black scales, white-blue eyes, two curved blade horns, pale zigzag scale markings on shoulders and blue-edged broad wings. Elemental accents: electric blue and white lightning glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/arcwing-2.webp"
+            "status": "ready",
+            "path": "img/arcwing-3.webp",
+            "source": "imagegen",
+            "reference": "img/arcwing-2.webp",
+            "sha256": "1805a44dc283219f68beffb9cea3ecc5477833e8c8dfa39f23b80e9c61504430",
+            "width": 720,
+            "height": 1080,
+            "bytes": 196666,
+            "quality": 82,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; pale blue eyes, two curved blade horns, lightning zigzag shoulder scales and blue-edged wings match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -922,10 +943,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Thundrake, storm family, heavy gunmetal armor, short triangular horns, a split cobalt chest crest, blue eyes and serrated lightning-lit wing fingers. Elemental accents: electric blue and white lightning glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/thundrake-2.webp"
+            "status": "ready",
+            "path": "img/thundrake-3.webp",
+            "source": "imagegen",
+            "reference": "img/thundrake-2.webp",
+            "sha256": "b959fe8e663540b7e25f523ef26a5668d80a042d2396f16ebe4d41fa67145f71",
+            "width": 720,
+            "height": 1080,
+            "bytes": 194118,
+            "quality": 80,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; blue eyes, short triangular horns, gunmetal armor and split cobalt chest crest match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -1173,10 +1201,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Duskmaw, shadow family, dark purple-black scales, broad jaw, two blunt swept horns, purple eyes, a pale violet line along the lower jaw. Elemental accents: deep violet glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/duskmaw-2.webp"
+            "status": "ready",
+            "path": "img/duskmaw-3.webp",
+            "source": "imagegen",
+            "reference": "img/duskmaw-2.webp",
+            "sha256": "d5fa1f7f5c9db8bc071f3dcdf7a624f1bd85787a04e09288e2e69fe09b3d1ad1",
+            "width": 720,
+            "height": 1080,
+            "bytes": 197854,
+            "quality": 82,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; violet eyes, blunt swept horns, broad jaw and pale violet lower-jaw line match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -1252,10 +1287,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Umbrafell, shadow family, black armor, violet slit eyes, four thin swept horns, smoke-like violet throat scales and scalloped dark wing membranes. Elemental accents: deep violet glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/umbrafell-2.webp"
+            "status": "ready",
+            "path": "img/umbrafell-3.webp",
+            "source": "imagegen",
+            "reference": "img/umbrafell-2.webp",
+            "sha256": "99468262a33c379d42fc2a46cf4b9e7f3f391ab49405bd813b68fb658505a0d0",
+            "width": 720,
+            "height": 1080,
+            "bytes": 194012,
+            "quality": 86,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; violet eyes, thin swept horn cluster, smoky throat and scalloped violet wings match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -1417,10 +1459,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Astryn, cosmic family, dark indigo scales, silver eyes, two swept silver-tipped horns, tiny luminous star-like scale flecks and purple wing membranes. Elemental accents: violet and silver starlight glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/astryn-2.webp"
+            "status": "ready",
+            "path": "img/astryn-3.webp",
+            "source": "imagegen",
+            "reference": "img/astryn-2.webp",
+            "sha256": "a9fe7563ee1e7fe903c2c5c61827737e011c67f03d8ed5053df82e5cac139023",
+            "width": 720,
+            "height": 1080,
+            "bytes": 194712,
+            "quality": 83,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; silver eyes, silver-tipped horn pair, indigo scales and starry violet wings match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -1496,10 +1545,17 @@
           "index": 3,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Nebularis, cosmic family, steel-indigo scales, violet eyes, two long curled horns, pale silver cheek markings and nebula-like violet wing veining. Elemental accents: violet and silver starlight glow. Stage: The very same dragon as its adult reference, now an ancient colossal titan with heavy mature armor and enormous wings, powerful majestic pose. Increase scale and presence, not the number of horns or limbs. Preserve exact elemental palette, eye color, horn number and shape lineage, cheek and chest markings.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": "img/nebularis-2.webp"
+            "status": "ready",
+            "path": "img/nebularis-3.webp",
+            "source": "imagegen",
+            "reference": "img/nebularis-2.webp",
+            "sha256": "1d155c2a3c8678233bdc3d856c890f7c107f730cf8a28e7aaffd39eb0ffc2562",
+            "width": 720,
+            "height": 1080,
+            "bytes": 195250,
+            "quality": 83,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; violet eyes, curled horn pair, silver cheek plates and nebula wing veining match the adult reference; colossal torso, heavy limbs and mature armor with ruined pillars for scale; no text or extra limbs."
           }
         }
       }
@@ -1541,10 +1597,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Voidstar, cosmic family, obsidian scales, white eyes, four upward silver horns, violet chest fissures and dark wings dotted with small silver scale highlights. Elemental accents: violet and silver starlight glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/voidstar-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "085626c2df6875385c30ee4b21a016ac57f74b75d437c151054dfd558ef15fc1",
+            "width": 720,
+            "height": 1080,
+            "bytes": 145464,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; white eyes, four upward silver horns, obsidian scales, violet chest fissures and silver star flecks; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
@@ -1757,10 +1820,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Briarthorn, nature family, black-green scales, green eyes, two branching antler-like horns, thorn ridges, paired pale green leaf-shaped cheek scales. Elemental accents: moss green and pale gold glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/briarthorn-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "5ecc5fa3af0d55da1a072a76dd5164a6f79342c625050d28c6efbd2d96a1ccd6",
+            "width": 720,
+            "height": 1080,
+            "bytes": 146274,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; green eyes, branching antler pair, pale green leaf cheek plates and black-green thorn scales; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
@@ -1822,10 +1892,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Mossguard, nature family, heavy bark-black armor, wide blunt horns, amber eyes, luminous moss-green cracks and broad forest-veined wings. Elemental accents: moss green and pale gold glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/mossguard-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "9e082520594c168c1bcee63d424fca7289a20c0373920c1043f7f34921167d64",
+            "width": 720,
+            "height": 1080,
+            "bytes": 163518,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; amber eyes, blunt bark horn pair, moss-lined black armor and green leaf-veined wings; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
@@ -1973,10 +2050,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Shardling, crystal family, dark slate scales, teal eyes, two short quartz horns, opal cheek plates and transparent teal-edged wing membranes. Elemental accents: teal and opal crystal glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/shardling-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "d9dbb2298d5b95cb3cbed81f9665944edf2fdd38ce1bafb69486c6f08b8b02d3",
+            "width": 720,
+            "height": 1080,
+            "bytes": 137924,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; teal eyes, short quartz horn pair, opal cheek plates and transparent teal wing edges; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
@@ -2038,10 +2122,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Prismora, crystal family, black scales, opal-white eyes, two backward faceted horns, teal chest plates and prism-like wing ridges. Elemental accents: teal and opal crystal glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/prismora-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "29e15cd1839b7906ac5b6d74a921fe667b8be79f4a577771be6d2afe5d830604",
+            "width": 720,
+            "height": 1080,
+            "bytes": 150064,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; opal-white eyes, faceted swept horn pair, teal chest plates and iridescent prism wing ridges; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
@@ -2103,10 +2194,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Quartzhelm, crystal family, dark stone armor, broad faceted teal horn helmet, pale teal eyes, a row of six large quartz spine plates and dark crystalline wings. Elemental accents: teal and opal crystal glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/quartzhelm-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "24fc0fd6df60f3cc7064d4bad90d0af0c585535beab064ff790c34b6f385966f",
+            "width": 720,
+            "height": 1080,
+            "bytes": 136188,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; pale teal eyes, broad faceted horn helmet, large quartz spine plates and dark crystalline wings; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
@@ -2319,10 +2417,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Giltwing, gold family, black bronze scales, amber eyes, two smooth swept gold horns, a single golden stripe along the jaw and gold-veined dark wings. Elemental accents: warm golden glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/giltwing-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "4e8fa6e5bc37386c172e4b862c3e3165b2cdfc005ec0511a48c9b986e3d6a5b9",
+            "width": 720,
+            "height": 1080,
+            "bytes": 139042,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; amber eyes, smooth swept gold horn pair, golden jaw stripe and gold-veined bronze-black wings; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
@@ -2384,10 +2489,17 @@
           "index": 1,
           "prompt": "A single dark, realistic fantasy dragon, intricate black or dark steel scales with glowing elemental accents, matching the existing FLOCK dragon illustrations. Cinematic directional rim light, deep near-black background, full body with the head, wings and tail inside the frame, portrait 2:3. No text, lettering, symbols, numbers, watermarks, border, collage, grid or other creatures. Believable joints; exactly four legs and one pair of wings, unless this dragon has the explicitly stated serpentine body. No extra or duplicated limbs. Subject: Solcrest, gold family, dark bronze armor, three swept golden crest horns, golden eyes, bright gold chest scales and black wings with warm gold edges. Elemental accents: warm golden glow. Stage: A newly hatched small dragon with a compact body, short wings and small recognizable horns; grounded curious pose, detailed realistic scales, not a toy or cartoon.",
           "art": {
-            "status": "missing",
-            "path": null,
-            "source": null,
-            "reference": null
+            "status": "ready",
+            "path": "img/solcrest-1.webp",
+            "source": "imagegen",
+            "reference": null,
+            "sha256": "9594d4b2dd94e336a72ba38f9601e8d431ff3f26b227d3cceb7cefb109d0b08e",
+            "width": 720,
+            "height": 1080,
+            "bytes": 155008,
+            "quality": 93,
+            "reviewedBy": "agent",
+            "review": "Approved: four legs and two wings; golden eyes, three swept golden crest horns, bright gold chest scales and bronze-black wings; hatchling proportions; no text or extra limbs."
           }
         },
         "adult": {
