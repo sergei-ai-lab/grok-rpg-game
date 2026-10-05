@@ -1,5 +1,9 @@
 # FLOCK art pipeline
 
+Paused by the owner on 2026-10-05. All completed work is saved on `work/gpt/art-pipeline` in PR #5; the PR is unmerged. The checkpoint has **88 ready / 8 missing stages**, **24 complete dragons**, 12 reused portraits and 76 approved generated portraits. The asset audit and all 49 tests pass at this checkpoint. Earlier typecheck, build, bundle verification and mobile browser checks passed with 30 ready stages; the evidence labels that earlier scope explicitly.
+
+The only remaining work is the titan stage of Voidstar, Briarthorn, Mossguard, Shardling, Prismora, Quartzhelm, Giltwing and Solcrest. Their approved adult references are already in `img/`. No generation, scheduled continuation or merge runs while paused. Resume from `art_pipeline.py queue` when the owner requests continuation.
+
 `catalog.json` is the source of truth for 32 dragons: eight families, four rarities per family, and three stages per dragon. Each entry carries two abilities, a two-sentence legend, a visual identity and an individual prompt for every stage. The existing three starters and campaign identities keep their original IDs and combat styles.
 
 ## Direct file transfer: passed
@@ -36,7 +40,7 @@ Only `public/flock/` and its new catalog tests are changed by this implementatio
 
 Run `npm run typecheck`, `npm test`, `npm run build`, `npm run verify:bundle` and the Python asset audit. `tests/flock-catalog.test.mjs` checks the catalog shape, real assets, stage selection, missing-art filtering, saved ownership and path isolation.
 
-The agent also exercises the game in Chromium with a 390 × 844 touch viewport, CPU ×4 and a simulated 4G connection: starter/name flow, saved name, collection, image decoding at levels 1/5/10, real attack damage and termination of all ten campaign waves using the embedded battle engine. This is mobile browser emulation, not a physical iPhone test. Final counts, hashes and measured results are recorded in `evidence/art-pipeline.json`.
+The agent also exercised the game in Chromium with a 390 × 844 touch viewport, CPU ×4 and a simulated 4G connection: starter/name flow, saved name, collection, image decoding at levels 1/5/10, real attack damage and termination of all ten campaign waves using the embedded battle engine. This is mobile browser emulation, not a physical iPhone test. Checkpoint counts, hashes, resume queue and measured results with their validation scope are recorded in `evidence/art-pipeline.json`.
 
 The PR stays unmerged. Pages updates after the PR is merged into `main` through the existing `deploy.yml` workflow.
 
