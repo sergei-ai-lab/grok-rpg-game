@@ -23,6 +23,10 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); }
 body { overflow: hidden; }
+#tg-player { flex: 0 0 auto; padding: calc(6px + var(--tg-safe-top, 0px)) 12px 6px; font-size: 11px; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#tg-player[hidden] { display: none; }
+body.tg-mini-app { display: flex; flex-direction: column; --safe-t: 0px; --safe-b: 0px; padding-bottom: max(env(safe-area-inset-bottom), var(--tg-safe-bottom, 0px)); }
+body.tg-mini-app #app { flex: 1 1 auto; min-height: 0; height: auto; }
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; touch-action: manipulation; }
 #app { height: 100dvh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; transition: opacity .28s ease; }
@@ -172,7 +176,9 @@ button.danger { margin-top: 10px; background: transparent; color: #e7b2a8; borde
 </style>
 </head>
 <body>
+<div id="tg-player" hidden></div>
 <main id="app"></main>
+<script src="./telegram-bridge.js"></script>
 <script>
 const KEY = "flock.v3";
 const HINTS = {
@@ -466,7 +472,7 @@ function cue(kind) {
     else { noise(0.07, 0.05, 500); tone(110, 0.12, "triangle", 0.05, 0); }
   } catch { /* sound is optional */ }
 }
-function buzz(pattern) { try { navigator.vibrate?.(pattern); } catch { /* iOS often ignores */ } }
+function buzz(pattern) { try { if (!window.FlockTelegram?.haptic(pattern)) navigator.vibrate?.(pattern); } catch { /* optional feedback */ } }
 function hint(id) { return state.hints[id] ? "" : `<p class="hint" data-hint="${id}">${HINTS[id]}</p>`; }
 function dismiss(id) {
   if (state.hints[id]) return;
