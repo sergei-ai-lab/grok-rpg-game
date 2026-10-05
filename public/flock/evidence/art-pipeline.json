@@ -1,0 +1,1033 @@
+{
+  "status": "paused-by-owner",
+  "date": "2026-10-05",
+  "automationWorked": true,
+  "branch": "work/gpt/art-pipeline",
+  "pullRequest": "https://github.com/sergei-ai-lab/grok-rpg-game/pull/5",
+  "baseMainCommit": "e158ad61da5dba628a72dd225f635b91ad05e5fe",
+  "directTransferTest": {
+    "dragon": "glacielle",
+    "stages": [
+      "hatchling",
+      "adult",
+      "titan"
+    ],
+    "files": [
+      "img/glacielle-1.webp",
+      "img/glacielle-2.webp",
+      "img/glacielle-3.webp"
+    ],
+    "remoteCommitVerified": "7c87967be2801d3e6b28d683782d884c753c8c36",
+    "localGitBlobHashesMatchedRemote": true
+  },
+  "assets": {
+    "dragons": 32,
+    "ready": 88,
+    "missing": 8,
+    "completeDragons": 24,
+    "errors": [],
+    "files": [
+      {
+        "id": "kaelith",
+        "stage": "hatchling",
+        "path": "img/kaelith-1.webp",
+        "bytes": 76678,
+        "width": 720,
+        "height": 1080,
+        "sha256": "a8f4c29d86c281a0590944836177dd4ce43fb4f644c4d86d589626aa1800cda1"
+      },
+      {
+        "id": "kaelith",
+        "stage": "adult",
+        "path": "img/kaelith-2.webp",
+        "bytes": 102076,
+        "width": 720,
+        "height": 1080,
+        "sha256": "cdf14c65a498e41ab72d7e1061d91c5ccd8831929aef71e56dd53cf3ca1a144a"
+      },
+      {
+        "id": "kaelith",
+        "stage": "titan",
+        "path": "img/kaelith-3.webp",
+        "bytes": 131652,
+        "width": 720,
+        "height": 1080,
+        "sha256": "5b77eb710daa582ff0173e099f32566db20e3e76160a861a115e9436202b768a"
+      },
+      {
+        "id": "ashmaw",
+        "stage": "hatchling",
+        "path": "img/ashmaw-1.webp",
+        "bytes": 63538,
+        "width": 720,
+        "height": 1080,
+        "sha256": "ae73884e63f9f7551d9beec1ea8502eda8cdc022f13d8478aeceb3bae92d1a0f"
+      },
+      {
+        "id": "ashmaw",
+        "stage": "adult",
+        "path": "img/ashmaw-2.webp",
+        "bytes": 192780,
+        "width": 720,
+        "height": 1080,
+        "sha256": "8de71b39201ed01f110e09c0aaf0af7e8b40ed4a4cf58e62b7aaefdbd0e542e9"
+      },
+      {
+        "id": "ashmaw",
+        "stage": "titan",
+        "path": "img/ashmaw-3.webp",
+        "bytes": 198880,
+        "width": 720,
+        "height": 1080,
+        "sha256": "06dd48d4165da768f2de70071859de35fd02167749007dd38ed4aed57a41ec22"
+      },
+      {
+        "id": "pyrestone",
+        "stage": "hatchling",
+        "path": "img/pyrestone-1.webp",
+        "bytes": 101214,
+        "width": 720,
+        "height": 1080,
+        "sha256": "225c8eccd65a6a36573bd4315c0e6536756617ad07596d630c7928d4ea8cf6ab"
+      },
+      {
+        "id": "pyrestone",
+        "stage": "adult",
+        "path": "img/pyrestone-2.webp",
+        "bytes": 197982,
+        "width": 720,
+        "height": 1080,
+        "sha256": "09eef3813388b9efea4525e6c6ea37eb29a07f48bd2682d1ef898b07d449918b"
+      },
+      {
+        "id": "pyrestone",
+        "stage": "titan",
+        "path": "img/pyrestone-3.webp",
+        "bytes": 198934,
+        "width": 720,
+        "height": 1080,
+        "sha256": "4d1721ffe645d044a46d3ae5955206a807661edcd58206c79127a7a6e4b93ad1"
+      },
+      {
+        "id": "scorchlane",
+        "stage": "hatchling",
+        "path": "img/scorchlane-1.webp",
+        "bytes": 61250,
+        "width": 720,
+        "height": 1080,
+        "sha256": "61387bc5941bbdda88fc1b2bb38c5316348c8a298d3f3e1a137d34bd10e7e02f"
+      },
+      {
+        "id": "scorchlane",
+        "stage": "adult",
+        "path": "img/scorchlane-2.webp",
+        "bytes": 159828,
+        "width": 720,
+        "height": 1080,
+        "sha256": "785ced3f4d469cc7566c6de2a65e01e63b279b39b283e435804121b262b08153"
+      },
+      {
+        "id": "scorchlane",
+        "stage": "titan",
+        "path": "img/scorchlane-3.webp",
+        "bytes": 194014,
+        "width": 720,
+        "height": 1080,
+        "sha256": "d39263e13ce6fd47c4447a897200ccdd3d66cccb8bf7393aa75bb5e2651bed25"
+      },
+      {
+        "id": "glacielle",
+        "stage": "hatchling",
+        "path": "img/glacielle-1.webp",
+        "bytes": 184100,
+        "width": 720,
+        "height": 1080,
+        "sha256": "3a68f221b881231aab1b6dddf1087c9e016cba13e4036d7b8c4d86a4a51838ec"
+      },
+      {
+        "id": "glacielle",
+        "stage": "adult",
+        "path": "img/glacielle-2.webp",
+        "bytes": 196268,
+        "width": 720,
+        "height": 1080,
+        "sha256": "e57d3bd12f7e83e6acecd37b08d2db09e7c9589bce646aadf9667fa5bb2d3603"
+      },
+      {
+        "id": "glacielle",
+        "stage": "titan",
+        "path": "img/glacielle-3.webp",
+        "bytes": 197974,
+        "width": 720,
+        "height": 1080,
+        "sha256": "63637a05ca1a502014ee74d6ae30098d13692bc6919d296d990a9a5f96689011"
+      },
+      {
+        "id": "rimefang",
+        "stage": "hatchling",
+        "path": "img/rimefang-1.webp",
+        "bytes": 164078,
+        "width": 720,
+        "height": 1080,
+        "sha256": "4b90edde852bf7f6f476d547296a5f4093f337667b37001b1b22226b4a2c025c"
+      },
+      {
+        "id": "rimefang",
+        "stage": "adult",
+        "path": "img/rimefang-2.webp",
+        "bytes": 198478,
+        "width": 720,
+        "height": 1080,
+        "sha256": "b8e441e2bb261d72f2f1243ae0ad3384481b75e07ce0a087f8e0466d35af835b"
+      },
+      {
+        "id": "rimefang",
+        "stage": "titan",
+        "path": "img/rimefang-3.webp",
+        "bytes": 195932,
+        "width": 720,
+        "height": 1080,
+        "sha256": "163d96a57cf991157012c24abaca9c525db156885d0d625df9afe7183c67c050"
+      },
+      {
+        "id": "hoarfell",
+        "stage": "hatchling",
+        "path": "img/hoarfell-1.webp",
+        "bytes": 163024,
+        "width": 720,
+        "height": 1080,
+        "sha256": "02b650bb3468e80d4bd4dc5d9901b58dcd2df89c8d61997dd51ed9b9e3d43296"
+      },
+      {
+        "id": "hoarfell",
+        "stage": "adult",
+        "path": "img/hoarfell-2.webp",
+        "bytes": 197966,
+        "width": 720,
+        "height": 1080,
+        "sha256": "8b67ae12044fd5ed29ef707be6925e2aab14f79d12211006f49dac3eefbd6d29"
+      },
+      {
+        "id": "hoarfell",
+        "stage": "titan",
+        "path": "img/hoarfell-3.webp",
+        "bytes": 199680,
+        "width": 720,
+        "height": 1080,
+        "sha256": "ebea22a00d244daea2c5facfe300164f6d7fe5216258772c01ba04508998f019"
+      },
+      {
+        "id": "wintercrown",
+        "stage": "hatchling",
+        "path": "img/wintercrown-1.webp",
+        "bytes": 196192,
+        "width": 720,
+        "height": 1080,
+        "sha256": "0df15f49bc0c4118a5e39bd4d34e3cc8e33dd55d16cbdc84bde2914c7ddd9ccc"
+      },
+      {
+        "id": "wintercrown",
+        "stage": "adult",
+        "path": "img/wintercrown-2.webp",
+        "bytes": 197354,
+        "width": 720,
+        "height": 1080,
+        "sha256": "836a252fd15e766e34ff69ec2fb1b8461f0fd0272e0abca1ba0eea022de86218"
+      },
+      {
+        "id": "wintercrown",
+        "stage": "titan",
+        "path": "img/wintercrown-3.webp",
+        "bytes": 193246,
+        "width": 720,
+        "height": 1080,
+        "sha256": "838071c3a345aee16010b01fe3aba7826c42478f92422d625fded77620d7a979"
+      },
+      {
+        "id": "stormveil",
+        "stage": "hatchling",
+        "path": "img/stormveil-1.webp",
+        "bytes": 148666,
+        "width": 720,
+        "height": 1080,
+        "sha256": "de197013a37b0e91e3a761449a86d50036aa5bf168faaa54fe80df2e49fe9d4b"
+      },
+      {
+        "id": "stormveil",
+        "stage": "adult",
+        "path": "img/stormveil-2.webp",
+        "bytes": 194006,
+        "width": 720,
+        "height": 1080,
+        "sha256": "66d1eda093a46a2bd5f884b3fbb1b0b296160685816ac3782e2fa34fb20c8c9f"
+      },
+      {
+        "id": "stormveil",
+        "stage": "titan",
+        "path": "img/stormveil-3.webp",
+        "bytes": 194034,
+        "width": 720,
+        "height": 1080,
+        "sha256": "c2f68ba626e9cf96c1dc3daaf1a59b74c59dc6cd9dc8d8eacc9826410c2084f3"
+      },
+      {
+        "id": "arcwing",
+        "stage": "hatchling",
+        "path": "img/arcwing-1.webp",
+        "bytes": 151626,
+        "width": 720,
+        "height": 1080,
+        "sha256": "0778a76cba0c62dc9e954c5ea0e51a75183e150a9d49c602d007bd7ee2fca72a"
+      },
+      {
+        "id": "arcwing",
+        "stage": "adult",
+        "path": "img/arcwing-2.webp",
+        "bytes": 187362,
+        "width": 720,
+        "height": 1080,
+        "sha256": "bd4cff6ac4049bbad147b5a4d99a2b915eab1dcd38c9ffd8bd4b0c1b2dcd677c"
+      },
+      {
+        "id": "arcwing",
+        "stage": "titan",
+        "path": "img/arcwing-3.webp",
+        "bytes": 196666,
+        "width": 720,
+        "height": 1080,
+        "sha256": "1805a44dc283219f68beffb9cea3ecc5477833e8c8dfa39f23b80e9c61504430"
+      },
+      {
+        "id": "thundrake",
+        "stage": "hatchling",
+        "path": "img/thundrake-1.webp",
+        "bytes": 163776,
+        "width": 720,
+        "height": 1080,
+        "sha256": "e180692564ff48c4bf9599ad390647e5501b84d634a4dd880137a1c7f5b99944"
+      },
+      {
+        "id": "thundrake",
+        "stage": "adult",
+        "path": "img/thundrake-2.webp",
+        "bytes": 190316,
+        "width": 720,
+        "height": 1080,
+        "sha256": "8d4c8fdde0ae828cac2a26a29356f150f5bffe3876336ff52586644ea5be742c"
+      },
+      {
+        "id": "thundrake",
+        "stage": "titan",
+        "path": "img/thundrake-3.webp",
+        "bytes": 194118,
+        "width": 720,
+        "height": 1080,
+        "sha256": "b959fe8e663540b7e25f523ef26a5668d80a042d2396f16ebe4d41fa67145f71"
+      },
+      {
+        "id": "tempestral",
+        "stage": "hatchling",
+        "path": "img/tempestral-1.webp",
+        "bytes": 154802,
+        "width": 720,
+        "height": 1080,
+        "sha256": "dc65567fc9008e824316aa7b7a7a418eb91345c28025987e5f9ed85d45bb3a30"
+      },
+      {
+        "id": "tempestral",
+        "stage": "adult",
+        "path": "img/tempestral-2.webp",
+        "bytes": 196790,
+        "width": 720,
+        "height": 1080,
+        "sha256": "b81c1bb1c7ae05f0009917f9c6483ec3731af1381aabb78ca280dc234d8dc742"
+      },
+      {
+        "id": "tempestral",
+        "stage": "titan",
+        "path": "img/tempestral-3.webp",
+        "bytes": 195892,
+        "width": 720,
+        "height": 1080,
+        "sha256": "4a5366a2c7cd788cc487bf68a7d7cdc22afef297428da63b464d47b571695005"
+      },
+      {
+        "id": "nyxshade",
+        "stage": "hatchling",
+        "path": "img/nyxshade-1.webp",
+        "bytes": 129622,
+        "width": 720,
+        "height": 1080,
+        "sha256": "2d471518c663583e6bc55bd40705ec0c1b9a54cb21355e7a585ce6ad7b29fb25"
+      },
+      {
+        "id": "nyxshade",
+        "stage": "adult",
+        "path": "img/nyxshade-2.webp",
+        "bytes": 189264,
+        "width": 720,
+        "height": 1080,
+        "sha256": "e298f8b19e1cfaef14c94d7720746998a3867e02375e80575810957c9c9e03a9"
+      },
+      {
+        "id": "nyxshade",
+        "stage": "titan",
+        "path": "img/nyxshade-3.webp",
+        "bytes": 192756,
+        "width": 720,
+        "height": 1080,
+        "sha256": "95964b02c3617c65d597af57a7d2d185de4edcc096e52e9ce9426315b9f2ca1f"
+      },
+      {
+        "id": "duskmaw",
+        "stage": "hatchling",
+        "path": "img/duskmaw-1.webp",
+        "bytes": 148932,
+        "width": 720,
+        "height": 1080,
+        "sha256": "87ff22648d947491085f91d339c6407eabf0f1be2a781b172fc1c8d616acc9ae"
+      },
+      {
+        "id": "duskmaw",
+        "stage": "adult",
+        "path": "img/duskmaw-2.webp",
+        "bytes": 194070,
+        "width": 720,
+        "height": 1080,
+        "sha256": "3f7b7b6ed798a756ba6cd25e998cfb5cb3ced423e4002bede020ecef3aa3a9fc"
+      },
+      {
+        "id": "duskmaw",
+        "stage": "titan",
+        "path": "img/duskmaw-3.webp",
+        "bytes": 197854,
+        "width": 720,
+        "height": 1080,
+        "sha256": "d5fa1f7f5c9db8bc071f3dcdf7a624f1bd85787a04e09288e2e69fe09b3d1ad1"
+      },
+      {
+        "id": "umbrafell",
+        "stage": "hatchling",
+        "path": "img/umbrafell-1.webp",
+        "bytes": 127012,
+        "width": 720,
+        "height": 1080,
+        "sha256": "8ee89fe727290e58505c442e6c38ef236d71bca2f97b5d9cb47cb7b831580164"
+      },
+      {
+        "id": "umbrafell",
+        "stage": "adult",
+        "path": "img/umbrafell-2.webp",
+        "bytes": 181304,
+        "width": 720,
+        "height": 1080,
+        "sha256": "9378a0ddd6590e44d718a9df57bab21dda4f0de5717c4f610cbc7fbf8cbad6d5"
+      },
+      {
+        "id": "umbrafell",
+        "stage": "titan",
+        "path": "img/umbrafell-3.webp",
+        "bytes": 194012,
+        "width": 720,
+        "height": 1080,
+        "sha256": "99468262a33c379d42fc2a46cf4b9e7f3f391ab49405bd813b68fb658505a0d0"
+      },
+      {
+        "id": "eclipsion",
+        "stage": "hatchling",
+        "path": "img/eclipsion-1.webp",
+        "bytes": 149824,
+        "width": 720,
+        "height": 1080,
+        "sha256": "5a0ab93d6a70f80ab44ead717f24ba501e4092a8cedf7c468885145f9a94b3d7"
+      },
+      {
+        "id": "eclipsion",
+        "stage": "adult",
+        "path": "img/eclipsion-2.webp",
+        "bytes": 197824,
+        "width": 720,
+        "height": 1080,
+        "sha256": "fcea8e2c030f67a0d11694adb7387a9cc08d63d28d9dbb400789930bc5259a1f"
+      },
+      {
+        "id": "eclipsion",
+        "stage": "titan",
+        "path": "img/eclipsion-3.webp",
+        "bytes": 193716,
+        "width": 720,
+        "height": 1080,
+        "sha256": "ed23348a7a3f5dfc809b88c3dbf6cede7ae37423d167c0ef531ce753168e0b22"
+      },
+      {
+        "id": "astryn",
+        "stage": "hatchling",
+        "path": "img/astryn-1.webp",
+        "bytes": 147902,
+        "width": 720,
+        "height": 1080,
+        "sha256": "687f763bb6bc8ac903364b5ab6b5b541a4ba5d0f205225f0620a73087cf4da6a"
+      },
+      {
+        "id": "astryn",
+        "stage": "adult",
+        "path": "img/astryn-2.webp",
+        "bytes": 190494,
+        "width": 720,
+        "height": 1080,
+        "sha256": "bf9a49436233ccd4247d593e1b5d87c644aac15c55c7cc5173d696f13b42d12b"
+      },
+      {
+        "id": "astryn",
+        "stage": "titan",
+        "path": "img/astryn-3.webp",
+        "bytes": 194712,
+        "width": 720,
+        "height": 1080,
+        "sha256": "a9fe7563ee1e7fe903c2c5c61827737e011c67f03d8ed5053df82e5cac139023"
+      },
+      {
+        "id": "nebularis",
+        "stage": "hatchling",
+        "path": "img/nebularis-1.webp",
+        "bytes": 158756,
+        "width": 720,
+        "height": 1080,
+        "sha256": "eb3f6aff5f575233e27cfa9725c5b98cd49d94c4b6348aa6a46c1f9d55a75b13"
+      },
+      {
+        "id": "nebularis",
+        "stage": "adult",
+        "path": "img/nebularis-2.webp",
+        "bytes": 190770,
+        "width": 720,
+        "height": 1080,
+        "sha256": "b882573c05ce8445cef34837602e1ae221e8a42a149a6e23bc811d5485e4f194"
+      },
+      {
+        "id": "nebularis",
+        "stage": "titan",
+        "path": "img/nebularis-3.webp",
+        "bytes": 195250,
+        "width": 720,
+        "height": 1080,
+        "sha256": "1d155c2a3c8678233bdc3d856c890f7c107f730cf8a28e7aaffd39eb0ffc2562"
+      },
+      {
+        "id": "voidstar",
+        "stage": "hatchling",
+        "path": "img/voidstar-1.webp",
+        "bytes": 145464,
+        "width": 720,
+        "height": 1080,
+        "sha256": "085626c2df6875385c30ee4b21a016ac57f74b75d437c151054dfd558ef15fc1"
+      },
+      {
+        "id": "voidstar",
+        "stage": "adult",
+        "path": "img/voidstar-2.webp",
+        "bytes": 196924,
+        "width": 720,
+        "height": 1080,
+        "sha256": "be6958137f4788dfeba0df6952e9dadab672391c95265a868a69099ec3846b62"
+      },
+      {
+        "id": "starovereign",
+        "stage": "hatchling",
+        "path": "img/starovereign-1.webp",
+        "bytes": 173394,
+        "width": 720,
+        "height": 1080,
+        "sha256": "adbb3960447410b81d972e03a94163bfe2d34b4192b7833af8e1ba5b6b2a3999"
+      },
+      {
+        "id": "starovereign",
+        "stage": "adult",
+        "path": "img/starovereign-2.webp",
+        "bytes": 189896,
+        "width": 720,
+        "height": 1080,
+        "sha256": "e1b8cdcded0732e51ad870016cf355a75f956c83f7fbce31232529114312b597"
+      },
+      {
+        "id": "starovereign",
+        "stage": "titan",
+        "path": "img/starovereign-3.webp",
+        "bytes": 193104,
+        "width": 720,
+        "height": 1080,
+        "sha256": "1ae8f2e6f3d60e2d04f4ee112a02b428fed1764109b8c47e43e0ca0dc87d1d71"
+      },
+      {
+        "id": "verdraxis",
+        "stage": "hatchling",
+        "path": "img/verdraxis-1.webp",
+        "bytes": 97248,
+        "width": 720,
+        "height": 1080,
+        "sha256": "98b1478bf1c87b51f4db5c5ec07faf0ba0ad427c81ae4f39f9921b08a62ba2ad"
+      },
+      {
+        "id": "verdraxis",
+        "stage": "adult",
+        "path": "img/verdraxis-2.webp",
+        "bytes": 145160,
+        "width": 720,
+        "height": 1080,
+        "sha256": "36c084e024f5f6d2baba0006e5406991ba0dc63fdc00c43fd65cbb36829353bb"
+      },
+      {
+        "id": "verdraxis",
+        "stage": "titan",
+        "path": "img/verdraxis-3.webp",
+        "bytes": 175742,
+        "width": 720,
+        "height": 1080,
+        "sha256": "0bdd769ec29201eb3fea684e961753d54a48b4a45c6b20098d13a87948bfb3ba"
+      },
+      {
+        "id": "briarthorn",
+        "stage": "hatchling",
+        "path": "img/briarthorn-1.webp",
+        "bytes": 146274,
+        "width": 720,
+        "height": 1080,
+        "sha256": "5ecc5fa3af0d55da1a072a76dd5164a6f79342c625050d28c6efbd2d96a1ccd6"
+      },
+      {
+        "id": "briarthorn",
+        "stage": "adult",
+        "path": "img/briarthorn-2.webp",
+        "bytes": 189752,
+        "width": 720,
+        "height": 1080,
+        "sha256": "59721443a2d22dc2700375fc217217a84157b1d5ca67cc0bc53a71fc7c6f5a32"
+      },
+      {
+        "id": "mossguard",
+        "stage": "hatchling",
+        "path": "img/mossguard-1.webp",
+        "bytes": 163518,
+        "width": 720,
+        "height": 1080,
+        "sha256": "9e082520594c168c1bcee63d424fca7289a20c0373920c1043f7f34921167d64"
+      },
+      {
+        "id": "mossguard",
+        "stage": "adult",
+        "path": "img/mossguard-2.webp",
+        "bytes": 190758,
+        "width": 720,
+        "height": 1080,
+        "sha256": "0af5d849c16c55e3f19d47a6b5c2eca5d6fba18a5b797021e5b30c3600800a14"
+      },
+      {
+        "id": "worldroot",
+        "stage": "hatchling",
+        "path": "img/worldroot-1.webp",
+        "bytes": 169600,
+        "width": 720,
+        "height": 1080,
+        "sha256": "6718d0b7a4cabac47495c4c11bd638a1a939a7346a7a56f3605c4aa0ba76979a"
+      },
+      {
+        "id": "worldroot",
+        "stage": "adult",
+        "path": "img/worldroot-2.webp",
+        "bytes": 198930,
+        "width": 720,
+        "height": 1080,
+        "sha256": "20e0aca6c7e51ec945226c6e645b687917e67c90406666c0770f44f5ff853a14"
+      },
+      {
+        "id": "worldroot",
+        "stage": "titan",
+        "path": "img/worldroot-3.webp",
+        "bytes": 197302,
+        "width": 720,
+        "height": 1080,
+        "sha256": "05837c3881d65065cf4b39da02ac889525605b740512e0e2eb3c4bef84714b5b"
+      },
+      {
+        "id": "shardling",
+        "stage": "hatchling",
+        "path": "img/shardling-1.webp",
+        "bytes": 137924,
+        "width": 720,
+        "height": 1080,
+        "sha256": "d9dbb2298d5b95cb3cbed81f9665944edf2fdd38ce1bafb69486c6f08b8b02d3"
+      },
+      {
+        "id": "shardling",
+        "stage": "adult",
+        "path": "img/shardling-2.webp",
+        "bytes": 192048,
+        "width": 720,
+        "height": 1080,
+        "sha256": "f03ecc34518ff2843dcdd7f6fe9946e2e2b8308cb87b294c942ae061cef36ce4"
+      },
+      {
+        "id": "prismora",
+        "stage": "hatchling",
+        "path": "img/prismora-1.webp",
+        "bytes": 150064,
+        "width": 720,
+        "height": 1080,
+        "sha256": "29e15cd1839b7906ac5b6d74a921fe667b8be79f4a577771be6d2afe5d830604"
+      },
+      {
+        "id": "prismora",
+        "stage": "adult",
+        "path": "img/prismora-2.webp",
+        "bytes": 194682,
+        "width": 720,
+        "height": 1080,
+        "sha256": "45915d913a02cfb85b52f6c1271f97f64d44457c35ef73c3c3a20232b0fc3f83"
+      },
+      {
+        "id": "quartzhelm",
+        "stage": "hatchling",
+        "path": "img/quartzhelm-1.webp",
+        "bytes": 136188,
+        "width": 720,
+        "height": 1080,
+        "sha256": "24fc0fd6df60f3cc7064d4bad90d0af0c585535beab064ff790c34b6f385966f"
+      },
+      {
+        "id": "quartzhelm",
+        "stage": "adult",
+        "path": "img/quartzhelm-2.webp",
+        "bytes": 191642,
+        "width": 720,
+        "height": 1080,
+        "sha256": "bdd1cbb6337c6a8a710c6f6d23efb967c967a5a2071b3f7ab10475ba63bd5da0"
+      },
+      {
+        "id": "crystalith",
+        "stage": "hatchling",
+        "path": "img/crystalith-1.webp",
+        "bytes": 161456,
+        "width": 720,
+        "height": 1080,
+        "sha256": "a753974c945cbaeccd6e57b6f6fce7bfd74e26c73184b75608e6fdf945ae69e9"
+      },
+      {
+        "id": "crystalith",
+        "stage": "adult",
+        "path": "img/crystalith-2.webp",
+        "bytes": 197636,
+        "width": 720,
+        "height": 1080,
+        "sha256": "cf1f538cc0aa881abca80bdb26186e3ee62db2308ee6a48695c3fb7aa1b5f805"
+      },
+      {
+        "id": "crystalith",
+        "stage": "titan",
+        "path": "img/crystalith-3.webp",
+        "bytes": 194012,
+        "width": 720,
+        "height": 1080,
+        "sha256": "ccb85615ee62eed1bbecd3be3fc6b07f759a6fae01c3177942f102dfe9c878c7"
+      },
+      {
+        "id": "aurelune",
+        "stage": "hatchling",
+        "path": "img/aurelune-1.webp",
+        "bytes": 118348,
+        "width": 720,
+        "height": 1080,
+        "sha256": "1eb123a71dfaf8c95a5e01c7489baa41ceda20bb69fd4905eaee7e8e35f86811"
+      },
+      {
+        "id": "aurelune",
+        "stage": "adult",
+        "path": "img/aurelune-2.webp",
+        "bytes": 136822,
+        "width": 720,
+        "height": 1080,
+        "sha256": "ca3ed6cbd38258a815d5ee5951e0e6ed7036886709d6a00ba7d65fd59465f7e8"
+      },
+      {
+        "id": "aurelune",
+        "stage": "titan",
+        "path": "img/aurelune-3.webp",
+        "bytes": 179798,
+        "width": 720,
+        "height": 1080,
+        "sha256": "d91ed45e934cddba6abda0b5d18d3cc0f37077cea1c636911e3c83d3a761188b"
+      },
+      {
+        "id": "giltwing",
+        "stage": "hatchling",
+        "path": "img/giltwing-1.webp",
+        "bytes": 139042,
+        "width": 720,
+        "height": 1080,
+        "sha256": "4e8fa6e5bc37386c172e4b862c3e3165b2cdfc005ec0511a48c9b986e3d6a5b9"
+      },
+      {
+        "id": "giltwing",
+        "stage": "adult",
+        "path": "img/giltwing-2.webp",
+        "bytes": 190246,
+        "width": 720,
+        "height": 1080,
+        "sha256": "d76bea69bfbec3b8b0f36243b66f556b5588c112ce090df96447736bfce9f735"
+      },
+      {
+        "id": "solcrest",
+        "stage": "hatchling",
+        "path": "img/solcrest-1.webp",
+        "bytes": 155008,
+        "width": 720,
+        "height": 1080,
+        "sha256": "9594d4b2dd94e336a72ba38f9601e8d431ff3f26b227d3cceb7cefb109d0b08e"
+      },
+      {
+        "id": "solcrest",
+        "stage": "adult",
+        "path": "img/solcrest-2.webp",
+        "bytes": 190158,
+        "width": 720,
+        "height": 1080,
+        "sha256": "19515123f1c5adc94af2fa76d8e521476f66aeeb1e769c087df5707886c0f40b"
+      },
+      {
+        "id": "aurumarch",
+        "stage": "hatchling",
+        "path": "img/aurumarch-1.webp",
+        "bytes": 160988,
+        "width": 720,
+        "height": 1080,
+        "sha256": "b4dbd69804d5cfb5313fb30f2b1a82aec7556158f0b2b4c285209debbd9453fb"
+      },
+      {
+        "id": "aurumarch",
+        "stage": "adult",
+        "path": "img/aurumarch-2.webp",
+        "bytes": 191086,
+        "width": 720,
+        "height": 1080,
+        "sha256": "562b96e392246b44319eff0970d373bd955ef3a58acdd8405fcd3a0cb069928c"
+      },
+      {
+        "id": "aurumarch",
+        "stage": "titan",
+        "path": "img/aurumarch-3.webp",
+        "bytes": 195986,
+        "width": 720,
+        "height": 1080,
+        "sha256": "711f93f43cb274defe78825ba40c98db21ba588d6d794771d62a9a2488e1deea"
+      }
+    ]
+  },
+  "sources": {
+    "existing": 12,
+    "imagegen": 76
+  },
+  "rejectedResults": [
+    {
+      "id": "worldroot",
+      "stage": "titan",
+      "reason": "Silhouette too close to adult; regenerated and approved."
+    },
+    {
+      "id": "crystalith",
+      "stage": "titan",
+      "reason": "Silhouette too close to adult; regenerated and approved."
+    }
+  ],
+  "validation": {
+    "currentAssetAudit": "pass",
+    "currentNpmTests": {
+      "tests": 49,
+      "passed": 49,
+      "failed": 0
+    },
+    "previousTypecheck": "pass",
+    "previousBuild": "pass",
+    "previousBundleVerification": "pass",
+    "buildValidationAssetState": {
+      "ready": 30,
+      "missing": 66
+    },
+    "previousBrowserSmoke": {
+      "assetState": {
+        "ready": 30,
+        "missing": 66
+      },
+      "result": {
+        "status": "pass",
+        "browser": "153.0.8010.0",
+        "viewport": "390x844",
+        "cpuThrottle": 4,
+        "network": "150 ms latency, 4 Mbps down",
+        "firstScreenMs": 1254,
+        "roster": {
+          "count": 7,
+          "ids": [
+            "kaelith",
+            "verdraxis",
+            "aurelune",
+            "scorchlane",
+            "glacielle",
+            "wintercrown",
+            "aurumarch"
+          ]
+        },
+        "tiles": 7,
+        "stages": [
+          "img/kaelith-1.webp",
+          "img/kaelith-2.webp",
+          "img/kaelith-3.webp"
+        ],
+        "checks": [
+          "catalog fetch",
+          "selection and naming",
+          "collection hides missing sets",
+          "no provisional portraits",
+          "level 1/5/10 art",
+          "attack affects HP",
+          "ten fights AI-vs-AI terminate with valid HP",
+          "reload preserves name",
+          "no horizontal overflow",
+          "no page errors or HTTP failures"
+        ],
+        "simulations": [
+          {
+            "fight": 1,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 2,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 3,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 4,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 5,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 6,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 7,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 8,
+            "won": true,
+            "turns": 1,
+            "terminated": true
+          },
+          {
+            "fight": 9,
+            "won": true,
+            "turns": 5,
+            "terminated": true
+          },
+          {
+            "fight": 10,
+            "won": true,
+            "turns": 5,
+            "terminated": true
+          }
+        ],
+        "errors": [],
+        "failed": []
+      },
+      "note": "Historical successful mobile emulation run. Not a browser run of this 88-ready checkpoint."
+    }
+  },
+  "resumeQueue": [
+    {
+      "id": "briarthorn",
+      "stage": "titan",
+      "reference": "img/briarthorn-2.webp",
+      "destination": "img/briarthorn-3.webp",
+      "priority": 3
+    },
+    {
+      "id": "giltwing",
+      "stage": "titan",
+      "reference": "img/giltwing-2.webp",
+      "destination": "img/giltwing-3.webp",
+      "priority": 3
+    },
+    {
+      "id": "mossguard",
+      "stage": "titan",
+      "reference": "img/mossguard-2.webp",
+      "destination": "img/mossguard-3.webp",
+      "priority": 3
+    },
+    {
+      "id": "prismora",
+      "stage": "titan",
+      "reference": "img/prismora-2.webp",
+      "destination": "img/prismora-3.webp",
+      "priority": 3
+    },
+    {
+      "id": "quartzhelm",
+      "stage": "titan",
+      "reference": "img/quartzhelm-2.webp",
+      "destination": "img/quartzhelm-3.webp",
+      "priority": 3
+    },
+    {
+      "id": "shardling",
+      "stage": "titan",
+      "reference": "img/shardling-2.webp",
+      "destination": "img/shardling-3.webp",
+      "priority": 3
+    },
+    {
+      "id": "solcrest",
+      "stage": "titan",
+      "reference": "img/solcrest-2.webp",
+      "destination": "img/solcrest-3.webp",
+      "priority": 3
+    },
+    {
+      "id": "voidstar",
+      "stage": "titan",
+      "reference": "img/voidstar-2.webp",
+      "destination": "img/voidstar-3.webp",
+      "priority": 3
+    }
+  ],
+  "pauseReason": "Owner requested saving all work and stopping. No further generation or merge is authorized in this pause.",
+  "examples": [
+    "glacielle",
+    "aurumarch",
+    "worldroot"
+  ],
+  "preservedUncataloguedConcurrentFiles": [
+    "img/vorathion-1.webp",
+    "img/vorathion-2.webp",
+    "img/vorathion-3.webp"
+  ]
+}

@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0e0c0b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="description" content="Name a hatchling and grow it through a ten-fight campaign.">
-<meta name="flock-build" content="night-v3">
+<meta name="flock-build" content="catalog-art-v1">
 <title>Flock</title>
 <style>
 :root {
@@ -173,6 +173,7 @@ button.danger { margin-top: 10px; background: transparent; color: #e7b2a8; borde
 </head>
 <body>
 <main id="app"></main>
+<script src="./catalog-runtime.js"></script>
 <script>
 const KEY = "flock.v3";
 const HINTS = {
@@ -203,19 +204,11 @@ const STYLE_LINE = {
   leech: "Skill gives you part of the damage."
 };
 const STYLE_WORD = { burst: "Heavy", bulwark: "Shield", mend: "Mend", burn: "Burn", shell: "Hide", flurry: "Twice", frost: "Freeze", arc: "Arc", leech: "Leech" };
-const SPECIES = [
-  { id: "kaelith", name: "Kaelith", element: "Ember", rune: "fury", style: "burst", starter: true, skills: ["Spark", "Lava Rend", "Inferno"], art: [1, 1, 1], blurb: "Coal-hearted and already restless." },
-  { id: "verdraxis", name: "Verdraxis", element: "Moss", rune: "ward", style: "bulwark", starter: true, skills: ["Root", "Stonehide", "Worldroot"], art: [1, 1, 1], blurb: "A young bulk of root and stone." },
-  { id: "aurelune", name: "Aurelune", element: "Bloom", rune: "life", style: "mend", starter: true, skills: ["Petal", "Bloom", "Solace"], art: [1, 1, 1], blurb: "Gold petals along a quiet spine." },
-  { id: "ashmaw", name: "Ashmaw", element: "Smoke", rune: "fury", style: "burn", skills: ["Cinder", "Ashcloud", "Blacksun"], art: [1, 0, 0], blurb: "Smoke before the fire." },
-  { id: "pyrestone", name: "Pyrestone", element: "Magma", rune: "ward", style: "shell", skills: ["Slam", "Magma", "Caldera"], art: [1, 0, 0], blurb: "A leaping body of cooling stone." },
-  { id: "scorchlane", name: "Scorchlane", element: "Flame", rune: "fury", style: "flurry", skills: ["Singe", "Breath", "Wildfire"], art: [1, 0, 0], blurb: "Walks, then the air burns." },
-  { id: "glacielle", name: "Glacielle", element: "Frost", rune: "ward", style: "frost", ghost: "aurelune", skills: ["Rime", "Glacier", "Whiteout"], art: [0, 0, 0], blurb: "Not hatched. Frost will stand in until its own portrait." },
-  { id: "stormveil", name: "Stormveil", element: "Storm", rune: "fury", style: "arc", ghost: "kaelith", skills: ["Arc", "Crown", "Tempest"], art: [0, 0, 0], blurb: "Not hatched. A storm-tint stands in." },
-  { id: "nyxshade", name: "Nyxshade", element: "Void", rune: "life", style: "leech", ghost: "verdraxis", skills: ["Hush", "Eclipse", "Maw"], art: [0, 0, 0], blurb: "Not hatched. A night-tint stands in." }
-];
-const BY = Object.fromEntries(SPECIES.map((s) => [s.id, s]));
-const WAVES = [
+let SPECIES = [];
+let BY = {};
+let UNLOCK_AT = {};
+let WAVES = [];
+const CAMPAIGN_WAVES = [
   ["ashmaw"],
   ["ashmaw", "ashmaw"],
   ["ashmaw", "pyrestone"],
@@ -227,7 +220,7 @@ const WAVES = [
   ["scorchlane", "scorchlane"],
   ["scorchlane"]
 ];
-const UNLOCK_AT = { 1: "ashmaw", 2: "pyrestone", 3: "scorchlane", 4: "glacielle", 5: "stormveil", 6: "nyxshade" };
+
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const app = document.querySelector("#app");
 let state = load();
@@ -303,12 +296,7 @@ function strike(rune, level) {
   return base + (level - 1) * growth + (stage - 1) * bloom;
 }
 function skillName(id, level) { return spec(id).skills[stageFor(level) - 1]; }
-function artOf(id, level) {
-  const stage = stageFor(level);
-  const item = spec(id);
-  if (item.ghost && !item.art[0]) return { src: "img/" + item.ghost + "-" + stage + ".webp", provisional: true, tint: item.id, stage };
-  return { src: "img/" + id + "-" + stage + ".webp", provisional: !item.art[stage - 1], tint: "", stage };
-}
+function artOf(id, level) { return FlockCatalog.artFor(BY, id, level); }
 function titleOf(id) {
   if (id === state.partnerId && state.partnerName) return state.partnerName;
   return spec(id).name;
@@ -484,7 +472,7 @@ function show(html, fade) {
   requestAnimationFrame(() => app.classList.remove("is-swapping"));
 }
 function squadIds() {
-  const ids = (state.squad || []).filter((id) => state.owned[id] && !spec(id).locked);
+  const ids = (state.squad || []).filter((id) => state.owned[id] && spec(id));
   if (state.partnerId && !ids.includes(state.partnerId)) ids.unshift(state.partnerId);
   return ids.slice(0, 3);
 }
@@ -946,7 +934,7 @@ function openReward(info) {
 }
 function openEvolve(evo, fromStage) {
   const id = state.partnerId;
-  const from = "img/" + id + "-" + fromStage + ".webp";
+  const from = artOf(id, fromStage === 3 ? 10 : fromStage === 2 ? 5 : 1).src;
   const to = artOf(id, evo.level);
   show(`
     ${hint("evolve")}
@@ -1066,7 +1054,30 @@ function openSettings() {
   };
   app.querySelector("[data-back]").onclick = () => { resetArmed = false; state.partnerId ? openDen() : openPick(0); };
 }
-boot();
+async function bootCatalog() {
+  app.innerHTML = '<section class="grid-screen"><p class="sub" role="status">Loading your flock…</p></section>';
+  try {
+    const response = await fetch("catalog.json", { cache: "no-cache" });
+    if (!response.ok) throw new Error("Catalog could not be loaded");
+    const catalog = await response.json();
+    const roster = FlockCatalog.buildRoster(catalog);
+    SPECIES = roster.species;
+    BY = roster.by;
+    UNLOCK_AT = roster.unlockAt;
+    // Keep missing dragons out of battles as well as collection and rewards.
+    WAVES = CAMPAIGN_WAVES.map((wave) => {
+      const ready = wave.filter((id) => BY[id]);
+      return ready.length ? ready : [SPECIES.find((dragon) => dragon.starter).id];
+    });
+    state = FlockCatalog.reconcileSave(state, roster);
+    boot();
+  } catch (error) {
+    app.innerHTML = '<section class="grid-screen"><h1>Flock is resting</h1><p class="sub">We could not load the dragon collection.</p><button class="go" type="button">Try again</button></section>';
+    app.querySelector(".go").onclick = bootCatalog;
+    console.error(error);
+  }
+}
+bootCatalog();
 </script>
 </body>
 </html>
