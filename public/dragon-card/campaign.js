@@ -1,4 +1,4 @@
-import { createMatch } from './match.js?v=9a4396cd8f3a';
+import { createMatch } from './match.js?v=2349f3449164';
 export const ENCOUNTERS = [
   ['Ember Nest', 'cinder', 1], ['Bloom Trail', 'sylvara', 1], ['Lava Crossing', 'vorathion', 2],
   ['Golden Gate', 'aurion', 3], ['Ash Canyon', 'cinder', 4], ['Living Woods', 'sylvara', 5],

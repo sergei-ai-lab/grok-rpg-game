@@ -1,4 +1,4 @@
-import { DRAGONS, stageForLevel } from './match.js?v=9a4396cd8f3a';
+import { DRAGONS, stageForLevel } from './match.js?v=2349f3449164';
 export const FAMILIES = ['vorathion', 'aurion', 'sylvara', 'cinder'];
 export const STARTERS = ['vorathion', 'sylvara', 'cinder'];
 export const PROFILE_KEY = 'dragon-journey-v1';
