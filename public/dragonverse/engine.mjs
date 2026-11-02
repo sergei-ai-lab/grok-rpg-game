@@ -351,9 +351,10 @@ function spawnWave(S) {
   for (const u of S.allies) if (u.alive) u.statuses = [];
   S.events.push({ t: 'wave', wave: S.wave + 1, of: S.waves });
   const all = [...S.allies, ...S.enemies];
+  // Initialize every meter before team passives modify it, regardless of slot.
+  for (const u of all) if (u.alive) u.meter = S.rng() * 10;
   for (const u of all) {
     if (!u.alive) continue;
-    u.meter = S.rng() * 10; // small jitter so equal speeds do not lock-step
     const p = u.passive;
     if (p.startAllyMeter) for (const a of side(S, u.side)) a.meter = clamp(a.meter + p.startAllyMeter, 0, 99);
     if (p.startEnemyMeter) for (const e of foes(S, u.side)) e.meter = clamp(e.meter + p.startEnemyMeter, 0, 99);

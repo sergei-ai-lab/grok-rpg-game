@@ -13,7 +13,7 @@ html,body{margin:0;height:100%;background:#000;color:var(--txt);overflow:hidden;
 button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
 img{-webkit-user-drag:none;pointer-events:none}
 #app{position:fixed;left:0;top:0;overflow:hidden;background:#000;transform-origin:0 0;font-size:var(--fs,14px)}
-.scr{position:absolute;inset:0;overflow:hidden}
+.scr{position:absolute;inset:0;overflow:hidden}#bt{overflow:clip}
 .bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .abs{position:absolute}
 .t-outline{text-shadow:0 1px 0 #000,1px 0 0 #000,-1px 0 0 #000,0 -1px 0 #000,0 2px 4px rgba(0,0,0,.8)}
@@ -331,7 +331,7 @@ svg.path{position:absolute;inset:0;width:100%;height:100%}
 .evo3 .lk img{filter:brightness(0) drop-shadow(0 0 1px #888)}
 .bar{height:.55em;background:rgba(0,0,0,.6);border:1px solid #000;border-radius:.3em;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,#f2c057,#ff8a2a)}
-.gslots{display:flex;gap:.35em;align-items:center}
+.gslots{display:flex;gap:.3em;align-items:center;min-width:0;max-width:100%}.gslots .gs{flex:0 1 2.9em;min-width:0;width:auto;height:auto;aspect-ratio:1}.gslots #autoeq{flex:none;padding:.3em .45em}
 .gs,.gcard{position:relative;width:2.9em;height:2.9em;border-radius:.3em;display:grid;place-items:center;background:rgba(0,0,0,.5);border:2px dashed rgba(255,255,255,.25);flex:none}
 .gs.R,.gcard.R{border:2px solid #8fb3d9;background:linear-gradient(#2c4c78,#14243b)}.gs.E,.gcard.E{border:2px solid #c290ff;background:linear-gradient(#55307d,#22143a)}.gs.L,.gcard.L{border:2px solid #ffcf5a;background:linear-gradient(#8a5e14,#3d2606);box-shadow:0 0 .5em rgba(255,200,80,.5)}
 .gs .gi,.gcard .gi{font-size:1.4em}.gs b,.gcard b{position:absolute;right:.1em;bottom:0;font-size:.7em;font-weight:900;text-shadow:0 0 2px #000,0 0 2px #000}
@@ -381,6 +381,6 @@ svg.path{position:absolute;inset:0;width:100%;height:100%}
 <body>
 <div id="app"><div style="position:fixed;inset:0;display:grid;place-items:center;color:#f4c76a;font:700 18px Georgia,serif;letter-spacing:3px;background:#000">DRAGONVERSE<br><span style="font:12px sans-serif;color:#888;letter-spacing:1px;text-align:center;display:block;margin-top:8px">loading…</span></div></div>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script type="module" src="./game.mjs?v=1793605992"></script>
+<script type="module" src="./game.mjs?v=1793618047"></script>
 </body>
 </html>

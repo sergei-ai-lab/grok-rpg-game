@@ -2,7 +2,7 @@ import {
   HEROES, ENEMIES, MARKS, STATUS, levelMul,
   createBattle, beginTurn, act, aiChoose, usableSkills, legalTargets, previewOrder, round, stars, starFlags, starRules,
   side, allUnits, CHAPTERS, PER, rngOf, stageDef, STAGE_COUNT, RAR_MUL, RARITY, scaleSkill, runAuto, DIFFS, DIFF_ORDER,
-} from './engine.mjs?v=1793605992';
+} from './engine.mjs?v=1793618047';
 
 // ======================= assets & data =======================
 const FIG = (k) => `fig/${k}.webp`;
@@ -210,7 +210,8 @@ const H = (k) => { const h = S.heroes[k]; if (h && !h.art) h.art = {}; if (h && 
 function heroMul(k) { const h = H(k); return RAR_MUL[VIS[k].r] * (1 + 0.12 * (h.st - 1)) * (1 + 0.1 * (h.aw || 0)) * (1 + 0.08 * formOf(h.lv)) * (1 + 0.03 * (((h.sk || {}).p || 1) - 1)); }
 function heroStats(k) {
   const t = HEROES[k], h = H(k) || { lv: 1, st: RAR[VIS[k].r].stars, gear: {} };
-  const m = levelMul(h.lv) * (H(k) ? heroMul(k) : RAR_MUL[VIS[k].r]);
+  const exM = h.ex ? 1 + 0.1 + 0.05 * (h.ex - 1) : 1;
+  const m = levelMul(h.lv) * (H(k) ? heroMul(k) : RAR_MUL[VIS[k].r]) * exM;
   const b = H(k) ? gearBonus(k) : {}; const su = (t.passive2 && t.passive2.statUp) || {};
   return { hp: Math.round(t.hp * m * (1 + (b.hpPct || 0)) + (b.hp || 0)), atk: Math.round(t.atk * m * (1 + (b.atkPct || 0)) + (b.atk || 0)), def: Math.round(t.def * m * (1 + (b.defPct || 0)) + (b.def || 0)),
     spd: Math.round((t.spd + (su.spd || 0)) * (1 + (b.spdPct || 0)) + (b.spd || 0)), crit: (t.crit ?? 0.15) + (su.crit || 0) + (b.crit || 0) };
@@ -835,7 +836,7 @@ function battle(st) {
   const t0 = Date.now(); BT.timer = setInterval(() => { if (!BT.alive || !document.getElementById('tm')) return clearInterval(BT.timer); const s = Math.floor((Date.now() - t0) / 1000); $('tm').textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; }, 1000);
   sync();
   FX.init($('fx'), $('stage'));
-  for (const u of allUnits(B)) { const vv = unitVis(u); if (vv.anims) preloadAnims(Object.values(vv.anims)); }
+  // Animation frames are loaded only when their action is first played.
   buildField();
   loop();
 }
@@ -1340,32 +1341,55 @@ function setPose(uid, pose) {
 }
 const ANIM_CACHE = {};
 function preloadAnims(names) {
-  for (const n of names) { const m = ANIM_META[n]; if (!m || ANIM_CACHE[n]) continue; ANIM_CACHE[n] = [];
-    for (let i = 0; i < m.n; i++) { const im = new Image(); im.src = ASSET_URL(`anim/${n}_${String(i).padStart(2, '0')}.webp`); im.decode?.().catch(() => {}); ANIM_CACHE[n].push(im.src); } }
+  return Promise.all(names.map((n) => {
+    const m = ANIM_META[n]; if (!m) return false;
+    if (ANIM_CACHE[n]) return ANIM_CACHE[n].ready;
+    const entry = { frames: [], ready: null }; ANIM_CACHE[n] = entry;
+    const loads = Array.from({ length: m.n }, (_, i) => new Promise((resolve) => {
+      const im = new Image(); entry.frames.push(im);
+      im.onload = () => { if (im.decode) im.decode().then(() => resolve(true), () => resolve(false)); else resolve(true); };
+      im.onerror = () => resolve(false);
+      im.src = ASSET_URL(`anim/${n}_${String(i).padStart(2, '0')}.webp`);
+    }));
+    let timer;
+    // Slow or missing art must never block combat indefinitely; keep the idle pose.
+    entry.ready = Promise.race([Promise.all(loads).then((ok) => ok.every(Boolean)),
+      new Promise((resolve) => { timer = setTimeout(() => resolve(false), 8000); })])
+      .then((ok) => { clearTimeout(timer); if (!ok && ANIM_CACHE[n] === entry) delete ANIM_CACHE[n]; return ok; });
+    return entry.ready;
+  })).then((ok) => ok.every(Boolean));
 }
 const ANIM_RATE = { vf_atk: 1.7, vf_cast: 1.6, vf_ult: 1.35, vf_hit: 2.6 };
 function playAnim(uid, name, opts = {}) {
   const el = figEl(uid); const m = ANIM_META[name];
   if (!el || !m) return { impact: Promise.resolve(), done: Promise.resolve() };
-  preloadAnims([name]);
+  const ready = preloadAnims([name]); const entry = ANIM_CACHE[name];
   const sp = el.querySelector('.sprite'); const tok = (el._tok || 0) + 1; el._tok = tok; el._busy = name;
-  const step = 1000 / (m.fps * (ANIM_RATE[name] || 1.5)) / S.speed;
-  if (opts.toUid) {
-    const a = center(uid), b = center(opts.toUid); const fr = opts.frac || 0.42;
-    const dx = (b.x - a.x) * fr, dy = (b.y - a.y) * fr * 0.6; const tAll = m.n * step;
-    el.animate([{ transform: 'translate(-50%,-100%)' }, { transform: `translate(calc(-50% + ${dx}px),calc(-100% + ${dy}px))`, offset: Math.min(0.85, Math.max(0.2, m.impact / m.n)) }, { transform: 'translate(-50%,-100%)' }], { duration: tAll, easing: 'ease-in-out' });
-    el.style.zIndex = '90';
-  }
+  const active = () => el._tok === tok && document.body.contains(sp);
   let hit; const impact = new Promise((r) => { hit = r; });
   const done = (async () => {
-    for (let i = 0; i < m.n; i++) {
-      if (el._tok !== tok || !document.body.contains(sp)) { hit(); return; }
-      sp.src = ANIM_CACHE[name][i];
-      if (i === m.impact) hit();
-      await sleep(step);
+    let cancelTimer;
+    try {
+      const cancelled = new Promise((resolve) => { cancelTimer = setInterval(() => { if (!active()) resolve(false); }, 50); });
+      if (!await Promise.race([ready, cancelled]) || !active()) return;
+      clearInterval(cancelTimer);
+      const step = 1000 / (m.fps * (ANIM_RATE[name] || 1.5)) / S.speed;
+      if (opts.toUid) {
+        const a = center(uid), b = center(opts.toUid); const fr = opts.frac || 0.42;
+        const dx = (b.x - a.x) * fr, dy = (b.y - a.y) * fr * 0.6; const tAll = m.n * step;
+        el.animate([{ transform: 'translate(-50%,-100%)' }, { transform: `translate(calc(-50% + ${dx}px),calc(-100% + ${dy}px))`, offset: Math.min(0.85, Math.max(0.2, m.impact / m.n)) }, { transform: 'translate(-50%,-100%)' }], { duration: tAll, easing: 'ease-in-out' });
+        el.style.zIndex = '90';
+      }
+      for (let i = 0; i < m.n; i++) {
+        if (!active()) return;
+        sp.src = entry.frames[i].src;
+        if (i === m.impact) hit();
+        await sleep(step);
+      }
+    } finally {
+      clearInterval(cancelTimer); hit();
+      if (el._tok === tok) { el._busy = null; if (document.body.contains(sp)) sp.src = ANIM(el._vis.idle); el.style.zIndex = String(Math.round(el._y || 50)); }
     }
-    hit();
-    if (el._tok === tok) { el._busy = null; sp.src = ANIM(el._vis.idle); el.style.zIndex = String(Math.round(el._y || 50)); }
   })();
   return { impact, done };
 }
@@ -1518,3 +1542,4 @@ if (TG && TG.BackButton) {
 }
 home();
 tgLoad();
+
