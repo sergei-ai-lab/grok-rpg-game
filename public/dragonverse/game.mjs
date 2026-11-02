@@ -2,7 +2,7 @@ import {
   HEROES, ENEMIES, MARKS, STATUS, levelMul,
   createBattle, beginTurn, act, aiChoose, usableSkills, legalTargets, previewOrder, round, stars, starFlags, starRules,
   side, allUnits, CHAPTERS, PER, rngOf, stageDef, STAGE_COUNT, RAR_MUL, RARITY, scaleSkill, runAuto, DIFFS, DIFF_ORDER,
-} from './engine.mjs?v=1793600001';
+} from './engine.mjs?v=1793605992';
 
 // ======================= assets & data =======================
 const FIG = (k) => `fig/${k}.webp`;
@@ -854,7 +854,7 @@ function buildField() {
     const rr = RARITY[u.key.replace('elite_', '')];
     el.className = `fig ${u.side}${boss ? ' boss' : ''}${rr === 'L' ? ' leg' : rr === 'E' ? ' epi' : ''}`; el.dataset.uid = u.uid;
     el.style.left = x + '%'; el.style.top = y + '%'; el.style.zIndex = String(Math.round(y));
-    el.innerHTML = `<div class="body"><div class="circ"></div><div class="${flip ? 'flip' : ''}" style="display:flex;align-items:flex-end;position:relative"><img class="sprite ${v.idle ? 'live' : ''}" src="${v.idle ? ANIM(v.idle) : v.src}" style="height:${hgt}px;max-width:${W0 * (boss ? 0.36 : v.idle ? 0.36 : 0.22)}px;filter:${v.filter} drop-shadow(0 .4em .4em rgba(0,0,0,.6));animation-delay:${-Math.random() * 2}s"></div>
+    el.innerHTML = `<div class="body"><div class="circ"></div><div class="${flip ? 'flip' : ''}" style="display:flex;align-items:flex-end;position:relative"><img class="sprite ${v.idle ? 'live' : ''}" src="${v.idle ? ANIM(v.idle) : v.src}" style="height:${hgt}px;max-width:${W0 * (boss ? 0.36 : v.idle ? 0.36 : 0.22)}px;filter:${v.filter || 'none'};animation-delay:${-Math.random() * 2}s"></div>
       <div class="hud"><div class="sts"></div><div class="row" style="position:relative"><span class="arw l">▶</span><span class="arw r">◀</span><span class="lvl">${u.lv}</span><div class="bars"><div class="hp"><u></u><i></i><s></s></div><div class="mt"><i></i></div></div></div></div></div>`;
     el.onclick = () => tapUnit(u.uid);
     el._vis = v; el._x = x; el._y = y; el._h = hgt; el._max = u.maxHp; el._uid = u.uid; el._key = u.key;
@@ -1210,8 +1210,15 @@ function chapterReward(st, cg, hostEl) {
 }
 const FX = {
   cv: null, cx: null, parts: [], raf: 0, w: 0, h: 0,
-  init(cv, host) { this.cv = cv; const dpr = Math.min(2, window.devicePixelRatio || 1); this.w = host.clientWidth; this.h = host.clientHeight; cv.width = this.w * dpr; cv.height = this.h * dpr; cv.style.width = this.w + 'px'; cv.style.height = this.h + 'px'; this.cx = cv.getContext('2d'); this.cx.setTransform(dpr, 0, 0, dpr, 0, 0); this.parts = []; this.run(); },
+  init(cv, host) { this.cv = cv; const dpr = 1; this.dirty = true; this.w = host.clientWidth; this.h = host.clientHeight; cv.width = this.w * dpr; cv.height = this.h * dpr; cv.style.width = this.w + 'px'; cv.style.height = this.h + 'px'; this.cx = cv.getContext('2d'); this.cx.setTransform(dpr, 0, 0, dpr, 0, 0); this.parts = []; this.run(); },
   stop() { cancelAnimationFrame(this.raf); this.parts = []; },
+  texs: new Map(),
+  tex(col, kind) { // pre-rendered soft sprite: one drawImage instead of a radial gradient per particle per frame
+    const key = kind + col; let t = this.texs.get(key); if (t) return t;
+    t = document.createElement('canvas'); t.width = t.height = 64; const g = t.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    if (kind === 'p') { gr.addColorStop(0, col); gr.addColorStop(0.5, col + 'aa'); gr.addColorStop(1, col + '00'); } else { gr.addColorStop(0, '#fff'); gr.addColorStop(0.25, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); }
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64); this.texs.set(key, t); return t;
+  },
   add(p) { this.parts.push({ life: 1, age: 0, vx: 0, vy: 0, g: 0, size: 4, glow: true, shape: 'dot', ...p }); },
   burst(x, y, color, n = 24, sp = 5, size = 4, life = 0.7, g = 0.05) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = sp * (0.3 + Math.random()); this.add({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, color, size: size * (0.5 + Math.random()), life: life * (0.6 + Math.random() * 0.6), g }); } },
   ring(x, y, color, r = 60, life = 0.45, width = 4) { this.add({ x, y, color, shape: 'ring', r0: 6, r1: r, life, width }); },
@@ -1259,19 +1266,18 @@ const FX = {
   },
   run() {
     const loop = () => {
-      const c = this.cx; if (!c) return; c.clearRect(0, 0, this.w, this.h); c.globalCompositeOperation = 'lighter';
+      const c = this.cx; if (!c) return; this.raf = requestAnimationFrame(loop); if (!this.parts.length) { if (this.dirty) { c.clearRect(0, 0, this.w, this.h); this.dirty = false; } return; } this.dirty = true; c.clearRect(0, 0, this.w, this.h); c.globalCompositeOperation = 'lighter';
       const dt = 1 / 60 * S.speed;
       this.parts = this.parts.filter((p) => { if (p.delay > 0) { p.delay -= dt; return true; } return (p.age += dt) < p.life; });
       for (const p of this.parts) {
         if (p.delay > 0) continue;
         const k = 1 - p.age / p.life; c.globalAlpha = Math.max(0, k);
         if (p.shape === 'dot' || p.shape === 'plus') { p.x += p.vx * S.speed; p.y += p.vy * S.speed; p.vy += p.g * S.speed; const s = p.size * (0.4 + k * 0.6);
-          const gr = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, s * 2.2); gr.addColorStop(0, '#fff'); gr.addColorStop(0.25, p.color); gr.addColorStop(1, 'transparent'); c.fillStyle = gr;
-          if (p.shape === 'plus') { c.fillRect(p.x - s, p.y - s * 0.3, s * 2, s * 0.6); c.fillRect(p.x - s * 0.3, p.y - s, s * 0.6, s * 2); } else { c.beginPath(); c.arc(p.x, p.y, s * 2.2, 0, 7); c.fill(); } }
-        else if (p.shape === 'ring') { const r = p.r0 + (p.r1 - p.r0) * (1 - k); c.strokeStyle = p.color; c.lineWidth = p.width * k + 1; c.shadowColor = p.color; c.shadowBlur = 16; c.beginPath(); c.ellipse(p.x, p.y, r, r * 0.55, 0, 0, 7); c.stroke(); c.shadowBlur = 0; }
-        else if (p.shape === 'slash') { const t = 1 - k; c.save(); c.translate(p.x, p.y); c.rotate(p.ang); c.strokeStyle = p.color; c.shadowColor = p.color; c.shadowBlur = 18; c.lineCap = 'round'; c.lineWidth = 7 * k + 1; c.beginPath(); c.arc(0, 0, p.len * (0.6 + t * 0.4), -1.1, -1.1 + 2.2 * Math.min(1, t * 3)); c.stroke(); c.restore(); c.shadowBlur = 0; }
+          if (p.shape === 'plus') { c.fillStyle = p.color; c.fillRect(p.x - s, p.y - s * 0.3, s * 2, s * 0.6); c.fillRect(p.x - s * 0.3, p.y - s, s * 0.6, s * 2); } else { const R = s * 2.2; c.drawImage(this.tex(p.color, 'd'), p.x - R, p.y - R, R * 2, R * 2); } }
+        else if (p.shape === 'ring') { const r = p.r0 + (p.r1 - p.r0) * (1 - k); c.strokeStyle = p.color; c.lineWidth = p.width * k + 1; c.shadowColor = p.color; c.shadowBlur = 0; c.beginPath(); c.ellipse(p.x, p.y, r, r * 0.55, 0, 0, 7); c.stroke(); c.shadowBlur = 0; }
+        else if (p.shape === 'slash') { const t = 1 - k; c.save(); c.translate(p.x, p.y); c.rotate(p.ang); c.strokeStyle = p.color; c.shadowColor = p.color; c.shadowBlur = 0; c.lineCap = 'round'; c.lineWidth = 7 * k + 1; c.beginPath(); c.arc(0, 0, p.len * (0.6 + t * 0.4), -1.1, -1.1 + 2.2 * Math.min(1, t * 3)); c.stroke(); c.restore(); c.shadowBlur = 0; }
         else if (p.shape === 'emit') {
-          const f = p.from, tgs = p.tg, n = Math.round(7 * p.power * S.speed);
+          const f = p.from, tgs = p.tg, n = this.parts.length > 260 ? 1 : Math.round(5 * p.power * S.speed);
           for (let i = 0; i < n; i++) {
             const t = tgs[Math.floor(Math.random() * tgs.length)]; const tx = t.x + (Math.random() - 0.5) * 40, ty = t.y + (Math.random() - 0.5) * 50;
             const dx = tx - f.x, dy = ty - f.y, d = Math.hypot(dx, dy) || 1; const life = 0.42 + Math.random() * 0.12; const sp = d / (life * 60) * (0.9 + Math.random() * 0.25);
@@ -1280,35 +1286,32 @@ const FX = {
               col: p.pal[Math.floor(Math.random() * p.pal.length)], s0: 4 + Math.random() * 3, s1: (22 + Math.random() * 22) * p.power, age: 0, life });
           }
           // hot core at the mouth
-          const gr = c.createRadialGradient(f.x, f.y, 0, f.x, f.y, 22 * p.power); gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.3, p.pal[0]); gr.addColorStop(1, 'transparent');
-          c.globalAlpha = 0.55; c.fillStyle = gr; c.beginPath(); c.arc(f.x, f.y, 22 * p.power, 0, 7); c.fill();
-          if (Math.random() < 0.5 * S.speed) for (const t of tgs) this.parts.push({ x: t.x + (Math.random() - 0.5) * 50, y: t.y + (Math.random() - 0.5) * 60, vx: (Math.random() - 0.5) * 5, vy: -1 - Math.random() * 3, color: p.pal[1], size: 4 + Math.random() * 5, life: 0.5, age: 0, g: -0.02, shape: 'dot' });
+          { const R = 22 * p.power; c.globalAlpha = 0.55; c.drawImage(this.tex(p.pal[0], 'd'), f.x - R, f.y - R, R * 2, R * 2); }
+          if (Math.random() < 0.35 * S.speed) for (const t of tgs) this.parts.push({ x: t.x + (Math.random() - 0.5) * 50, y: t.y + (Math.random() - 0.5) * 60, vx: (Math.random() - 0.5) * 5, vy: -1 - Math.random() * 3, color: p.pal[1], size: 4 + Math.random() * 5, life: 0.5, age: 0, g: -0.02, shape: 'dot' });
         }
         else if (p.shape === 'puff') {
           p.x += p.vx * S.speed; p.y += p.vy * S.speed; p.vx *= 0.995; p.vy *= 0.995;
           const t = p.age / p.life, s = p.s0 + (p.s1 - p.s0) * Math.pow(t, 0.7);
-          const gr = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, s); gr.addColorStop(0, p.col); gr.addColorStop(0.5, p.col + 'aa'); gr.addColorStop(1, p.col + '00');
           c.globalCompositeOperation = t < 0.25 ? 'lighter' : 'source-over';
-          c.globalAlpha = Math.max(0, (t < 0.12 ? t / 0.12 : 1) * (1 - t) * (t < 0.25 ? 0.45 : 0.6)); c.fillStyle = gr; c.beginPath(); c.arc(p.x, p.y, s, 0, 7); c.fill();
+          c.globalAlpha = Math.max(0, (t < 0.12 ? t / 0.12 : 1) * (1 - t) * (t < 0.25 ? 0.45 : 0.6)); c.drawImage(this.tex(p.col, 'p'), p.x - s, p.y - s, s * 2, s * 2);
           c.globalCompositeOperation = 'lighter';
         }
-        else if (p.shape === 'shard') { if (p.vx) { p.x += p.vx * S.speed; p.y += p.vy * S.speed; p.vy += (p.g || 0) * S.speed; } c.save(); c.translate(p.x, p.y); c.rotate(p.ang); c.fillStyle = p.color; c.shadowColor = '#6fd0ff'; c.shadowBlur = 12; c.beginPath(); c.moveTo(p.len, 0); c.lineTo(-p.len * 0.6, -p.len * 0.22); c.lineTo(-p.len * 0.3, 0); c.lineTo(-p.len * 0.6, p.len * 0.22); c.closePath(); c.fill(); c.restore(); c.shadowBlur = 0; }
+        else if (p.shape === 'shard') { if (p.vx) { p.x += p.vx * S.speed; p.y += p.vy * S.speed; p.vy += (p.g || 0) * S.speed; } c.save(); c.translate(p.x, p.y); c.rotate(p.ang); c.fillStyle = p.color; c.shadowColor = '#6fd0ff'; c.shadowBlur = 0; c.beginPath(); c.moveTo(p.len, 0); c.lineTo(-p.len * 0.6, -p.len * 0.22); c.lineTo(-p.len * 0.3, 0); c.lineTo(-p.len * 0.6, p.len * 0.22); c.closePath(); c.fill(); c.restore(); c.shadowBlur = 0; }
         else if (p.shape === 'lance') { const g2 = Math.min(1, p.age / p.grow); const ex = p.a.x + (p.b.x - p.a.x) * g2, ey = p.a.y + (p.b.y - p.a.y) * g2; c.lineCap = 'round';
-          for (const [w, col, bl] of [[18, p.color, 30], [8, '#fff6d0', 12], [3, '#ffffff', 4]]) { c.strokeStyle = col; c.shadowColor = p.color; c.shadowBlur = bl; c.lineWidth = w * k + 1; c.beginPath(); c.moveTo(p.a.x, p.a.y); c.lineTo(ex, ey); c.stroke(); } c.shadowBlur = 0; }
+          for (const [w, col, bl] of [[18, p.color, 30], [8, '#fff6d0', 12], [3, '#ffffff', 4]]) { c.strokeStyle = col; c.shadowColor = p.color; c.shadowBlur = 0; c.lineWidth = w * k + 1; c.beginPath(); c.moveTo(p.a.x, p.a.y); c.lineTo(ex, ey); c.stroke(); } c.shadowBlur = 0; }
         else if (p.shape === 'beam') {
           const t = p.age / p.life, grow = Math.min(1, t / 0.3), fade = t > 0.7 ? (1 - t) / 0.3 : 1;
           const ex = p.a.x + (p.b.x - p.a.x) * grow, ey = p.a.y + (p.b.y - p.a.y) * grow;
           const mx = (p.a.x + ex) / 2 + Math.sin(p.age * 25 + p.seed) * 14, my = (p.a.y + ey) / 2 - 18 + Math.cos(p.age * 21 + p.seed) * 10;
           c.globalAlpha = Math.max(0, fade); c.lineCap = 'round';
-          for (const [wm, col, bl] of [[2.2, p.color, 30], [1, p.color, 18], [0.35, '#ffffff', 8]]) { c.strokeStyle = col; c.shadowColor = p.color; c.shadowBlur = bl; c.lineWidth = p.w * wm * (0.8 + 0.2 * Math.sin(p.age * 40)); c.beginPath(); c.moveTo(p.a.x, p.a.y); c.quadraticCurveTo(mx, my, ex, ey); c.stroke(); }
+          for (const [wm, col, bl] of [[2.2, p.color, 30], [1, p.color, 18], [0.35, '#ffffff', 8]]) { c.strokeStyle = col; c.shadowColor = p.color; c.shadowBlur = 0; c.lineWidth = p.w * wm * (0.8 + 0.2 * Math.sin(p.age * 40)); c.beginPath(); c.moveTo(p.a.x, p.a.y); c.quadraticCurveTo(mx, my, ex, ey); c.stroke(); }
           c.shadowBlur = 0;
           if (Math.random() < 0.9) { const q = Math.random() * grow; this.parts.push({ x: p.a.x + (p.b.x - p.a.x) * q, y: p.a.y + (p.b.y - p.a.y) * q - 10, vx: (Math.random() - 0.5) * 2, vy: 1 + Math.random() * 2.5, g: 0.08, color: p.color, size: 3 + Math.random() * 4, life: 0.6, age: 0, shape: 'dot' }); }
           if (grow >= 1 && Math.random() < 0.6) this.parts.push({ x: ex, y: ey, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.8) * 6, g: 0.15, color: p.color, size: 4 + Math.random() * 5, life: 0.5, age: 0, shape: 'dot' });
         }
-        else if (p.shape === 'bolt') { const r = rngOf(Math.floor(p.seed * 1000 + p.age * 30)); c.strokeStyle = p.color; c.shadowColor = p.color; c.shadowBlur = 20; c.lineWidth = 3; c.beginPath(); c.moveTo(p.a.x, p.a.y); for (let i = 1; i < 9; i++) { const t = i / 9; c.lineTo(p.a.x + (p.b.x - p.a.x) * t + (r() - 0.5) * 34, p.a.y + (p.b.y - p.a.y) * t + (r() - 0.5) * 34); } c.lineTo(p.b.x, p.b.y); c.stroke(); c.lineWidth = 1; c.strokeStyle = '#fff'; c.stroke(); c.shadowBlur = 0; }
+        else if (p.shape === 'bolt') { const r = rngOf(Math.floor(p.seed * 1000 + p.age * 30)); c.strokeStyle = p.color; c.shadowColor = p.color; c.shadowBlur = 0; c.lineWidth = 3; c.beginPath(); c.moveTo(p.a.x, p.a.y); for (let i = 1; i < 9; i++) { const t = i / 9; c.lineTo(p.a.x + (p.b.x - p.a.x) * t + (r() - 0.5) * 34, p.a.y + (p.b.y - p.a.y) * t + (r() - 0.5) * 34); } c.lineTo(p.b.x, p.b.y); c.stroke(); c.lineWidth = 1; c.strokeStyle = '#fff'; c.stroke(); c.shadowBlur = 0; }
       }
       c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
-      this.raf = requestAnimationFrame(loop);
     };
     cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(loop);
   },
